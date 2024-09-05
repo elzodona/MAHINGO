@@ -14,6 +14,9 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
   int _selectedFilterIndex = 0;
   int _selectedCountIndex = 0;
   String couleur = 'couleur';
+  String _searchQuery = '';
+
+  final TextEditingController _nameAnimal = TextEditingController();
 
   final List<Map<String, dynamic>> animaux = [
     {
@@ -225,6 +228,7 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
   @override
   Widget build(BuildContext context) {
     Widget selectedContainer = Container();
+    final List<Map<String, dynamic>> foundAnimals = [];
 
     if (_selectedCountIndex == 0) {
       selectedContainer = Container(
@@ -385,6 +389,51 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
       return false;
     }).toList();
 
+    String getAnimalSearchResult(String searchQuery) {
+      int _cat = 0;
+      int _col = 0;
+      String _etat = '';
+
+      for (var category in animaux) {
+        for (var animal in category['animaux']) {
+          if (animal['nom'].toLowerCase() == searchQuery.toLowerCase()) {
+            foundAnimals.add(animal);
+            _cat = animal['idCategorie'];
+            _col = animal['idCollier'];
+
+            for (var collier in colliers) {
+              if (collier['id'] == _col) {
+                _etat = collier['etat'];
+
+                if (_etat == 'normal') {
+                  _selectedCountIndex = 0;
+                } else if (_etat == 'sensible') {
+                  _selectedCountIndex = 1;
+                }
+                if (_etat == 'anormal') {
+                  _selectedCountIndex = 2;
+                }
+              }
+            }
+
+            if (_cat == 1) {
+              _selectedFilterIndex = 0;
+            } else if (_cat == 2) {
+              _selectedFilterIndex = 1;
+            }
+          }
+          // filteredAnimaux = foundAnimals;
+        }
+      }
+
+      if (foundAnimals.isNotEmpty) {
+        return 'Animaux trouvés : ${foundAnimals}';
+
+      } else {
+        return 'Aucun animal trouvé.';
+      }
+    }
+
     return Scaffold(
       body: Container(
         decoration: const BoxDecoration(
@@ -448,11 +497,12 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
                                   ),
                                 ],
                               ),
-                              child: const TextField(
-                                style: TextStyle(
-                                  color: AppColors.gris,
+                              child: TextField(
+                                style: const TextStyle(
+                                  color: Color.fromARGB(255, 0, 0, 0),
                                 ),
-                                decoration: InputDecoration(
+                                controller: _nameAnimal,
+                                decoration: const InputDecoration(
                                   hintText: 'Search...',
                                   hintStyle: TextStyle(
                                     color: Color.fromARGB(255, 200, 199, 197),
@@ -467,6 +517,14 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
                                   fillColor: AppColors.blanc,
                                   filled: true,
                                 ),
+                                onChanged: (value) {
+                                  setState(() {
+                                    _searchQuery = value;
+                                    String searchResult =
+                                        getAnimalSearchResult(_searchQuery);
+                                    print(searchResult);
+                                  });
+                                },
                               ),
                             ),
                           ),
@@ -829,11 +887,12 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
                                                     CrossAxisAlignment.start,
                                                 children: [
                                                   Padding(
-                                                    padding: EdgeInsets.only(
-                                                        left: 10, top: 12),
+                                                    padding:
+                                                        const EdgeInsets.only(
+                                                            left: 10, top: 12),
                                                     child: Text(
                                                       animal['nom']!,
-                                                      style: TextStyle(
+                                                      style: const TextStyle(
                                                         fontSize: 16,
                                                         color:
                                                             Color(0xFF39434F),
@@ -843,13 +902,14 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
                                                       ),
                                                     ),
                                                   ),
-                                                  SizedBox(height: 4),
+                                                  const SizedBox(height: 4),
                                                   Padding(
-                                                    padding: EdgeInsets.only(
-                                                        left: 10),
+                                                    padding:
+                                                        const EdgeInsets.only(
+                                                            left: 10),
                                                     child: Text(
                                                       '${animal['sexe']}    ${animal['race']}',
-                                                      style: TextStyle(
+                                                      style: const TextStyle(
                                                         fontSize: 14,
                                                         fontFamily: 'Roboto',
                                                       ),
@@ -872,7 +932,7 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
                                                           : const Color(
                                                               0xFFFF3B30),
                                                   borderRadius:
-                                                      BorderRadius.only(
+                                                      const BorderRadius.only(
                                                           topLeft:
                                                               Radius.circular(
                                                                   100),
@@ -882,7 +942,7 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
                                                 ),
                                                 child: Row(
                                                   children: [
-                                                    SizedBox(width: 20),
+                                                    const SizedBox(width: 20),
                                                     Text(
                                                       'N ' +
                                                           animal['idCollier']
