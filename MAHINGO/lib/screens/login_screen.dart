@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:mahingo/screens/forget_password_screen1.dart';
-import 'package:mahingo/screens/home_screen.dart';
 import 'package:mahingo/services/toggle/bloc/toggle_bloc.dart';
 import 'package:mahingo/utils/colors.dart';
 import 'package:mahingo/routes/paths.dart';
@@ -96,26 +94,22 @@ class _LoginScreenState extends State<LoginScreen> {
                           builder: (content, state) {
                         // print(state);
                         return TextField(
-                          obscureText: (state as ToggleInitialState).isOn,
+                          obscureText: state.isFirstPasswordObscured,
                           decoration: InputDecoration(
                             labelText: 'Mot de passe',
                             prefixIcon:
                                 const Icon(Icons.lock, color: AppColors.vert),
                             suffixIcon: IconButton(
-                                icon: Icon(
-                                    state.isOn 
+                              icon: Icon(
+                                state.isFirstPasswordObscured
                                     ? Icons.visibility
                                     : Icons.visibility_off,
-                                    color: AppColors.vert),
-                                onPressed: () => context
-                                    .read<ToggleBloc>()
-                                    .add(ToggleSubmitEvent())
-
-                                // icon: Icon( _obscureText ? Icons.visibility : Icons.visibility_off,
-                                //   color: AppColors.vert,
-                                // ),
-                                // _togglePasswordVisibility,
-                                ),
+                                color: AppColors.vert,
+                              ),
+                              onPressed: () => context
+                                  .read<ToggleBloc>()
+                                  .add(ToggleFirstPasswordVisibility()),
+                            ),
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(12),
                             ),

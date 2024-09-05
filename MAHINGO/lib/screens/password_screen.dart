@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:mahingo/services/toggle/bloc/toggle_bloc.dart';
 import 'package:mahingo/utils/colors.dart';
 import 'package:mahingo/routes/paths.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 
 class PasswordScreen extends StatefulWidget {
@@ -11,21 +13,6 @@ class PasswordScreen extends StatefulWidget {
 }
 
 class _PasswordScreenState extends State<PasswordScreen> {
-  bool _obscureText = true;
-  bool _obscureText2 = true;
-
-
-  void _togglePasswordVisibility() {
-    setState(() {
-      _obscureText = !_obscureText;
-    });
-  }
-
-  void _togglePasswordVisibility2() {
-    setState(() {
-      _obscureText2 = !_obscureText2;
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -52,47 +39,58 @@ class _PasswordScreenState extends State<PasswordScreen> {
               padding: const EdgeInsets.all(40),
               child: Column(
                 children: [
-                  TextField(
-                    obscureText: _obscureText,
-                    decoration: InputDecoration(
-                      labelText: 'Nouveau mot de passe',
-                      prefixIcon: const Icon(Icons.lock, color: AppColors.vert),
-                      suffixIcon: IconButton(
-                        icon: Icon(
-                          _obscureText
-                              ? Icons.visibility
-                              : Icons.visibility_off,
-                          color: AppColors.vert,
+                  BlocBuilder<ToggleBloc, ToggleState>(
+                    builder: (context, state) {
+                      return TextField(
+                        obscureText: state.isFirstPasswordObscured,
+                        decoration: InputDecoration(
+                          labelText: 'Nouveau mot de passe',
+                          prefixIcon:
+                              const Icon(Icons.lock, color: AppColors.vert),
+                          suffixIcon: IconButton(
+                            icon: Icon(
+                              state.isFirstPasswordObscured
+                                  ? Icons.visibility
+                                  : Icons.visibility_off,
+                              color: AppColors.vert,
+                            ),
+                            onPressed: () => context
+                                .read<ToggleBloc>()
+                                .add(ToggleFirstPasswordVisibility()),
+                          ),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
                         ),
-                        onPressed: _togglePasswordVisibility,
-                      ),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                    ),
-                    keyboardType: TextInputType.visiblePassword,
+                      );
+                    },
                   ),
-                  const SizedBox(
-                      height: 20),
-                  TextField(
-                    obscureText: _obscureText2,
-                    decoration: InputDecoration(
-                      labelText: 'Confirmer le mot de passe',
-                      prefixIcon: const Icon(Icons.lock, color: AppColors.vert),
-                      suffixIcon: IconButton(
-                        icon: Icon(
-                          _obscureText2
-                              ? Icons.visibility
-                              : Icons.visibility_off,
-                          color: AppColors.vert,
+                  const SizedBox(height: 20),
+                  BlocBuilder<ToggleBloc, ToggleState>(
+                    builder: (context, state) {
+                      return TextField(
+                        obscureText: state.isSecondPasswordObscured,
+                        decoration: InputDecoration(
+                          labelText: 'Confirmer le mot de passe',
+                          prefixIcon:
+                              const Icon(Icons.lock, color: AppColors.vert),
+                          suffixIcon: IconButton(
+                            icon: Icon(
+                              state.isSecondPasswordObscured
+                                  ? Icons.visibility
+                                  : Icons.visibility_off,
+                              color: AppColors.vert,
+                            ),
+                            onPressed: () => context
+                                .read<ToggleBloc>()
+                                .add(ToggleSecondPasswordVisibility()),
+                          ),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
                         ),
-                        onPressed: _togglePasswordVisibility2,
-                      ),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                    ),
-                    keyboardType: TextInputType.visiblePassword,
+                      );
+                    },
                   ),
                 ],
               ),
