@@ -15,17 +15,25 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int _selectedIndex = 0;
-  int _page = 0;
+
+  final PageController _pageController = PageController();
 
   final List<Widget> _pages = [
     AccueilScreen(),
     const AnimalsScreen(),
     const LocationScreen(),
     const EventsScreen(),
-    // const SettingsScreen(),
   ];
 
   void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+      _pageController.animateToPage(index,
+          duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
+    });
+  }
+
+  void _onPageChanged(int index) {
     setState(() {
       _selectedIndex = index;
     });
@@ -34,8 +42,12 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // appBar: const CustomAppBar(),
-      body: _pages[_page],
+      body: PageView(
+        controller: _pageController,
+        onPageChanged: _onPageChanged,
+        children: _pages,
+        physics: const BouncingScrollPhysics(),
+      ),
       bottomNavigationBar: CurvedNavigationBar(
         height: 60,
         backgroundColor: Colors.transparent,
@@ -48,13 +60,9 @@ class _HomePageState extends State<HomePage> {
           Image.asset('assets/images/location.png', width: 32, height: 32),
           const Icon(Icons.event, size: 32, color: AppColors.blanc),
         ],
-        onTap: (index) {
-          setState(() {
-            _page = index;
-          });
-        },
+        onTap: _onItemTapped,
+        index: _selectedIndex,
       ),
     );
   }
 }
-
