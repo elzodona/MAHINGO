@@ -227,13 +227,17 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
+    double screenHeight = MediaQuery.of(context).size.height;
+
     Widget selectedContainer = Container();
+
     final List<Map<String, dynamic>> foundAnimals = [];
 
     if (_selectedCountIndex == 0) {
       selectedContainer = Container(
         margin: EdgeInsets.only(top: 30),
-        height: 350,
+        height: screenHeight * 0.44,
         decoration: const BoxDecoration(
           image: DecorationImage(
             image: AssetImage('assets/images/vertb.png'),
@@ -246,8 +250,7 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
               child: Center(
                 child: Image.asset(
                   'assets/images/vertc.png',
-                  width: 300,
-                  height: 300,
+                  width: screenWidth * 0.5,
                 ),
               ),
             ),
@@ -255,8 +258,7 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
               child: Center(
                 child: Image.asset(
                   'assets/images/vert.png',
-                  width: 150,
-                  height: 150,
+                  width: screenWidth * 0.4,
                 ),
               ),
             ),
@@ -266,7 +268,7 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
     } else if (_selectedCountIndex == 1) {
       selectedContainer = Container(
         margin: EdgeInsets.only(top: 30),
-        height: 350,
+        height: screenHeight * 0.44,
         decoration: const BoxDecoration(
           image: DecorationImage(
             image: AssetImage('assets/images/orange.png'),
@@ -279,7 +281,7 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
               child: Center(
                 child: Image.asset(
                   'assets/images/orangec.png',
-                  width: 300,
+                  width: screenWidth * 0.5,
                   height: 300,
                 ),
               ),
@@ -288,8 +290,7 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
               child: Center(
                 child: Image.asset(
                   'assets/images/orangeb.png',
-                  width: 115,
-                  height: 115,
+                  width: screenWidth * 0.32,
                 ),
               ),
             ),
@@ -299,7 +300,7 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
     } else if (_selectedCountIndex == 2) {
       selectedContainer = Container(
         margin: EdgeInsets.only(top: 30),
-        height: 350,
+        height: screenHeight * 0.44,
         decoration: const BoxDecoration(
           image: DecorationImage(
             image: AssetImage('assets/images/rouge (1).png'),
@@ -312,8 +313,7 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
               child: Center(
                 child: Image.asset(
                   'assets/images/rougec.png',
-                  width: 300,
-                  height: 300,
+                  width: screenWidth * 0.5,
                 ),
               ),
             ),
@@ -321,8 +321,7 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
               child: Center(
                 child: Image.asset(
                   'assets/images/rouge (2).png',
-                  width: 150,
-                  height: 150,
+                  width: screenWidth * 0.4,
                 ),
               ),
             ),
@@ -434,6 +433,7 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
       }
     }
 
+
     return Scaffold(
       body: Container(
         decoration: const BoxDecoration(
@@ -451,7 +451,7 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
           children: [
             Container(
               padding: const EdgeInsets.only(top: 30),
-              height: 130,
+              height: screenHeight * 0.15,
               color: AppColors.vert,
               child: const Center(
                 child: Text(
@@ -465,10 +465,11 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
                 ),
               ),
             ),
+            
             Expanded(
               child: SingleChildScrollView(
                 child: Container(
-                  height: 650,
+                  height: screenHeight * 0.9,
                   decoration: const BoxDecoration(
                     color: AppColors.blanc,
                     borderRadius: BorderRadius.only(
@@ -479,20 +480,20 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
                   padding: const EdgeInsets.all(14),
                   child: Column(
                     children: [
-                      const SizedBox(height: 15),
+                      SizedBox(height: screenHeight * 0.015),
+                      
                       Row(
                         children: [
                           Expanded(
                             child: Container(
-                              height: 36,
+                              height: screenHeight * 0.05,
                               decoration: BoxDecoration(
-                                color: AppColors.blanc,
-                                borderRadius: BorderRadius.circular(12),
+                                borderRadius: BorderRadius.circular(30),
                                 boxShadow: const [
                                   BoxShadow(
                                     color: AppColors.gris,
-                                    spreadRadius: 5,
-                                    blurRadius: 5,
+                                    spreadRadius: 3,
+                                    blurRadius: 6,
                                     offset: Offset(0, 3),
                                   ),
                                 ],
@@ -502,36 +503,56 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
                                   color: Color.fromARGB(255, 0, 0, 0),
                                 ),
                                 controller: _nameAnimal,
-                                decoration: const InputDecoration(
+                                decoration: InputDecoration(
                                   hintText: 'Search...',
-                                  hintStyle: TextStyle(
+                                  hintStyle: const TextStyle(
                                     color: Color.fromARGB(255, 200, 199, 197),
                                   ),
-                                  prefixIcon: Icon(
+                                  prefixIcon: const Icon(
                                     Icons.search,
                                     color: AppColors.gris,
                                   ),
-                                  contentPadding: EdgeInsets.symmetric(
-                                      vertical: 10, horizontal: 15),
-                                  border: InputBorder.none,
+                                  contentPadding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                    borderSide: const BorderSide(
+                                      color: AppColors.gris,
+                                      width: 1,
+                                    ),
+                                  ),
+                                  enabledBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                    borderSide: const BorderSide(
+                                      color: AppColors.gris,
+                                      width: 1,
+                                    ),
+                                  ),
+                                  focusedBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                    borderSide: const BorderSide(
+                                      color: AppColors.vert,
+                                      width: 2,
+                                    ),
+                                  ),
                                   fillColor: AppColors.blanc,
                                   filled: true,
                                 ),
                                 onChanged: (value) {
                                   setState(() {
                                     _searchQuery = value;
-                                    String searchResult =
-                                        getAnimalSearchResult(_searchQuery);
+                                    String searchResult = getAnimalSearchResult(_searchQuery);
                                     print(searchResult);
                                   });
                                 },
                               ),
                             ),
                           ),
-                          const SizedBox(width: 10),
+                          
+                          SizedBox(width: screenWidth * 0.03),
+                          
                           Container(
-                            height: 36,
-                            width: 48,
+                            height: screenHeight * 0.04,
+                            width: screenWidth * 0.1,
                             decoration: BoxDecoration(
                               color: AppColors.vert,
                               borderRadius: BorderRadius.circular(4),
@@ -547,17 +568,19 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
                             child: const Icon(
                               Icons.add,
                               color: AppColors.blanc,
-                              size: 20,
+                              size: 22,
                             ),
                           ),
                         ],
                       ),
-                      const SizedBox(height: 25),
+                      
+                      SizedBox(height: screenHeight * 0.035),
+                      
                       Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Container(
-                            width: 135,
-                            height: 30,
+                            height: screenHeight * 0.04,
                             decoration: BoxDecoration(
                               color: AppColors.blanc,
                               borderRadius: BorderRadius.circular(15),
@@ -572,8 +595,8 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
                                     });
                                   },
                                   child: Container(
-                                    width: 67,
-                                    height: 35,
+                                    width: screenHeight * 0.0835,
+                                    height: screenHeight * 0.04,
                                     decoration: BoxDecoration(
                                       color: _selectedFilterIndex == 0
                                           ? AppColors.vert
@@ -583,8 +606,8 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
                                       // boxShadow: const [
                                       //   BoxShadow(
                                       //     color: AppColors.gris,
-                                      //     spreadRadius: 1,
-                                      //     blurRadius: 1,
+                                      //     spreadRadius: 4,
+                                      //     blurRadius: 3,
                                       //     offset: Offset(0, 0),
                                       //   ),
                                       // ],
@@ -645,8 +668,8 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
                                     });
                                   },
                                   child: Container(
-                                    width: 67,
-                                    height: 35,
+                                    width: screenHeight * 0.0835,
+                                    height: screenHeight * 0.04,
                                     decoration: BoxDecoration(
                                       color: _selectedFilterIndex == 1
                                           ? AppColors.vert
@@ -714,10 +737,9 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
                               ],
                             ),
                           ),
-                          const SizedBox(width: 59),
+                                                    
                           Container(
-                            width: 170,
-                            height: 30,
+                            height: screenHeight * 0.04,
                             decoration: BoxDecoration(
                               color: AppColors.blanc,
                               borderRadius: BorderRadius.circular(15),
@@ -731,9 +753,10 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
                                       _selectedCountIndex = 0;
                                     });
                                   },
-                                  child: Container(
-                                    width: 55,
-                                    height: 30,
+                                  child: 
+                                  Container(
+                                    width: screenWidth * 0.14,
+                                    // height: screenHeight * 0.04,
                                     decoration: BoxDecoration(
                                       color: _selectedCountIndex == 0
                                           ? AppColors.vert
@@ -770,8 +793,8 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
                                     });
                                   },
                                   child: Container(
-                                    width: 55,
-                                    height: 30,
+                                    width: screenWidth * 0.14,
+                                    // height: screenHeight * 0.04,
                                     decoration: BoxDecoration(
                                       color: _selectedCountIndex == 1
                                           ? const Color(0xFFFF9500)
@@ -808,8 +831,8 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
                                     });
                                   },
                                   child: Container(
-                                    width: 55,
-                                    height: 30,
+                                    width: screenWidth * 0.14,
+                                    // height: screenHeight * 0.04,
                                     decoration: BoxDecoration(
                                       color: _selectedCountIndex == 2
                                           ? const Color(0xFFFF3B30)
@@ -844,10 +867,12 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
                           ),
                         ],
                       ),
-                      const SizedBox(height: 18),
+                      
+                      SizedBox(height: screenHeight * 0.03),
+                      
                       Container(
-                        height: 460,
-                        width: double.infinity,
+                        height: screenHeight * 0.565,
+                        width: screenWidth * 0.94,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(8),
                         ),
@@ -857,11 +882,10 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
                                 ? [selectedContainer]
                                 : filteredAnimaux.map<Widget>((animal) {
                                     return Padding(
-                                      padding:
-                                          const EdgeInsets.only(bottom: 8.0),
+                                      padding: const EdgeInsets.only(bottom: 8.0),
                                       child: Container(
-                                        height: 70,
-                                        width: double.infinity,
+                                        height: screenHeight * 0.08,
+                                        width: screenWidth * 0.94,
                                         decoration: BoxDecoration(
                                           color: _selectedCountIndex == 0
                                               ? AppColors.vertClair
@@ -902,7 +926,7 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
                                                       ),
                                                     ),
                                                   ),
-                                                  const SizedBox(height: 4),
+                                                  SizedBox(height: screenHeight * 0.01),
                                                   Padding(
                                                     padding:
                                                         const EdgeInsets.only(
@@ -920,8 +944,8 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
                                             ),
                                             Container(
                                                 // padding: const EdgeInsets.all(5),
-                                                width: 140,
-                                                height: 30,
+                                                width: screenWidth * 0.38,
+                                                height: screenHeight * 0.04,
                                                 decoration: BoxDecoration(
                                                   color: _selectedCountIndex ==
                                                           0
@@ -957,8 +981,8 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
                                                     ),
                                                     const Spacer(),
                                                     Container(
-                                                      width: 50,
-                                                      height: 30,
+                                                      width: screenWidth * 0.13,
+                                                      height: screenHeight * 0.04,
                                                       decoration: BoxDecoration(
                                                         color: _selectedCountIndex ==
                                                                 0
@@ -1014,6 +1038,7 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
             ),
           ],
         ),
+      
       ),
     );
   }
