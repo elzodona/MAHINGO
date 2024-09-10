@@ -24,13 +24,16 @@ class _StartingScreenState extends State<StartingScreen> {
 
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
+    double screenHeight = MediaQuery.of(context).size.height;
+
     return Scaffold(
       backgroundColor: AppColors.vert,
       body: Center(
         child: Image.asset(
           'assets/images/logo1.png',
-          width: 200, // Définir la largeur selon vos besoins
-          height: 200, // Définir la hauteur selon vos besoins
+          width: screenWidth,
+          height: screenHeight * 0.3,
         ),
       ),
     );

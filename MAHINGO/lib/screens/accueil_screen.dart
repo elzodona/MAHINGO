@@ -93,6 +93,9 @@ class AccueilScreen extends StatelessWidget {
         .firstWhere((categorie) => categorie['libelle'] == 'Vache')['animaux']
         .length;
 
+    double screenWidth = MediaQuery.of(context).size.width;
+    double screenHeight = MediaQuery.of(context).size.height;
+
     return Scaffold(
        appBar: const CustomAppBar(),
         body: Padding(
@@ -112,109 +115,142 @@ class AccueilScreen extends StatelessWidget {
                 ),
               ),
             ),
-            const SizedBox(height: 10),
+            
+            SizedBox(height: screenHeight * 0.01),
+            
             Container(
               child: Row(
-                children: [
-                  Container(
-                    alignment: Alignment.center,
-                    height: 90,
-                    width: 113,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Icon(MdiIcons.sheep, color: AppColors.vert, size: 26),
-                        Text(
-                          '$nombreMoutons',
-                          style: TextStyle(
-                            color: AppColors.vert, 
-                            fontSize: 26,
-                            fontWeight: FontWeight.w600,
-                            fontFamily: 'Poppins'
-                          )),
-                        Text('Moutons', style: TextStyle(color: AppColors.vert, fontSize: 16, fontFamily: 'Poppins', fontWeight: FontWeight.w600)),
-                      ],
-                    ),
-                    decoration: BoxDecoration(
-                      color: AppColors.blanc,
-                      borderRadius: BorderRadius.all(Radius.circular(20)),
-                      border: Border.all(
-                        color: AppColors.vert,
-                        width: 2,
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    Container(
+                      alignment: Alignment.center,
+                      height: screenHeight * 0.12,
+                      width: screenWidth * 0.3,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Icon(MdiIcons.sheep, color: AppColors.vert, size: 26),
+                          Text(
+                            '$nombreMoutons',
+                            style: TextStyle(
+                              color: AppColors.vert,
+                              fontSize: 26,
+                              fontWeight: FontWeight.w600,
+                              fontFamily: 'Poppins',
+                            ),
+                          ),
+                          Text(
+                            'Moutons',
+                            style: TextStyle(
+                              color: AppColors.vert,
+                              fontSize: 16,
+                              fontFamily: 'Poppins',
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ],
                       ),
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Container(
-                    height: 90,
-                    width: 113,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Icon(MdiIcons.cow, color: AppColors.vert, size: 26),
-                        Text(
-                          '$nombreVaches', 
-                          style: TextStyle(
-                            color: AppColors.vert, 
-                            fontSize: 26,
-                            fontWeight: FontWeight.w600,
-                            fontFamily: 'Poppins'
-                          )),
-                          Text('Vaches', style: TextStyle(color: AppColors.vert, fontSize: 16, fontFamily: 'Poppins', fontWeight: FontWeight.w600)),
-                      ],
-                    ),
-                    decoration: BoxDecoration(
-                      color: AppColors.blanc,
-                      borderRadius: BorderRadius.all(Radius.circular(20)),
-                      border: Border.all(
-                        color: AppColors.vert,
-                        width: 2,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Container(
-                    height: 90,
-                    width: 113,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Image.asset(
-                          'assets/images/icon_good_health.png',
-                          color: AppColors.blanc,
-                          height: 26,
-                          width: 26,
+                      decoration: BoxDecoration(
+                        color: AppColors.blanc,
+                        borderRadius: BorderRadius.all(Radius.circular(20)),
+                        border: Border.all(
+                          color: AppColors.vert,
+                          width: 2,
                         ),
-                        Text('95%',
-                          style: TextStyle(
+                      ),
+                    ),
+                    
+                    Container(
+                      alignment: Alignment.center,
+                      height: screenHeight * 0.12,
+                      width: screenWidth * 0.3,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Icon(MdiIcons.cow, color: AppColors.vert, size: 26),
+                          Text(
+                            '$nombreVaches',
+                            style: TextStyle(
+                              color: AppColors.vert,
+                              fontSize: 26,
+                              fontWeight: FontWeight.w600,
+                              fontFamily: 'Poppins',
+                            ),
+                          ),
+                          Text(
+                            'Vaches',
+                            style: TextStyle(
+                              color: AppColors.vert,
+                              fontSize: 16,
+                              fontFamily: 'Poppins',
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ],
+                      ),
+                      decoration: BoxDecoration(
+                        color: AppColors.blanc,
+                        borderRadius: BorderRadius.all(Radius.circular(20)),
+                        border: Border.all(
+                          color: AppColors.vert,
+                          width: 2,
+                        ),
+                      ),
+                    ),
+                    Container(
+                      alignment: Alignment.center,
+                      height: screenHeight * 0.12,
+                      width: screenWidth * 0.3,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Image.asset(
+                            'assets/images/icon_good_health.png',
                             color: AppColors.blanc,
-                            fontSize: 26,
-                            fontWeight: FontWeight.w600,
-                            fontFamily: 'Poppins'
-                          )
-                        ),
-                        Text('Bon état', style: TextStyle(color: AppColors.blanc, fontSize: 16, fontFamily: 'Poppins', fontWeight: FontWeight.w600)),
-                      ],
-                    ),
-                    decoration: const BoxDecoration(
+                            height: 26,
+                            width: 26,
+                          ),
+                          Text(
+                            '95%',
+                            style: TextStyle(
+                              color: AppColors.blanc,
+                              fontSize: 26,
+                              fontWeight: FontWeight.w600,
+                              fontFamily: 'Poppins',
+                            ),
+                          ),
+                          Text(
+                            'Bon état',
+                            style: TextStyle(
+                              color: AppColors.blanc,
+                              fontSize: 16,
+                              fontFamily: 'Poppins',
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ],
+                      ),
+                      decoration: const BoxDecoration(
                         color: AppColors.vert,
-                        borderRadius:
-                            BorderRadius.all(Radius.circular(20))),
-                  ),
-                ],
-              ),
+                        borderRadius: BorderRadius.all(Radius.circular(20)),
+                      ),
+                    ),
+                  ],
+                ),
             ),
-            const SizedBox(height: 12),
+            
+            SizedBox(height: screenHeight * 0.01),
+
             Container(
               child: Column(
                 children: [
                   Container(
                     padding: const EdgeInsets.all(8),
-                    height: 200,
-                    width: 370,
+                    height: screenHeight * 0.25,
+                    width: screenWidth * 0.96,
                     decoration: BoxDecoration(
                       color: Color.fromARGB(255, 203, 222, 201),
                       // border: Border.all(
@@ -228,11 +264,11 @@ class AccueilScreen extends StatelessWidget {
                     ),
                     // child: const Text('Contenu du container'),
                   ),
-                  // const SizedBox(height: 10),
+                  // const SizedBox(height: 5),
                   Container(
                     padding: const EdgeInsets.all(8.0),
-                    height: 50,
-                    width: 370,
+                    height: screenHeight * 0.065,
+                    width: screenWidth * 0.96,
                     decoration: BoxDecoration(
                       color: AppColors.vert,
                       border: Border.all(
@@ -251,7 +287,9 @@ class AccueilScreen extends StatelessWidget {
                       ),
                     ),
                   ),
-                  const SizedBox(height: 12),
+                  
+                  SizedBox(height: screenHeight * 0.01),
+
                   const Align(
                     alignment: Alignment.centerLeft,
                     child: Text(
@@ -263,11 +301,13 @@ class AccueilScreen extends StatelessWidget {
                           fontFamily: 'Poppins'),
                     ),
                   ),
-                  const SizedBox(height: 8),
+                  
+                  SizedBox(height: screenHeight * 0.007),
+                  
                   Container(
                   // padding: const EdgeInsets.all(8.0),
-                  height: 50,
-                  width: 370,
+                  height: screenHeight * 0.068,
+                  width: screenWidth * 0.96,
                   decoration: BoxDecoration(
                     color: const Color(0xFFEBF4EB),
                     borderRadius: BorderRadius.circular(14),
@@ -318,65 +358,69 @@ class AccueilScreen extends StatelessWidget {
                     ],
                   ),
                 ),
-                const SizedBox(height: 7),
-                Container(
-                  // padding: const EdgeInsets.all(8.0),
-                  height: 50,
-                  width: 370,
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFEBF4EB),
-                    borderRadius: BorderRadius.circular(14),
-                  ),
-                  child: Row(
-                    children: [
-                      Container(
-                        // padding: const EdgeInsets.all(8.0),
-                        height: 70,
-                        width: 70,
-                        decoration: BoxDecoration(
-                          color: AppColors.vert,
-                          borderRadius: BorderRadius.circular(8.0),
-                        ),
-                        child: Image.asset(
-                          'assets/images/visite_medicale.png',
-                          color: AppColors.blanc,
-                          height: 26,
-                          width: 26,
-                        ),
-                      ),
-                      const SizedBox(width: 16),
-                      const Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            'Visite médicale',
-                            style: TextStyle(
-                              color: AppColors.noir,
-                              fontSize: 14,
-                              fontFamily: 'Poppins',
-                              fontWeight: FontWeight.w600,
-                            ),
+                  
+                  SizedBox(height: screenHeight * 0.006),
+                  
+                  Container(
+                    // padding: const EdgeInsets.all(8.0),
+                    height: screenHeight * 0.068,
+                    width: screenWidth * 0.96,
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFEBF4EB),
+                      borderRadius: BorderRadius.circular(14),
+                    ),
+                    child: Row(
+                      children: [
+                        Container(
+                          // padding: const EdgeInsets.all(8.0),
+                          height: 70,
+                          width: 70,
+                          decoration: BoxDecoration(
+                            color: AppColors.vert,
+                            borderRadius: BorderRadius.circular(8.0),
                           ),
-                          Text(
-                            '11.06.2023 | 13:30',
-                            style: TextStyle(
-                              color: Color(0xFF808B9A),
-                              fontSize: 12,
-                              fontFamily: 'Poppins',
-                              fontWeight: FontWeight.w600,
-                            ),
+                          child: Image.asset(
+                            'assets/images/visite_medicale.png',
+                            color: AppColors.blanc,
+                            height: 26,
+                            width: 26,
                           ),
-                        ],
-                      ),
-                    ],
+                        ),
+                        const SizedBox(width: 16),
+                        const Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              'Visite médicale',
+                              style: TextStyle(
+                                color: AppColors.noir,
+                                fontSize: 14,
+                                fontFamily: 'Poppins',
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            Text(
+                              '11.06.2023 | 13:30',
+                              style: TextStyle(
+                                color: Color(0xFF808B9A),
+                                fontSize: 12,
+                                fontFamily: 'Poppins',
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-                const SizedBox(height: 7),
-                Container(
+                  
+                  SizedBox(height: screenHeight * 0.006),
+                  
+                  Container(
                   // padding: const EdgeInsets.all(8.0),
-                  height: 50,
-                  width: 370,
+                  height: screenHeight * 0.068,
+                  width: screenWidth * 0.96,
                   decoration: BoxDecoration(
                     color: const Color(0xFFEBF4EB),
                     borderRadius: BorderRadius.circular(14),
@@ -431,6 +475,7 @@ class AccueilScreen extends StatelessWidget {
               ),
             ),
           ],
+          
         ),
         
         )

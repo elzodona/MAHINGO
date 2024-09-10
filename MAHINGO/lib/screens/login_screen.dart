@@ -23,8 +23,9 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
+    double screenHeight = MediaQuery.of(context).size.height;
     return Scaffold(
-      // backgroundColor: Colors.white,
       body: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
@@ -42,6 +43,7 @@ class _LoginScreenState extends State<LoginScreen> {
             Container(
               padding: const EdgeInsets.only(top: 30),
               height: 200,
+              width: screenWidth,
               child: Image.asset(
                 'assets/images/tetes_bovins.png',
                 width: 400,
@@ -50,18 +52,18 @@ class _LoginScreenState extends State<LoginScreen> {
               decoration: const BoxDecoration(
                 color: AppColors.vert,
                 borderRadius: BorderRadius.only(
-                  bottomLeft: Radius.circular(70),
+                  bottomLeft: Radius.circular(60),
                 ),
               ),
             ),
             Expanded(
               child: SingleChildScrollView(
                 child: Container(
-                  height: 602,
+                  height: screenHeight,
                   decoration: const BoxDecoration(
                     color: AppColors.blanc,
                     borderRadius: BorderRadius.only(
-                      topRight: Radius.circular(70),
+                      topRight: Radius.circular(60),
                       // topLeft: Radius.circular(50),
                     ),
                   ),
@@ -182,6 +184,7 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
           ],
         ),
+      
       ),
     );
   }
