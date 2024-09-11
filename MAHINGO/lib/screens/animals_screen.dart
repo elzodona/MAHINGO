@@ -1,5 +1,8 @@
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:mahingo/screens/newAnimal_screen.dart';
 import 'package:mahingo/utils/colors.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
@@ -15,6 +18,7 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
   int _selectedCountIndex = 0;
   String couleur = 'couleur';
   String _searchQuery = '';
+  bool display = false;
 
   final TextEditingController _nameAnimal = TextEditingController();
 
@@ -426,13 +430,13 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
       }
 
       if (foundAnimals.isNotEmpty) {
+        display = true;
         return 'Animaux trouvés : ${foundAnimals}';
-
       } else {
+        display = false;
         return 'Aucun animal trouvé.';
       }
     }
-
 
     return Scaffold(
       body: Container(
@@ -465,7 +469,6 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
                 ),
               ),
             ),
-            
             Expanded(
               child: SingleChildScrollView(
                 child: Container(
@@ -481,7 +484,6 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
                   child: Column(
                     children: [
                       SizedBox(height: screenHeight * 0.015),
-                      
                       Row(
                         children: [
                           Expanded(
@@ -512,7 +514,8 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
                                     Icons.search,
                                     color: AppColors.gris,
                                   ),
-                                  contentPadding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+                                  contentPadding: const EdgeInsets.symmetric(
+                                      vertical: 10, horizontal: 15),
                                   border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(12),
                                     borderSide: const BorderSide(
@@ -540,42 +543,50 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
                                 onChanged: (value) {
                                   setState(() {
                                     _searchQuery = value;
-                                    String searchResult = getAnimalSearchResult(_searchQuery);
+                                    String searchResult =
+                                    getAnimalSearchResult(_searchQuery);
                                     print(searchResult);
                                   });
                                 },
                               ),
                             ),
                           ),
-                          
                           SizedBox(width: screenWidth * 0.03),
-                          
-                          Container(
-                            height: screenHeight * 0.04,
-                            width: screenWidth * 0.1,
-                            decoration: BoxDecoration(
-                              color: AppColors.vert,
-                              borderRadius: BorderRadius.circular(4),
-                              boxShadow: const [
-                                BoxShadow(
-                                  color: AppColors.gris,
-                                  spreadRadius: 5,
-                                  blurRadius: 5,
-                                  offset: Offset(0, 3),
-                                ),
-                              ],
-                            ),
-                            child: const Icon(
-                              Icons.add,
-                              color: AppColors.blanc,
-                              size: 22,
+                          GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        const NewAnimalsScreen()),
+                              );
+                            },
+                            child: Container(
+                              height: screenHeight * 0.04,
+                              width: screenWidth * 0.1,
+                              decoration: BoxDecoration(
+                                color: AppColors.vert,
+                                borderRadius: BorderRadius.circular(4),
+                                boxShadow: const [
+                                  BoxShadow(
+                                    color: AppColors.gris,
+                                    spreadRadius: 5,
+                                    blurRadius: 5,
+                                    offset: Offset(0, 3),
+                                  ),
+                                ],
+                              ),
+                              child: const Icon(
+                                Icons.add,
+                                color: AppColors.blanc,
+                                size: 22,
+                              ),
                             ),
                           ),
+
                         ],
                       ),
-                      
                       SizedBox(height: screenHeight * 0.035),
-                      
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -737,7 +748,6 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
                               ],
                             ),
                           ),
-                                                    
                           Container(
                             height: screenHeight * 0.04,
                             decoration: BoxDecoration(
@@ -753,8 +763,7 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
                                       _selectedCountIndex = 0;
                                     });
                                   },
-                                  child: 
-                                  Container(
+                                  child: Container(
                                     width: screenWidth * 0.14,
                                     // height: screenHeight * 0.04,
                                     decoration: BoxDecoration(
@@ -867,9 +876,7 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
                           ),
                         ],
                       ),
-                      
                       SizedBox(height: screenHeight * 0.03),
-                      
                       Container(
                         height: screenHeight * 0.565,
                         width: screenWidth * 0.94,
@@ -882,7 +889,8 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
                                 ? [selectedContainer]
                                 : filteredAnimaux.map<Widget>((animal) {
                                     return Padding(
-                                      padding: const EdgeInsets.only(bottom: 8.0),
+                                      padding:
+                                          const EdgeInsets.only(bottom: 8.0),
                                       child: Container(
                                         height: screenHeight * 0.08,
                                         width: screenWidth * 0.94,
@@ -926,7 +934,9 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
                                                       ),
                                                     ),
                                                   ),
-                                                  SizedBox(height: screenHeight * 0.01),
+                                                  SizedBox(
+                                                      height:
+                                                          screenHeight * 0.01),
                                                   Padding(
                                                     padding:
                                                         const EdgeInsets.only(
@@ -982,7 +992,8 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
                                                     const Spacer(),
                                                     Container(
                                                       width: screenWidth * 0.13,
-                                                      height: screenHeight * 0.04,
+                                                      height:
+                                                          screenHeight * 0.04,
                                                       decoration: BoxDecoration(
                                                         color: _selectedCountIndex ==
                                                                 0
@@ -1038,7 +1049,6 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
             ),
           ],
         ),
-      
       ),
     );
   }
