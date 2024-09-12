@@ -1,7 +1,9 @@
 import 'dart:ffi';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:mahingo/screens/newAnimal_screen.dart';
 import 'package:mahingo/utils/colors.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
@@ -438,6 +440,719 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
       }
     }
 
+    final TextEditingController _textController =
+        TextEditingController(text: 'M001');
+    final TextEditingController _nomController =
+        TextEditingController(text: 'Saloum Saloum');
+    final TextEditingController _ageController =
+        TextEditingController(text: '6 ans');
+    final TextEditingController _tailleController =
+        TextEditingController(text: '1.70 m');
+    final TextEditingController _poidsController =
+        TextEditingController(text: '306 kg');
+    final TextEditingController _genreController =
+        TextEditingController(text: 'Femelle');
+    final TextEditingController _raceController =
+        TextEditingController(text: 'Ndama-grande');
+    // final TextEditingController _birthController =
+    //     TextEditingController(text: '6 ans');
+
+    final TextEditingController _birthController = TextEditingController();
+    DateTime? _selectedDate;
+
+    Future<void> _selectDate(BuildContext context) async {
+      final DateTime? picked = await showDatePicker(
+        context: context,
+        initialDate: _selectedDate ?? DateTime.now(),
+        firstDate: DateTime(2000),
+        lastDate: DateTime(2101),
+      );
+      if (picked != null && picked != _selectedDate) {
+        setState(() {
+          _selectedDate = picked;
+          _birthController.text = '${picked.toLocal()}'.split(' ')[0];
+        });
+      }
+    }
+
+    void _showAnimalDetails(BuildContext context, Map<String, dynamic> animal) {
+      showModalBottomSheet(
+        context: context,
+        isScrollControlled: true,
+        backgroundColor: Colors.transparent,
+        builder: (context) {
+          return DraggableScrollableSheet(
+            initialChildSize: 0.999,
+            minChildSize: 0.6,
+            maxChildSize: 0.999,
+            builder: (_, controller) {
+              return Container(
+                // height: screenHeight * 0.95,
+                // width: screenWidth,
+                decoration: const BoxDecoration(
+                  color: AppColors.blanc,
+                  borderRadius: BorderRadius.only(
+                    topRight: Radius.circular(23),
+                    topLeft: Radius.circular(23),
+                  ),
+                ),
+                padding: const EdgeInsets.all(14),
+                child: Column(
+                  children: [
+                    Container(
+                      width: 80,
+                      height: 5,
+                      margin: const EdgeInsets.only(top: 10, bottom: 10),
+                      decoration: BoxDecoration(
+                        color: Colors.grey[400],
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+
+                    Container(
+                      height: screenHeight * 0.17,
+                      child: Column(
+                        children: [
+                          Row(
+                            children: [
+                              Stack(
+                                children: [
+                                  Container(
+                                    width: 30,
+                                    height: 15,
+                                    decoration: BoxDecoration(
+                                      border: Border.all(
+                                          color: AppColors.vert, width: 2),
+                                      borderRadius: BorderRadius.circular(3),
+                                    ),
+                                  ),
+                                  Positioned(
+                                    left: 0,
+                                    top: 0,
+                                    bottom: 0,
+                                    child: Container(
+                                      width: 30 * 0.7, // Rempli à 70%
+                                      height: 15,
+                                      decoration: BoxDecoration(
+                                        color: Colors.green,
+                                        borderRadius: BorderRadius.circular(3),
+                                      ),
+                                    ),
+                                  ),
+                                  Positioned(
+                                    right: -6,
+                                    top: 2,
+                                    child: Container(
+                                      width: 6,
+                                      height: 12,
+                                      color: Colors.black,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(width: 8),
+                              const Text(
+                                '70%',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  color: AppColors.vert,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              const Spacer(),
+                              GestureDetector(
+                                onTap: () {},
+                                child: const FaIcon(
+                                  FontAwesomeIcons.penToSquare,
+                                  color: AppColors.vert,
+                                  size: 20,
+                                ),
+                              ),
+                            ],
+                          ),
+                          Center(
+                            child: Container(
+                              width: 105,
+                              height: 105,
+                              decoration: const BoxDecoration(
+                                color: AppColors.vertClair,
+                                shape: BoxShape.circle,
+                              ),
+                              child: const Center(
+                                child: CircleAvatar(
+                                  backgroundImage:
+                                      AssetImage('assets/images/me.jpeg'),
+                                  radius: 40,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    // SizedBox(height: screenHeight * 0.025),
+
+                    Container(
+                      height: screenHeight * 0.38,
+                      decoration: const BoxDecoration(
+                          // color: AppColors.noir
+                          ),
+                      child: Column(
+                        children: [
+                          const Center(
+                            child: Text(
+                              'Saloum Saloum',
+                              style: TextStyle(
+                                  fontSize: 16,
+                                  color: AppColors.noir,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                          SizedBox(height: screenHeight * 0.02),
+                          Container(
+                            padding: const EdgeInsets.all(5),
+                            height: screenHeight * 0.3,
+                            width: screenWidth * 0.85,
+                            decoration: BoxDecoration(
+                              border: Border.all(color: AppColors.gris),
+                              borderRadius: BorderRadius.circular(8.0),
+                              color: AppColors.blanc,
+                              boxShadow: const [
+                                BoxShadow(
+                                  color: AppColors.gris,
+                                  spreadRadius: 2,
+                                  blurRadius: 5,
+                                  offset: Offset(0, 3),
+                                ),
+                              ],
+                            ),
+                            child: Column(
+                              children: [
+                                Container(
+                                  child: Column(
+                                    children: [
+                                      Row(
+                                        children: [
+                                          Container(
+                                            width: screenWidth * 0.25,
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 12.0),
+                                            child: const Text(
+                                              'Race',
+                                              style: TextStyle(
+                                                  color: AppColors.noir,
+                                                  fontWeight: FontWeight.w600),
+                                            ),
+                                          ),
+                                          Expanded(
+                                            child: Padding(
+                                              padding: const EdgeInsets.only(
+                                                  left: 12.0),
+                                              child: TextField(
+                                                controller: _raceController,
+                                                textAlign: TextAlign.right,
+                                                decoration:
+                                                    const InputDecoration(
+                                                  border: InputBorder.none,
+                                                  contentPadding:
+                                                      EdgeInsets.only(
+                                                          right: 12.0),
+                                                  isDense: true,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      SizedBox(height: screenHeight * 0.003),
+                                      Container(
+                                        height: 1.0,
+                                        color: AppColors.gris,
+                                        width: screenWidth * 0.75,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                SizedBox(height: screenHeight * 0.015),
+                                Container(
+                                  child: Column(
+                                    children: [
+                                      Row(
+                                        children: [
+                                          Container(
+                                            width: screenWidth * 0.25,
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 12.0),
+                                            child: const Text(
+                                              'Âge',
+                                              style: TextStyle(
+                                                  color: AppColors.noir,
+                                                  fontWeight: FontWeight.w600),
+                                            ),
+                                          ),
+                                          Expanded(
+                                            child: Padding(
+                                              padding: const EdgeInsets.only(
+                                                  left: 12.0),
+                                              child: TextField(
+                                                controller: _ageController,
+                                                textAlign: TextAlign.right,
+                                                decoration:
+                                                    const InputDecoration(
+                                                  border: InputBorder.none,
+                                                  contentPadding:
+                                                      EdgeInsets.only(
+                                                          right: 12.0),
+                                                  isDense: true,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      SizedBox(height: screenHeight * 0.003),
+                                      Container(
+                                        height: 1.0,
+                                        color: AppColors.gris,
+                                        width: screenWidth * 0.75,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                SizedBox(height: screenHeight * 0.015),
+                                Container(
+                                  child: Column(
+                                    children: [
+                                      Row(
+                                        children: [
+                                          Container(
+                                            width: screenWidth * 0.25,
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 12.0),
+                                            child: const Text(
+                                              'Taille',
+                                              style: TextStyle(
+                                                  color: AppColors.noir,
+                                                  fontWeight: FontWeight.w600),
+                                            ),
+                                          ),
+                                          Expanded(
+                                            child: Padding(
+                                              padding: const EdgeInsets.only(
+                                                  left: 12.0),
+                                              child: TextField(
+                                                controller: _tailleController,
+                                                textAlign: TextAlign.right,
+                                                decoration:
+                                                    const InputDecoration(
+                                                  border: InputBorder.none,
+                                                  contentPadding:
+                                                      EdgeInsets.only(
+                                                          right: 12.0),
+                                                  isDense: true,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      SizedBox(height: screenHeight * 0.003),
+                                      Container(
+                                        height: 1.0,
+                                        color: AppColors.gris,
+                                        width: screenWidth * 0.75,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                SizedBox(height: screenHeight * 0.015),
+                                Container(
+                                  child: Column(
+                                    children: [
+                                      Row(
+                                        children: [
+                                          Container(
+                                            width: screenWidth * 0.25,
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 12.0),
+                                            child: const Text(
+                                              'Poids',
+                                              style: TextStyle(
+                                                  color: AppColors.noir,
+                                                  fontWeight: FontWeight.w600),
+                                            ),
+                                          ),
+                                          Expanded(
+                                            child: Padding(
+                                              padding: const EdgeInsets.only(
+                                                  left: 12.0),
+                                              child: TextField(
+                                                controller: _poidsController,
+                                                textAlign: TextAlign.right,
+                                                decoration:
+                                                    const InputDecoration(
+                                                  border: InputBorder.none,
+                                                  contentPadding:
+                                                      EdgeInsets.only(
+                                                          right: 12.0),
+                                                  isDense: true,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      SizedBox(height: screenHeight * 0.003),
+                                      Container(
+                                        height: 1.0,
+                                        color: AppColors.gris,
+                                        width: screenWidth * 0.75,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                SizedBox(height: screenHeight * 0.015),
+                                Container(
+                                  child: Column(
+                                    children: [
+                                      Row(
+                                        children: [
+                                          Container(
+                                            width: screenWidth * 0.25,
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 12.0),
+                                            child: const Text(
+                                              'Genre',
+                                              style: TextStyle(
+                                                  color: AppColors.noir,
+                                                  fontWeight: FontWeight.w600),
+                                            ),
+                                          ),
+                                          Expanded(
+                                            child: Padding(
+                                              padding: const EdgeInsets.only(
+                                                  left: 12.0),
+                                              child: TextField(
+                                                controller: _genreController,
+                                                textAlign: TextAlign.right,
+                                                decoration:
+                                                    const InputDecoration(
+                                                  border: InputBorder.none,
+                                                  contentPadding:
+                                                      EdgeInsets.only(
+                                                          right: 12.0),
+                                                  isDense: true,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      SizedBox(height: screenHeight * 0.003),
+                                      Container(
+                                        height: 1.0,
+                                        color: AppColors.gris,
+                                        width: screenWidth * 0.75,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                SizedBox(height: screenHeight * 0.015),
+                                Container(
+                                  child: Column(
+                                    children: [
+                                      Row(
+                                        children: [
+                                          Container(
+                                            width: screenWidth * 0.25,
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 12.0),
+                                            child: const Text(
+                                              'Collier',
+                                              style: TextStyle(
+                                                  color: AppColors.noir,
+                                                  fontWeight: FontWeight.w600),
+                                            ),
+                                          ),
+                                          Expanded(
+                                            child: Padding(
+                                              padding: const EdgeInsets.only(
+                                                  left: 12.0),
+                                              child: TextField(
+                                                controller: _textController,
+                                                textAlign: TextAlign.right,
+                                                decoration:
+                                                    const InputDecoration(
+                                                  border: InputBorder.none,
+                                                  contentPadding:
+                                                      EdgeInsets.only(
+                                                          right: 12.0),
+                                                  isDense: true,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      SizedBox(height: screenHeight * 0.003),
+                                      Container(
+                                        height: 1.0,
+                                        color: AppColors.gris,
+                                        width: screenWidth * 0.75,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(height: screenHeight * 0.007),
+
+                    Container(
+                      width: screenWidth * 0.85,
+                      height: screenHeight * 0.06,
+                      padding: EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                        border: Border.all(color: AppColors.gris),
+                        borderRadius: BorderRadius.circular(8.0),
+                        color: AppColors.blanc,
+                        boxShadow: const [
+                          BoxShadow(
+                            color: AppColors.gris,
+                            spreadRadius: 2,
+                            blurRadius: 5,
+                            offset: Offset(0, 3),
+                          ),
+                        ],
+                      ),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          const Text(
+                            'Position',
+                            style: TextStyle(
+                              color: AppColors.noir,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          const Spacer(),
+                          Image.asset(
+                            'assets/images/moutonDebout.png',
+                            height: 24,
+                            width: 24,
+                          ),
+                          const Spacer(),
+                          const Expanded(
+                            child: Align(
+                              alignment: Alignment.centerRight,
+                              child: Text(
+                                'Debout',
+                                style: TextStyle(
+                                  color: AppColors.noir,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    SizedBox(height: screenHeight * 0.02),
+
+                    Expanded(
+                      child: Container(
+                        // height: screenHeight * 0.13,
+                        // width: screenWidth * 0.85,
+                        decoration: const BoxDecoration(
+                            // color: AppColors.vert
+                            ),
+                        child: Column(
+                          children: [
+                            Container(
+                              alignment: Alignment.centerLeft,
+                              width: screenWidth * 0.85,
+                              child: const Text(
+                                'Constantes vitales',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: 18,
+                                ),
+                              ),
+                            ),
+                            SizedBox(height: 10),
+                            Container(
+                              width: screenWidth * 0.85,
+                              height: screenHeight * 0.07,
+                              decoration: BoxDecoration(
+                                border: Border.all(color: AppColors.gris),
+                                borderRadius: BorderRadius.circular(8.0),
+                                color: AppColors.vertClair,
+                                boxShadow: const [
+                                  BoxShadow(
+                                    color: AppColors.gris,
+                                    spreadRadius: 2,
+                                    blurRadius: 5,
+                                    offset: Offset(0, 3),
+                                  ),
+                                ],
+                              ),
+                              padding: EdgeInsets.all(12),
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Container(
+                                    child: Row(
+                                      children: [
+                                        Image.asset(
+                                          'assets/images/freq.png',
+                                          height: 24,
+                                          width: 24,
+                                        ),
+                                        SizedBox(width: 12),
+                                        const Text(
+                                          'Fréquence cardiaque',
+                                          style: TextStyle(
+                                            color: AppColors.noir,
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                        )
+                                      ],
+                                    ),
+                                  ),
+                                  const Spacer(),
+                                  const Expanded(
+                                    child: Text(
+                                      '80 bpm',
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            const SizedBox(height: 2),
+                            Container(
+                              width: screenWidth * 0.85,
+                              height: screenHeight * 0.07,
+                              decoration: BoxDecoration(
+                                border: Border.all(color: AppColors.gris),
+                                borderRadius: BorderRadius.circular(8.0),
+                                color: AppColors.vertClair,
+                                boxShadow: const [
+                                  BoxShadow(
+                                    color: AppColors.gris,
+                                    spreadRadius: 2,
+                                    blurRadius: 5,
+                                    offset: Offset(0, 3),
+                                  ),
+                                ],
+                              ),
+                              padding: EdgeInsets.all(12),
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Container(
+                                    child: Row(
+                                      children: [
+                                        Image.asset(
+                                          'assets/images/temp.png',
+                                          height: 24,
+                                          width: 24,
+                                        ),
+                                        SizedBox(width: 12),
+                                        const Text(
+                                          'Température corporelle',
+                                          style: TextStyle(
+                                            color: AppColors.noir,
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                        )
+                                      ],
+                                    ),
+                                  ),
+                                  const Spacer(),
+                                  const Expanded(
+                                    child: Text(
+                                    '38 °C',
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            const SizedBox(height: 2),
+                            Container(
+                              width: screenWidth * 0.85,
+                              height: screenHeight * 0.07,
+                              decoration: BoxDecoration(
+                                border: Border.all(color: AppColors.gris),
+                                borderRadius: BorderRadius.circular(8.0),
+                                color: AppColors.vertClair,
+                                boxShadow: const [
+                                  BoxShadow(
+                                    color: AppColors.gris,
+                                    spreadRadius: 2,
+                                    blurRadius: 5,
+                                    offset: Offset(0, 3),
+                                  ),
+                                ],
+                              ),
+                              padding: EdgeInsets.all(12),
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Container(
+                                    child: Row(
+                                      children: [
+                                        Image.asset(
+                                          'assets/images/freqres.png',
+                                          height: 24,
+                                          width: 24,
+                                        ),
+                                        SizedBox(width: 12),
+                                        const Text(
+                                          'Fréquence respiratoire',
+                                          style: TextStyle(
+                                            color: AppColors.noir,
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                        )
+                                      ],
+                                    ),
+                                  ),
+                                  const Spacer(),
+                                  const Expanded(
+                                    child: Text(
+                                      '50 bpm',
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    )
+                  ],
+                ),
+              );
+            },
+          );
+        },
+      );
+    }
+
     return Scaffold(
       body: Container(
         decoration: const BoxDecoration(
@@ -544,7 +1259,7 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
                                   setState(() {
                                     _searchQuery = value;
                                     String searchResult =
-                                    getAnimalSearchResult(_searchQuery);
+                                        getAnimalSearchResult(_searchQuery);
                                     print(searchResult);
                                   });
                                 },
@@ -583,7 +1298,6 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
                               ),
                             ),
                           ),
-
                         ],
                       ),
                       SizedBox(height: screenHeight * 0.035),
@@ -990,46 +1704,56 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
                                                       ),
                                                     ),
                                                     const Spacer(),
-                                                    Container(
-                                                      width: screenWidth * 0.13,
-                                                      height:
-                                                          screenHeight * 0.04,
-                                                      decoration: BoxDecoration(
-                                                        color: _selectedCountIndex ==
-                                                                0
-                                                            ? Color.fromARGB(
-                                                                255,
-                                                                81,
-                                                                170,
-                                                                77)
-                                                            : _selectedCountIndex ==
-                                                                    1
-                                                                ? Color
-                                                                    .fromARGB(
-                                                                        255,
-                                                                        248,
-                                                                        170,
-                                                                        62)
-                                                                : Color
-                                                                    .fromARGB(
-                                                                        255,
-                                                                        248,
-                                                                        100,
-                                                                        92),
-                                                        borderRadius:
-                                                            BorderRadius.only(
-                                                          topLeft:
-                                                              Radius.circular(
-                                                                  5),
-                                                          bottomLeft:
-                                                              Radius.circular(
-                                                                  5),
+                                                    GestureDetector(
+                                                      onTap: () {
+                                                        _showAnimalDetails(
+                                                            context, animal);
+                                                      },
+                                                      child: Container(
+                                                        width:
+                                                            screenWidth * 0.13,
+                                                        height:
+                                                            screenHeight * 0.04,
+                                                        decoration:
+                                                            BoxDecoration(
+                                                          color: _selectedCountIndex ==
+                                                                  0
+                                                              ? const Color.fromARGB(
+                                                                  255,
+                                                                  81,
+                                                                  170,
+                                                                  77)
+                                                              : _selectedCountIndex ==
+                                                                      1
+                                                                  ? const Color
+                                                                      .fromARGB(
+                                                                      255,
+                                                                      248,
+                                                                      170,
+                                                                      62)
+                                                                  : const Color
+                                                                      .fromARGB(
+                                                                      255,
+                                                                      248,
+                                                                      100,
+                                                                      92),
+                                                          borderRadius:
+                                                              const BorderRadius
+                                                                  .only(
+                                                            topLeft:
+                                                                Radius.circular(
+                                                                    5),
+                                                            bottomLeft:
+                                                                Radius.circular(
+                                                                    5),
+                                                          ),
                                                         ),
-                                                      ),
-                                                      child: const Icon(
-                                                        Icons.arrow_forward,
-                                                        color: AppColors.blanc,
-                                                        size: 20,
+                                                        child: const Icon(
+                                                          Icons.arrow_forward,
+                                                          color:
+                                                              AppColors.blanc,
+                                                          size: 20,
+                                                        ),
                                                       ),
                                                     ),
                                                   ],

@@ -41,7 +41,7 @@ class _NewAnimalsScreenState extends State<NewAnimalsScreen> {
       setState(() {
         _selectedDate = picked;
         _birthController.text =
-            '${picked.toLocal()}'.split(' ')[0]; // Format date to YYYY-MM-DD
+            '${picked.toLocal()}'.split(' ')[0];
       });
     }
   }
@@ -125,37 +125,46 @@ class _NewAnimalsScreenState extends State<NewAnimalsScreen> {
                     children: [
                       Container(
                         height: screenHeight * 0.17,
-                        child: Center(
-                          child: Stack(
-                            alignment: Alignment.center,
-                            children: [
-                              const CircleAvatar(
-                                backgroundImage:
-                                    AssetImage('assets/images/me.jpeg'),
-                                radius: 50,
-                              ),
-                              Positioned(
-                                bottom: -3,
-                                child: Container(
-                                  padding: const EdgeInsets.all(2),
-                                  decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    color: AppColors.vertClair,
-                                    border: Border.all(
-                                      color: AppColors.vert,
-                                      width: 2,
+                        child: Container(
+                          width: 120,
+                          height: 120,
+                          decoration: const BoxDecoration(
+                            color: AppColors.vertClair,
+                            shape: BoxShape.circle,
+                          ),
+                          child: Center(
+                            child: Stack(
+                              alignment: Alignment.center,
+                              children: [
+                                const CircleAvatar(
+                                  backgroundImage:
+                                      AssetImage('assets/images/me.jpeg'),
+                                  radius: 50,
+                                ),
+                                Positioned(
+                                  bottom: -3,
+                                  child: Container(
+                                    padding: const EdgeInsets.all(2),
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: AppColors.vertClair,
+                                      border: Border.all(
+                                        color: AppColors.vert,
+                                        width: 2,
+                                      ),
+                                    ),
+                                    child: Image.asset(
+                                      'assets/images/birth.png',
+                                      height: 24,
+                                      width: 24,
                                     ),
                                   ),
-                                  child: Image.asset(
-                                    'assets/images/birth.png',
-                                    height: 24,
-                                    width: 24,
-                                 ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
                         ),
+                        
                       ),
 
                       SizedBox(height: screenHeight * 0.025),
@@ -174,6 +183,15 @@ class _NewAnimalsScreenState extends State<NewAnimalsScreen> {
                               decoration: BoxDecoration(
                                 border: Border.all(color: AppColors.gris),
                                 borderRadius: BorderRadius.circular(8.0),
+                                color: AppColors.blanc,
+                                boxShadow: const [
+                                  BoxShadow(
+                                    color: AppColors.gris,
+                                    spreadRadius: 2,
+                                    blurRadius: 5,
+                                    offset: Offset(0, 3),
+                                  ),
+                                ],
                               ),
                               child: Column(
                                 children: [
@@ -231,6 +249,15 @@ class _NewAnimalsScreenState extends State<NewAnimalsScreen> {
                               decoration: BoxDecoration(
                                 border: Border.all(color: AppColors.gris),
                                 borderRadius: BorderRadius.circular(8.0),
+                                color: AppColors.blanc,
+                                boxShadow: const [
+                                  BoxShadow(
+                                    color: AppColors.gris,
+                                    spreadRadius: 2,
+                                    blurRadius: 5,
+                                    offset: Offset(0, 3),
+                                  ),
+                                ],
                               ),
                               child: Column(
                                 children: [
@@ -566,6 +593,15 @@ class _NewAnimalsScreenState extends State<NewAnimalsScreen> {
                               decoration: BoxDecoration(
                                 border: Border.all(color: AppColors.gris),
                                 borderRadius: BorderRadius.circular(8.0),
+                                color: AppColors.blanc,
+                                boxShadow: const [
+                                  BoxShadow(
+                                    color: AppColors.gris,
+                                    spreadRadius: 2,
+                                    blurRadius: 5,
+                                    offset: Offset(0, 3),
+                                  ),
+                                ],
                               ),
                               padding: EdgeInsets.all(12),
                               child: Row(
@@ -635,8 +671,15 @@ class _NewAnimalsScreenState extends State<NewAnimalsScreen> {
                             height: 50,
                             decoration: BoxDecoration(
                               color: AppColors.vert,
-                              borderRadius:
-                                  BorderRadius.circular(8.0),
+                              borderRadius: BorderRadius.circular(8.0),
+                              boxShadow: const [
+                                BoxShadow(
+                                  color: AppColors.gris,
+                                  spreadRadius: 2,
+                                  blurRadius: 5,
+                                  offset: Offset(0, 3),
+                                ),
+                              ],
                             ),
                             child: TextButton(
                               onPressed: () {
