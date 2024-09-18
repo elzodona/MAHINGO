@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:mahingo/screens/newAnimal_screen.dart';
+import 'package:mahingo/screens/update_animal_screen.dart';
 import 'package:mahingo/utils/colors.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
@@ -440,21 +441,21 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
       }
     }
 
-    final TextEditingController _textController =
+    TextEditingController _textController =
         TextEditingController(text: 'M001');
-    final TextEditingController _nomController =
+    TextEditingController _nomController =
         TextEditingController(text: 'Saloum Saloum');
-    final TextEditingController _ageController =
+    TextEditingController _ageController =
         TextEditingController(text: '6 ans');
-    final TextEditingController _tailleController =
+    TextEditingController _tailleController =
         TextEditingController(text: '1.70 m');
-    final TextEditingController _poidsController =
+    TextEditingController _poidsController =
         TextEditingController(text: '306 kg');
-    final TextEditingController _genreController =
+    TextEditingController _genreController =
         TextEditingController(text: 'Femelle');
-    final TextEditingController _raceController =
+    TextEditingController _raceController =
         TextEditingController(text: 'Ndama-grande');
-    // final TextEditingController _birthController =
+    // TextEditingController _birthController =
     //     TextEditingController(text: '6 ans');
 
     final TextEditingController _birthController = TextEditingController();
@@ -475,7 +476,33 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
       }
     }
 
+    
+    int _calculateAge(DateTime birthDate) {
+      DateTime now = DateTime.now();
+      int age = now.year - birthDate.year;
+
+      if (now.month < birthDate.month ||
+          (now.month == birthDate.month && now.day < birthDate.day)) {
+        age--;
+      }
+
+      return age;
+    }
+
     void _showAnimalDetails(BuildContext context, Map<String, dynamic> animal) {
+      // String dateNaissString = animal['dateNaiss'];
+      // DateTime dateNaiss = DateTime.parse(dateNaissString);
+      // int age = _calculateAge(dateNaiss);
+
+      _textController.text = animal['idCollier'].toString();
+      _ageController.text = animal['dateNaiss'];
+      _tailleController.text = animal['taille'];
+      _poidsController.text = animal['poids'];
+      _genreController.text = animal['sexe'];
+      _ageController.text = animal['dateNaiss'];
+      _raceController.text = animal['race'];
+
+
       showModalBottomSheet(
         context: context,
         isScrollControlled: true,
@@ -561,7 +588,28 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
                               ),
                               const Spacer(),
                               GestureDetector(
-                                onTap: () {},
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            UpdateAnimalScreen(
+                                              animal: {
+                                                'id': animal['id'].toString(),
+                                                'nom': animal['nom'],
+                                                'sexe': animal['sexe'],
+                                                'dateNaiss': animal['dateNaiss'],
+                                                'photo': animal['photo'],
+                                                'race': animal['race'],
+                                                'poids': animal['poids'],
+                                                'taille': animal['taille'],
+                                                'idCategorie': animal['idCategorie'].toString(),
+                                                'idCollier': animal['idCollier'].toString()
+                                              }
+                                            )
+                                    ),
+                                  );
+                                },
                                 child: const FaIcon(
                                   FontAwesomeIcons.penToSquare,
                                   color: AppColors.vert,
@@ -600,9 +648,9 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
                           ),
                       child: Column(
                         children: [
-                          const Center(
+                          Center(
                             child: Text(
-                              'Saloum Saloum',
+                              animal['nom'],
                               style: TextStyle(
                                   fontSize: 16,
                                   color: AppColors.noir,
@@ -652,6 +700,7 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
                                               child: TextField(
                                                 controller: _raceController,
                                                 textAlign: TextAlign.right,
+                                                enabled: false,
                                                 decoration:
                                                     const InputDecoration(
                                                   border: InputBorder.none,
@@ -659,6 +708,9 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
                                                       EdgeInsets.only(
                                                           right: 12.0),
                                                   isDense: true,
+                                                ),
+                                                 style: TextStyle(
+                                                  color: Colors.black,
                                                 ),
                                               ),
                                             ),
@@ -698,6 +750,7 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
                                               child: TextField(
                                                 controller: _ageController,
                                                 textAlign: TextAlign.right,
+                                                enabled: false,
                                                 decoration:
                                                     const InputDecoration(
                                                   border: InputBorder.none,
@@ -705,6 +758,9 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
                                                       EdgeInsets.only(
                                                           right: 12.0),
                                                   isDense: true,
+                                                ),
+                                                 style: TextStyle(
+                                                  color: Colors.black,
                                                 ),
                                               ),
                                             ),
@@ -744,6 +800,7 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
                                               child: TextField(
                                                 controller: _tailleController,
                                                 textAlign: TextAlign.right,
+                                                enabled: false,
                                                 decoration:
                                                     const InputDecoration(
                                                   border: InputBorder.none,
@@ -751,6 +808,9 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
                                                       EdgeInsets.only(
                                                           right: 12.0),
                                                   isDense: true,
+                                                ),
+                                                 style: TextStyle(
+                                                  color: Colors.black,
                                                 ),
                                               ),
                                             ),
@@ -790,6 +850,7 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
                                               child: TextField(
                                                 controller: _poidsController,
                                                 textAlign: TextAlign.right,
+                                                enabled: false,
                                                 decoration:
                                                     const InputDecoration(
                                                   border: InputBorder.none,
@@ -797,6 +858,9 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
                                                       EdgeInsets.only(
                                                           right: 12.0),
                                                   isDense: true,
+                                                ),
+                                                 style: TextStyle(
+                                                  color: Colors.black,
                                                 ),
                                               ),
                                             ),
@@ -836,6 +900,7 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
                                               child: TextField(
                                                 controller: _genreController,
                                                 textAlign: TextAlign.right,
+                                                enabled: false,
                                                 decoration:
                                                     const InputDecoration(
                                                   border: InputBorder.none,
@@ -843,6 +908,9 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
                                                       EdgeInsets.only(
                                                           right: 12.0),
                                                   isDense: true,
+                                                ),
+                                                 style: TextStyle(
+                                                  color: Colors.black,
                                                 ),
                                               ),
                                             ),
@@ -882,6 +950,7 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
                                               child: TextField(
                                                 controller: _textController,
                                                 textAlign: TextAlign.right,
+                                                enabled: false,
                                                 decoration:
                                                     const InputDecoration(
                                                   border: InputBorder.none,
@@ -889,6 +958,9 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
                                                       EdgeInsets.only(
                                                           right: 12.0),
                                                   isDense: true,
+                                                ),
+                                                style: TextStyle(
+                                                  color: Colors.black,
                                                 ),
                                               ),
                                             ),
@@ -1079,7 +1151,7 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
                                   const Spacer(),
                                   const Expanded(
                                     child: Text(
-                                    '38 °C',
+                                      '38 °C',
                                       style: TextStyle(
                                         fontSize: 16,
                                       ),

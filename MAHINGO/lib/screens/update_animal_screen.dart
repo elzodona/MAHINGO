@@ -3,35 +3,40 @@ import 'package:mahingo/utils/colors.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 
-class NewAnimalsScreen extends StatefulWidget {
-  const NewAnimalsScreen({super.key});
+class UpdateAnimalScreen extends StatefulWidget {
+  final Map<String, dynamic> animal;
+
+  const UpdateAnimalScreen({required this.animal, Key? key}) : super(key: key);
 
   @override
-  _NewAnimalsScreenState createState() => _NewAnimalsScreenState();
+  _UpdateAnimalScreenState createState() => _UpdateAnimalScreenState();
 }
 
-class _NewAnimalsScreenState extends State<NewAnimalsScreen> {
-
+class _UpdateAnimalScreenState extends State<UpdateAnimalScreen> {
   String? _selectedGender = 'Masculin';
 
-  final TextEditingController _textController = 
-      TextEditingController(text: 'M001');
-  final TextEditingController _nomController =
-      TextEditingController(text: 'Saloum saloum');
-  final TextEditingController _ageController = 
-      TextEditingController(text: '4 ans');
-  final TextEditingController _tailleController =
-      TextEditingController(text: '2.5 m');
-  final TextEditingController _poidsController =
-      TextEditingController(text: '90 kg');
-  final TextEditingController _genreController =
-      TextEditingController(text: 'entrer le genre');
-  final TextEditingController _raceController =
-      TextEditingController(text: 'Ndama');
-  // final TextEditingController _birthController =
-  //     TextEditingController(text: '6 ans');
+    late TextEditingController _textController;
+  late TextEditingController _nomController;
+  late TextEditingController _tailleController;
+  late TextEditingController _poidsController;
+  late TextEditingController _genreController;
+  late TextEditingController _raceController;
+  late TextEditingController _birthController;
 
-  final TextEditingController _birthController = TextEditingController();
+  @override
+  void initState() {
+    super.initState();
+
+    _textController = TextEditingController(text: widget.animal['idCollier'].toString());
+    _nomController = TextEditingController(text: widget.animal['nom']);
+    _birthController = TextEditingController(text: widget.animal['dateNaiss']);
+    _tailleController = TextEditingController(text: widget.animal['taille'].toString());
+    _poidsController = TextEditingController(text: widget.animal['poids'].toString());
+    _genreController = TextEditingController(text: widget.animal['sexe']);
+    _raceController = TextEditingController(text: widget.animal['race']);
+  }
+
+
   DateTime? _selectedDate;
 
   final ImagePicker _picker = ImagePicker();
@@ -87,25 +92,23 @@ class _NewAnimalsScreenState extends State<NewAnimalsScreen> {
     if (picked != null && picked != _selectedDate) {
       setState(() {
         _selectedDate = picked;
-        _birthController.text =
-            '${picked.toLocal()}'.split(' ')[0];
+        _birthController.text = '${picked.toLocal()}'.split(' ')[0];
       });
     }
   }
 
   @override
-    void dispose() {
-      _textController.dispose();
-      _nomController.dispose();
-      _ageController.dispose();
-      _tailleController.dispose();
-      _poidsController.dispose();
-      _genreController.dispose();
-      _raceController.dispose();
-      _birthController.dispose();
-      super.dispose();
+  void dispose() {
+    _textController.dispose();
+    _nomController.dispose();
+    _tailleController.dispose();
+    _poidsController.dispose();
+    _genreController.dispose();
+    _raceController.dispose();
+    _birthController.dispose();
+    super.dispose();
   }
-  
+
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
@@ -139,10 +142,10 @@ class _NewAnimalsScreenState extends State<NewAnimalsScreen> {
                     },
                   ),
                   const Spacer(),
-                  const Center(
+                  Center(
                     child: Text(
-                      'Ajouter un animal',
-                      style: TextStyle(
+                      'Mettre à jour ${widget.animal['nom']}',
+                      style: const TextStyle(
                         color: AppColors.blanc,
                         fontSize: 22,
                         fontWeight: FontWeight.bold,
@@ -154,7 +157,6 @@ class _NewAnimalsScreenState extends State<NewAnimalsScreen> {
                 ],
               ),
             ),
-            
             Expanded(
               child: SingleChildScrollView(
                 child: Container(
@@ -186,14 +188,16 @@ class _NewAnimalsScreenState extends State<NewAnimalsScreen> {
                                 CircleAvatar(
                                   backgroundImage: _selectedImage != null
                                       ? FileImage(File(_selectedImage!.path))
-                                      : const AssetImage('assets/images/me.jpeg') as ImageProvider,
+                                      : const AssetImage(
+                                              'assets/images/me.jpeg')
+                                          as ImageProvider,
                                   radius: 50,
                                 ),
                                 Positioned(
                                   bottom: -3,
                                   child: GestureDetector(
-                                    onTap: () => _showImagePickerOptions(
-                                        context),
+                                    onTap: () =>
+                                        _showImagePickerOptions(context),
                                     child: Container(
                                       padding: const EdgeInsets.all(2),
                                       decoration: BoxDecoration(
@@ -217,14 +221,12 @@ class _NewAnimalsScreenState extends State<NewAnimalsScreen> {
                           ),
                         ),
                       ),
-
-                      SizedBox(height: screenHeight * 0.025),
-
+                      SizedBox(height: screenHeight * 0.03),
                       Container(
-                        height: screenHeight * 0.38,
+                        height: screenHeight * 0.36,
                         decoration: const BoxDecoration(
-                          // color: AppColors.noir
-                        ),
+                            // color: AppColors.noir
+                            ),
                         child: Column(
                           children: [
                             Container(
@@ -254,8 +256,9 @@ class _NewAnimalsScreenState extends State<NewAnimalsScreen> {
                                             horizontal: 12.0),
                                         child: const Text(
                                           'Numéro',
-                                          style:
-                                              TextStyle(color: AppColors.noir, fontWeight: FontWeight.w600),
+                                          style: TextStyle(
+                                              color: AppColors.noir,
+                                              fontWeight: FontWeight.w600),
                                         ),
                                       ),
                                       Expanded(
@@ -265,8 +268,7 @@ class _NewAnimalsScreenState extends State<NewAnimalsScreen> {
                                           child: TextField(
                                             controller: _textController,
                                             style: const TextStyle(
-                                              fontWeight: FontWeight.w600
-                                            ),
+                                                fontWeight: FontWeight.w600),
                                             textAlign: TextAlign.right,
                                             decoration: const InputDecoration(
                                               border: InputBorder.none,
@@ -279,9 +281,7 @@ class _NewAnimalsScreenState extends State<NewAnimalsScreen> {
                                       ),
                                     ],
                                   ),
-
                                   SizedBox(height: screenHeight * 0.003),
-
                                   Container(
                                     height: 1.0,
                                     color: AppColors.gris,
@@ -290,12 +290,10 @@ class _NewAnimalsScreenState extends State<NewAnimalsScreen> {
                                 ],
                               ),
                             ),
-
-                            SizedBox(height: screenHeight * 0.015),
-                            
+                            SizedBox(height: screenHeight * 0.03),
                             Container(
                               padding: const EdgeInsets.all(5),
-                              height: screenHeight * 0.3,
+                              height: screenHeight * 0.25,
                               width: screenWidth * 0.85,
                               decoration: BoxDecoration(
                                 border: Border.all(color: AppColors.gris),
@@ -312,7 +310,6 @@ class _NewAnimalsScreenState extends State<NewAnimalsScreen> {
                               ),
                               child: Column(
                                 children: [
-
                                   Container(
                                     child: Column(
                                       children: [
@@ -326,7 +323,8 @@ class _NewAnimalsScreenState extends State<NewAnimalsScreen> {
                                               child: const Text(
                                                 'Nom',
                                                 style: TextStyle(
-                                                    color: AppColors.noir, fontWeight:
+                                                    color: AppColors.noir,
+                                                    fontWeight:
                                                         FontWeight.w600),
                                               ),
                                             ),
@@ -359,58 +357,7 @@ class _NewAnimalsScreenState extends State<NewAnimalsScreen> {
                                       ],
                                     ),
                                   ),
-
                                   SizedBox(height: screenHeight * 0.015),
-
-                                  Container(
-                                    child: Column(
-                                      children: [
-                                        Row(
-                                          children: [
-                                            Container(
-                                              width: screenWidth * 0.25,
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                      horizontal: 12.0),
-                                              child: const Text(
-                                                'Âge',
-                                                style: TextStyle(
-                                                    color: AppColors.noir, fontWeight:
-                                                        FontWeight.w600),
-                                              ),
-                                            ),
-                                            Expanded(
-                                              child: Padding(
-                                                padding: const EdgeInsets.only(
-                                                    left: 12.0),
-                                                child: TextField(
-                                                  controller: _ageController,
-                                                  textAlign: TextAlign.right,
-                                                  decoration:
-                                                      const InputDecoration(
-                                                    border: InputBorder.none,
-                                                    contentPadding:
-                                                        EdgeInsets.only(
-                                                            right: 12.0),
-                                                    isDense: true,
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                        SizedBox(height: screenHeight * 0.003),
-                                        Container(
-                                          height: 1.0,
-                                          color: AppColors.gris,
-                                          width: screenWidth * 0.75,
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-
-                                  SizedBox(height: screenHeight * 0.015),
-
                                   Container(
                                     child: Column(
                                       children: [
@@ -424,7 +371,8 @@ class _NewAnimalsScreenState extends State<NewAnimalsScreen> {
                                               child: const Text(
                                                 'Taille',
                                                 style: TextStyle(
-                                                    color: AppColors.noir, fontWeight:
+                                                    color: AppColors.noir,
+                                                    fontWeight:
                                                         FontWeight.w600),
                                               ),
                                             ),
@@ -457,9 +405,7 @@ class _NewAnimalsScreenState extends State<NewAnimalsScreen> {
                                       ],
                                     ),
                                   ),
-
                                   SizedBox(height: screenHeight * 0.015),
-
                                   Container(
                                     child: Column(
                                       children: [
@@ -473,7 +419,8 @@ class _NewAnimalsScreenState extends State<NewAnimalsScreen> {
                                               child: const Text(
                                                 'Poids',
                                                 style: TextStyle(
-                                                    color: AppColors.noir, fontWeight:
+                                                    color: AppColors.noir,
+                                                    fontWeight:
                                                         FontWeight.w600),
                                               ),
                                             ),
@@ -506,9 +453,7 @@ class _NewAnimalsScreenState extends State<NewAnimalsScreen> {
                                       ],
                                     ),
                                   ),
-
                                   SizedBox(height: screenHeight * 0.015),
-
                                   Container(
                                     child: Column(
                                       children: [
@@ -522,7 +467,8 @@ class _NewAnimalsScreenState extends State<NewAnimalsScreen> {
                                               child: const Text(
                                                 'Genre',
                                                 style: TextStyle(
-                                                    color: AppColors.noir, fontWeight:
+                                                    color: AppColors.noir,
+                                                    fontWeight:
                                                         FontWeight.w600),
                                               ),
                                             ),
@@ -533,10 +479,13 @@ class _NewAnimalsScreenState extends State<NewAnimalsScreen> {
                                                 child: DropdownButtonFormField<
                                                     String>(
                                                   value: _selectedGender,
-                                                  onChanged: (String? newValue) {
+                                                  onChanged:
+                                                      (String? newValue) {
                                                     setState(() {
-                                                      _selectedGender = newValue!;
-                                                      _genreController.text = newValue;
+                                                      _selectedGender =
+                                                          newValue!;
+                                                      _genreController.text =
+                                                          newValue;
                                                     });
                                                   },
                                                   items: <String>[
@@ -549,7 +498,8 @@ class _NewAnimalsScreenState extends State<NewAnimalsScreen> {
                                                     return DropdownMenuItem<
                                                         String>(
                                                       value: value,
-                                                      alignment: Alignment.centerRight,
+                                                      alignment:
+                                                          Alignment.centerRight,
                                                       child: Text(value),
                                                     );
                                                   }).toList(),
@@ -564,7 +514,6 @@ class _NewAnimalsScreenState extends State<NewAnimalsScreen> {
                                                 ),
                                               ),
                                             ),
-                                          
                                           ],
                                         ),
                                         SizedBox(height: screenHeight * 0.003),
@@ -576,9 +525,7 @@ class _NewAnimalsScreenState extends State<NewAnimalsScreen> {
                                       ],
                                     ),
                                   ),
-                                  
                                   SizedBox(height: screenHeight * 0.015),
-
                                   Container(
                                     child: Column(
                                       children: [
@@ -592,7 +539,8 @@ class _NewAnimalsScreenState extends State<NewAnimalsScreen> {
                                               child: const Text(
                                                 'Race',
                                                 style: TextStyle(
-                                                    color: AppColors.noir, fontWeight:
+                                                    color: AppColors.noir,
+                                                    fontWeight:
                                                         FontWeight.w600),
                                               ),
                                             ),
@@ -625,27 +573,21 @@ class _NewAnimalsScreenState extends State<NewAnimalsScreen> {
                                       ],
                                     ),
                                   ),
-
                                 ],
                               ),
                             ),
-
                           ],
                         ),
                       ),
-
-                      SizedBox(height: screenHeight * 0.01),
-
+                      // SizedBox(height: screenHeight * 0.005),
                       Container(
-                        height: screenHeight * 0.13,
+                        height: screenHeight * 0.12,
                         width: screenWidth * 0.85,
                         decoration: const BoxDecoration(
-                          // color: AppColors.vert
-                        ),
-                        
+                            // color: AppColors.vert
+                            ),
                         child: Column(
                           children: [
-
                             Container(
                               alignment: Alignment.centerLeft,
                               child: const Text(
@@ -656,9 +598,7 @@ class _NewAnimalsScreenState extends State<NewAnimalsScreen> {
                                 ),
                               ),
                             ),
-
                             SizedBox(height: 10),
-
                             Container(
                               width: screenWidth * 0.85,
                               height: screenHeight * 0.07,
@@ -704,22 +644,19 @@ class _NewAnimalsScreenState extends State<NewAnimalsScreen> {
                                           const EdgeInsets.only(left: 12.0),
                                       child: TextField(
                                         controller: _birthController,
-                                        readOnly:
-                                            true,
+                                        readOnly: true,
                                         textAlign: TextAlign.right,
-                                        onTap: () => _selectDate(
-                                            context),
+                                        onTap: () => _selectDate(context),
                                         decoration: InputDecoration(
-                                          border: InputBorder
-                                              .none,
+                                          border: InputBorder.none,
                                           contentPadding: EdgeInsets.symmetric(
                                               horizontal: 12.0),
                                           isDense: true,
                                           suffixIcon: IconButton(
                                             icon: const Icon(
                                                 Icons.calendar_today),
-                                            onPressed: () => _selectDate(
-                                                context),
+                                            onPressed: () =>
+                                                _selectDate(context),
                                           ),
                                         ),
                                       ),
@@ -728,14 +665,10 @@ class _NewAnimalsScreenState extends State<NewAnimalsScreen> {
                                 ],
                               ),
                             )
-
                           ],
                         ),
-                      
                       ),
-
-                      SizedBox(height: screenHeight * 0.01),
-
+                      // SizedBox(height: screenHeight * 0.01),
                       Expanded(
                         child: Center(
                           child: Container(
@@ -754,11 +687,9 @@ class _NewAnimalsScreenState extends State<NewAnimalsScreen> {
                               ],
                             ),
                             child: TextButton(
-                              onPressed: () {
-                                
-                              },
+                              onPressed: () {},
                               child: const Text(
-                                'Ajouter',
+                                'Modifier',
                                 style: TextStyle(
                                   color: Colors.white,
                                   fontWeight: FontWeight.bold,
