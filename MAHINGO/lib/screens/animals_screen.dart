@@ -180,8 +180,14 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
       'id': 1,
       'batterie': "70%",
       'position': "debout",
-      'température': "15°C",
-      'frequence': "20bpm",
+      'température': {
+        'value': "15°C",
+        'etat': "sensible"
+      },
+      'frequence': {
+        'value': "15bpm",
+        'etat': "normale"
+      },
       'localisation': {
         'altitude': "",
         'longitude': "",

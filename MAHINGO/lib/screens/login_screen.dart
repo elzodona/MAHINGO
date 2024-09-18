@@ -13,178 +13,139 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  // bool _obscureText = true;
-
-  // void _togglePasswordVisibility() {
-  //   setState(() {
-  //     _obscureText = !_obscureText;
-  //   });
-  // }
-
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
+
     return Scaffold(
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [
-              AppColors.blanc,
-              AppColors.vert,
-            ],
-            stops: [0.3, 0.3],
-          ),
-        ),
-        child: Column(
-          children: [
-            Container(
-              padding: const EdgeInsets.only(top: 30),
-              height: 200,
-              width: screenWidth,
-              child: Image.asset(
-                'assets/images/tetes_bovins.png',
-                width: 400,
-                // height: 200,
-              ),
-              decoration: const BoxDecoration(
-                color: AppColors.vert,
-                borderRadius: BorderRadius.only(
-                  bottomLeft: Radius.circular(60),
-                ),
-              ),
+      backgroundColor: AppColors.vert,
+      body: Column(
+        children: [
+          Container(
+            padding: const EdgeInsets.only(top: 30),
+            height: screenHeight * 0.25,
+            width: screenWidth,
+            child: Image.asset(
+              'assets/images/tetes_bovins.png',
+              width: 400,
             ),
-            Expanded(
-              child: SingleChildScrollView(
-                child: Container(
-                  height: screenHeight,
-                  decoration: const BoxDecoration(
-                    color: AppColors.blanc,
-                    borderRadius: BorderRadius.only(
-                      topRight: Radius.circular(60),
-                      // topLeft: Radius.circular(50),
-                    ),
+            decoration: const BoxDecoration(
+              color: AppColors.vert,
+            ),
+          ),
+          Expanded(
+            child: SingleChildScrollView(
+              child: Container(
+              height: screenHeight * 0.75,
+                decoration: const BoxDecoration(
+                  color: AppColors.blanc,
+                  borderRadius: BorderRadius.only(
+                    topRight: Radius.circular(25),
+                    topLeft: Radius.circular(25),
                   ),
-                  padding: const EdgeInsets.all(20),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const SizedBox(height: 60),
-                      const Text(
+                ),
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SizedBox(height: 60),
+                    Center(
+                      child: const Text(
                         'S\'identifier',
                         style: TextStyle(
                           fontSize: 24,
-                          color: AppColors.noir,
+                          color: AppColors.vert,
+                          fontWeight: FontWeight.bold
                         ),
                       ),
-                      const SizedBox(height: 50),
-                      TextField(
+                    ),
+                    const SizedBox(height: 50),
+                    TextField(
+                      decoration: InputDecoration(
+                        labelText: 'Téléphone',
+                        prefixIcon:
+                            const Icon(Icons.phone, color: AppColors.vert),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      keyboardType: TextInputType.phone,
+                    ),
+                    const SizedBox(height: 20),
+                    BlocBuilder<ToggleBloc, ToggleState>(
+                        builder: (context, state) {
+                      return TextField(
+                        obscureText: state.isFirstPasswordObscured,
                         decoration: InputDecoration(
-                          labelText: 'Téléphone',
+                          labelText: 'Mot de passe',
                           prefixIcon:
-                              const Icon(Icons.phone, color: AppColors.vert),
+                              const Icon(Icons.lock, color: AppColors.vert),
+                          suffixIcon: IconButton(
+                            icon: Icon(
+                              state.isFirstPasswordObscured
+                                  ? Icons.visibility
+                                  : Icons.visibility_off,
+                              color: AppColors.vert,
+                            ),
+                            onPressed: () => context
+                                .read<ToggleBloc>()
+                                .add(ToggleFirstPasswordVisibility()),
+                          ),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12),
                           ),
                         ),
-                        keyboardType: TextInputType.phone,
-                      ),
-                      const SizedBox(height: 20),
-                      BlocBuilder<ToggleBloc, ToggleState>(
-                          builder: (content, state) {
-                        // print(state);
-                        return TextField(
-                          obscureText: state.isFirstPasswordObscured,
-                          decoration: InputDecoration(
-                            labelText: 'Mot de passe',
-                            prefixIcon:
-                                const Icon(Icons.lock, color: AppColors.vert),
-                            suffixIcon: IconButton(
-                              icon: Icon(
-                                state.isFirstPasswordObscured
-                                    ? Icons.visibility
-                                    : Icons.visibility_off,
-                                color: AppColors.vert,
-                              ),
-                              onPressed: () => context
-                                  .read<ToggleBloc>()
-                                  .add(ToggleFirstPasswordVisibility()),
-                            ),
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
+                      );
+                    }),
+                    const SizedBox(height: 50),
+                    Center(
+                      child: ElevatedButton(
+                        onPressed: () {
+                          Navigator.pushReplacementNamed(
+                              context, AppPaths.home);
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppColors.vert,
+                          foregroundColor: AppColors.blanc,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
                           ),
-                        );
-                      }),
-                      const SizedBox(height: 50),
-                      Center(
-                        child: ElevatedButton(
-                          onPressed: () {
-                            Navigator.pushReplacementNamed(context, AppPaths.home);
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: AppColors.vert,
-                            foregroundColor: AppColors.blanc,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            padding: const EdgeInsets.symmetric(horizontal: 60),
-                            textStyle: const TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                            ),
+                          padding: const EdgeInsets.symmetric(horizontal: 60),
+                          textStyle: const TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
                           ),
-                          child: const Text('Se connecter'),
                         ),
+                        child: const Text('Se connecter'),
                       ),
-                      const SizedBox(height: 20),
-                      Align(
-                        alignment: Alignment.center,
-                        child: TextButton(
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(builder: (context) => const PhoneScreen()),
-                            );
-                          },
-                          child: const Text(
-                            'Mot de passe oublié?',
-                            style: TextStyle(
-                              color: AppColors.vert,
-                              decoration: TextDecoration.underline,
-                            ),
+                    ),
+                    const SizedBox(height: 20),
+                    Align(
+                      alignment: Alignment.center,
+                      child: TextButton(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const PhoneScreen()),
+                          );
+                        },
+                        child: const Text(
+                          'Mot de passe oublié?',
+                          style: TextStyle(
+                            color: AppColors.vert,
+                            decoration: TextDecoration.underline,
                           ),
                         ),
                       ),
-                      // const SizedBox(height: 30),
-                      // Row(
-                      //   mainAxisAlignment: MainAxisAlignment.center,
-                      //   children: [
-                      //     const Text('Vous n\'avez pas de compte?'),
-                      //     TextButton(
-                      //       onPressed: () {
-                      //         // Code pour inscription
-                      //       },
-                      //       child: const Text(
-                      //         'S\'inscrire',
-                      //         style: TextStyle(
-                      //           color: AppColors.vert,
-                      //           decoration: TextDecoration.underline,
-                      //         ),
-                      //       ),
-                      //     ),
-                      //   ],
-                      // ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ),
             ),
-          ],
-        ),
-      
+          ),
+        ],
       ),
     );
   }
