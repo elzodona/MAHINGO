@@ -1,5 +1,4 @@
 import 'dart:ffi';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -8,6 +7,58 @@ import 'package:mahingo/screens/newAnimal_screen.dart';
 import 'package:mahingo/screens/update_animal_screen.dart';
 import 'package:mahingo/utils/colors.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
+import 'package:awesome_dialog/awesome_dialog.dart';
+
+
+void showInfoDialog(BuildContext context) {
+  AwesomeDialog(
+    context: context,
+    dialogType: DialogType.info,
+    animType: AnimType.bottomSlide,
+    title: 'Information',
+    desc: 'Voici des informations importantes.',
+    btnOkOnPress: () {},
+  )..show();
+}
+
+void showErrorDialog(BuildContext context) {
+  AwesomeDialog(
+    context: context,
+    dialogType: DialogType.error,
+    animType: AnimType.bottomSlide,
+    title: 'Erreur',
+    desc: 'Quelque chose a mal tourné !',
+    btnCancelOnPress: () {},
+    btnOkOnPress: () {},
+  )..show();
+}
+
+void showSuccessDialog(BuildContext context) {
+  AwesomeDialog(
+    context: context,
+    dialogType: DialogType.success,
+    animType: AnimType.scale,
+    title: 'Succès',
+    desc: 'L\'animal a été supprimé avec succès.',
+    btnOkOnPress: () {},
+  )..show();
+}
+
+void showConfirmationDialog(BuildContext context) {
+  AwesomeDialog(
+    context: context,
+    dialogType: DialogType.question,
+    animType: AnimType.scale,
+    title: 'Confirmation',
+    desc: 'Êtes-vous sûr de vouloir supprimer cet animal ?',
+    btnCancelOnPress: () {
+    },
+    btnOkOnPress: () {
+      showSuccessDialog(context);
+    },
+  )..show();
+}
+
 
 class AnimalsScreen extends StatefulWidget {
   const AnimalsScreen({super.key});
@@ -489,6 +540,56 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
       return age;
     }
 
+    // void showDeleteConfirmation(BuildContext context) {
+    //   showModalBottomSheet(
+    //     context: context,
+    //     shape: const RoundedRectangleBorder(
+    //       borderRadius: BorderRadius.only(
+    //         topLeft: Radius.circular(15),
+    //         topRight: Radius.circular(15),
+    //       ),
+    //     ),
+    //     builder: (BuildContext context) {
+    //       return Container(
+    //         padding: const EdgeInsets.all(16),
+    //         height: 150,
+    //         child: Column(
+    //           mainAxisAlignment: MainAxisAlignment.center,
+    //           children: [
+    //             const Text(
+    //               'Êtes-vous sûr de vouloir supprimer cet élément ?',
+    //               style: TextStyle(fontSize: 16),
+    //               textAlign: TextAlign.center,
+    //             ),
+    //             const SizedBox(height: 20),
+    //             Row(
+    //               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+    //               children: [
+    //                 ElevatedButton(
+    //                   onPressed: () {
+    //                     Navigator.of(context).pop();
+    //                   },
+    //                   style: ElevatedButton.styleFrom(
+    //                     backgroundColor: Colors.grey,
+    //                   ),
+    //                   child: const Text('Annuler'),
+    //                 ),
+    //                 ElevatedButton(
+    //                   onPressed: () {
+    //                     Navigator.of(context).pop();
+    //                     showSuccessDialog(context);
+    //                   },
+    //                   child: const Text('Confirmer'),
+    //                 ),
+    //               ],
+    //             )
+    //           ],
+    //         ),
+    //       );
+    //     },
+    //   );
+    // }
+
     void _showAnimalDetails(BuildContext context, Map<String, dynamic> animal) {
       // String dateNaissString = animal['dateNaiss'];
       // DateTime dateNaiss = DateTime.parse(dateNaissString);
@@ -509,9 +610,9 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
         backgroundColor: Colors.transparent,
         builder: (context) {
           return DraggableScrollableSheet(
-            initialChildSize: 0.999,
+            initialChildSize: 0.99,
             minChildSize: 0.6,
-            maxChildSize: 0.999,
+            maxChildSize: 0.99,
             builder: (_, controller) {
               return Container(
                 // height: screenHeight * 0.95,
@@ -546,10 +647,10 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
                                 children: [
                                   Container(
                                     width: 30,
-                                    height: 15,
+                                    height: 12,
                                     decoration: BoxDecoration(
                                       border: Border.all(
-                                          color: AppColors.vert, width: 2),
+                                          color: AppColors.vert, width: 1.5),
                                       borderRadius: BorderRadius.circular(3),
                                     ),
                                   ),
@@ -559,7 +660,7 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
                                     bottom: 0,
                                     child: Container(
                                       width: 30 * 0.7, // Rempli à 70%
-                                      height: 15,
+                                      height: 12,
                                       decoration: BoxDecoration(
                                         color: Colors.green,
                                         borderRadius: BorderRadius.circular(3),
@@ -567,16 +668,17 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
                                     ),
                                   ),
                                   Positioned(
-                                    right: -6,
-                                    top: 2,
+                                    right: -4,
+                                    top: 1,
                                     child: Container(
-                                      width: 6,
-                                      height: 12,
+                                      width: 4,
+                                      height: 8,
                                       color: Colors.black,
                                     ),
                                   ),
                                 ],
                               ),
+
                               const SizedBox(width: 8),
                               const Text(
                                 '70%',
@@ -587,36 +689,53 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
                                 ),
                               ),
                               const Spacer(),
-                              GestureDetector(
-                                onTap: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) =>
-                                            UpdateAnimalScreen(
-                                              animal: {
-                                                'id': animal['id'].toString(),
-                                                'nom': animal['nom'],
-                                                'sexe': animal['sexe'],
-                                                'dateNaiss': animal['dateNaiss'],
-                                                'photo': animal['photo'],
-                                                'race': animal['race'],
-                                                'poids': animal['poids'],
-                                                'taille': animal['taille'],
-                                                'idCategorie': animal['idCategorie'].toString(),
-                                                'idCollier': animal['idCollier'].toString()
-                                              }
-                                            )
+                              Row(
+                                children: [
+                                  GestureDetector(
+                                    onTap: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                UpdateAnimalScreen(
+                                                  animal: {
+                                                    'id': animal['id'].toString(),
+                                                    'nom': animal['nom'],
+                                                    'sexe': animal['sexe'],
+                                                    'dateNaiss': animal['dateNaiss'],
+                                                    'photo': animal['photo'],
+                                                    'race': animal['race'],
+                                                    'poids': animal['poids'],
+                                                    'taille': animal['taille'],
+                                                    'idCategorie': animal['idCategorie'].toString(),
+                                                    'idCollier': animal['idCollier'].toString()
+                                                  }
+                                                )
+                                        ),
+                                      );
+                                    },
+                                    child: const FaIcon(
+                                      FontAwesomeIcons.penToSquare,
+                                      color: AppColors.vert,
+                                      size: 18,
                                     ),
-                                  );
-                                },
-                                child: const FaIcon(
-                                  FontAwesomeIcons.penToSquare,
-                                  color: AppColors.vert,
-                                  size: 20,
-                                ),
+                                  ),
+                                  // Spacer(),
+                                  SizedBox(width: 8),
+                                  GestureDetector(
+                                    onTap: () {
+                                       showConfirmationDialog(context);
+                                    },
+                                    child: const FaIcon(
+                                      FontAwesomeIcons.trash,
+                                      color: AppColors.vert,
+                                      size: 18,
+                                    ),
+                                  ),
+                            
+                                ],
                               ),
-                            ],
+                              ],
                           ),
                           Center(
                             child: Container(
