@@ -11,8 +11,8 @@ class Categorie extends Model
 {
     use HasFactory, SoftDeletes;
 
-    protected $fillable = ['libelle'];
-    
+    protected $guarded = ['id'];
+
     protected $hidden  = [
         'created_at',
         'updated_at',

@@ -9,7 +9,6 @@ import 'package:mahingo/utils/colors.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
 
-
 void showInfoDialog(BuildContext context) {
   AwesomeDialog(
     context: context,
@@ -51,14 +50,12 @@ void showConfirmationDialog(BuildContext context) {
     animType: AnimType.scale,
     title: 'Confirmation',
     desc: 'Êtes-vous sûr de vouloir supprimer cet animal ?',
-    btnCancelOnPress: () {
-    },
+    btnCancelOnPress: () {},
     btnOkOnPress: () {
       showSuccessDialog(context);
     },
   )..show();
 }
-
 
 class AnimalsScreen extends StatefulWidget {
   const AnimalsScreen({super.key});
@@ -73,6 +70,9 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
   String couleur = 'couleur';
   String _searchQuery = '';
   bool display = false;
+
+  late FocusNode _focusNode;
+  OverlayEntry? _overlayEntry;
 
   final TextEditingController _nameAnimal = TextEditingController();
 
@@ -178,116 +178,109 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
   final List<Map<String, dynamic>> colliers = [
     {
       'id': 1,
+      'timestamp': '12:40',
       'batterie': "70%",
       'position': "debout",
-      'température': {
-        'value': "15°C",
-        'etat': "sensible"
-      },
-      'frequence': {
-        'value': "15bpm",
-        'etat': "normale"
-      },
+      'température': {'value': "15°C", 'etat': "sensible"},
+      'frequence': {'value': "15bpm", 'etat': "normale"},
       'localisation': {
         'altitude': "",
         'longitude': "",
-        'lieu': "Dakar",
-        'date': "28/03/2024",
-        'heure': "15:40"
       },
       'etat': 'normal'
     },
     {
       'id': 2,
-      'batterie': "95%",
-      'position': "couché",
-      'température': "17°C",
-      'frequence': "23bpm",
+      'timestamp': '12:40',
+      'batterie': "70%",
+      'position': "debout",
+      'température': {'value': "15°C", 'etat': "sensible"},
+      'frequence': {'value': "15bpm", 'etat': "normale"},
       'localisation': {
         'altitude': "",
         'longitude': "",
-        'lieu': "Dakar",
-        'date': "28/03/2024",
-        'heure': "15:40"
       },
       'etat': 'sensible'
     },
     {
       'id': 3,
-      'batterie': "100%",
-      'position': "en marche",
-      'température': "15°C",
-      'frequence': "21bpm",
+      'timestamp': '12:40',
+      'batterie': "70%",
+      'position': "debout",
+      'température': {'value': "15°C", 'etat': "sensible"},
+      'frequence': {'value': "15bpm", 'etat': "normale"},
       'localisation': {
         'altitude': "",
         'longitude': "",
-        'lieu': "Dakar",
-        'date': "28/03/2024",
-        'heure': "15:40"
       },
       'etat': 'sensible'
     },
     {
       'id': 4,
-      'batterie': "95%",
-      'position': "couché",
-      'température': "17°C",
-      'frequence': "23bpm",
+      'timestamp': '12:40',
+      'batterie': "70%",
+      'position': "debout",
+      'température': {'value': "15°C", 'etat': "sensible"},
+      'frequence': {'value': "15bpm", 'etat': "normale"},
       'localisation': {
         'altitude': "",
         'longitude': "",
-        'lieu': "Dakar",
-        'date': "28/03/2024",
-        'heure': "15:40"
       },
       'etat': 'normal'
     },
     {
       'id': 5,
-      'batterie': "95%",
-      'position': "couché",
-      'température': "17°C",
-      'frequence': "23bpm",
+      'timestamp': '12:40',
+      'batterie': "70%",
+      'position': "debout",
+      'température': {'value': "15°C", 'etat': "sensible"},
+      'frequence': {'value': "15bpm", 'etat': "normale"},
       'localisation': {
         'altitude': "",
         'longitude': "",
-        'lieu': "Dakar",
-        'date': "28/03/2024",
-        'heure': "15:40"
       },
       'etat': 'anormal'
     },
     {
       'id': 6,
-      'batterie': "95%",
-      'position': "couché",
-      'température': "17°C",
-      'frequence': "23bpm",
+      'timestamp': '12:40',
+      'batterie': "70%",
+      'position': "debout",
+      'température': {'value': "15°C", 'etat': "sensible"},
+      'frequence': {'value': "15bpm", 'etat': "normale"},
       'localisation': {
         'altitude': "",
         'longitude': "",
-        'lieu': "Dakar",
-        'date': "28/03/2024",
-        'heure': "15:40"
       },
       'etat': 'normal'
     },
     {
       'id': 7,
-      'batterie': "95%",
-      'position': "couché",
-      'température': "17°C",
-      'frequence': "23bpm",
+      'timestamp': '12:40',
+      'batterie': "70%",
+      'position': "debout",
+      'température': {'value': "15°C", 'etat': "sensible"},
+      'frequence': {'value': "15bpm", 'etat': "normale"},
       'localisation': {
         'altitude': "",
         'longitude': "",
-        'lieu': "Dakar",
-        'date': "28/03/2024",
-        'heure': "15:40"
       },
       'etat': 'normal'
     }
   ];
+
+  @override
+  void initState() {
+    super.initState();
+    _focusNode = FocusNode();
+  }
+
+  @override
+  void dispose() {
+    _focusNode.dispose();
+    _overlayEntry?.remove();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -296,7 +289,10 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
 
     Widget selectedContainer = Container();
 
-    final List<Map<String, dynamic>> foundAnimals = [];
+    // bool displayDropdown = false;
+    List<Map<String, dynamic>> foundAnimals = [];
+
+    final LayerLink _layerLink = LayerLink();
 
     if (_selectedCountIndex == 0) {
       selectedContainer = Container(
@@ -452,58 +448,26 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
       return false;
     }).toList();
 
-    String getAnimalSearchResult(String searchQuery) {
-      int _cat = 0;
-      int _col = 0;
-      String _etat = '';
-
+    List<Map<String, dynamic>> getAnimalSearchResult(String searchQuery) {
+      List<Map<String, dynamic>> foundAnimals = [];
       for (var category in animaux) {
         for (var animal in category['animaux']) {
-          if (animal['nom'].toLowerCase() == searchQuery.toLowerCase()) {
+          if (animal['nom']
+              .toLowerCase()
+              .startsWith(searchQuery.toLowerCase())) {
             foundAnimals.add(animal);
-            _cat = animal['idCategorie'];
-            _col = animal['idCollier'];
-
-            for (var collier in colliers) {
-              if (collier['id'] == _col) {
-                _etat = collier['etat'];
-
-                if (_etat == 'normal') {
-                  _selectedCountIndex = 0;
-                } else if (_etat == 'sensible') {
-                  _selectedCountIndex = 1;
-                }
-                if (_etat == 'anormal') {
-                  _selectedCountIndex = 2;
-                }
-              }
-            }
-
-            if (_cat == 1) {
-              _selectedFilterIndex = 0;
-            } else if (_cat == 2) {
-              _selectedFilterIndex = 1;
-            }
           }
-          // filteredAnimaux = foundAnimals;
         }
       }
 
-      if (foundAnimals.isNotEmpty) {
-        display = true;
-        return 'Animaux trouvés : ${foundAnimals}';
-      } else {
-        display = false;
-        return 'Aucun animal trouvé.';
-      }
+      print('Résultats trouvés : $foundAnimals');
+      return foundAnimals;
     }
 
-    TextEditingController _textController =
-        TextEditingController(text: 'M001');
+    TextEditingController _textController = TextEditingController(text: 'M001');
     TextEditingController _nomController =
         TextEditingController(text: 'Saloum Saloum');
-    TextEditingController _ageController =
-        TextEditingController(text: '6 ans');
+    TextEditingController _ageController = TextEditingController(text: '6 ans');
     TextEditingController _tailleController =
         TextEditingController(text: '1.70 m');
     TextEditingController _poidsController =
@@ -533,7 +497,6 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
       }
     }
 
-    
     int _calculateAge(DateTime birthDate) {
       DateTime now = DateTime.now();
       int age = now.year - birthDate.year;
@@ -609,16 +572,15 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
       _ageController.text = animal['dateNaiss'];
       _raceController.text = animal['race'];
 
-
       showModalBottomSheet(
         context: context,
         isScrollControlled: true,
         backgroundColor: Colors.transparent,
         builder: (context) {
           return DraggableScrollableSheet(
-            initialChildSize: 0.99,
+            initialChildSize: 0.887,
             minChildSize: 0.6,
-            maxChildSize: 0.99,
+            maxChildSize: 0.887,
             builder: (_, controller) {
               return Container(
                 // height: screenHeight * 0.95,
@@ -684,7 +646,6 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
                                   ),
                                 ],
                               ),
-
                               const SizedBox(width: 8),
                               const Text(
                                 '70%',
@@ -703,21 +664,23 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
                                         context,
                                         MaterialPageRoute(
                                             builder: (context) =>
-                                                UpdateAnimalScreen(
-                                                  animal: {
-                                                    'id': animal['id'].toString(),
-                                                    'nom': animal['nom'],
-                                                    'sexe': animal['sexe'],
-                                                    'dateNaiss': animal['dateNaiss'],
-                                                    'photo': animal['photo'],
-                                                    'race': animal['race'],
-                                                    'poids': animal['poids'],
-                                                    'taille': animal['taille'],
-                                                    'idCategorie': animal['idCategorie'].toString(),
-                                                    'idCollier': animal['idCollier'].toString()
-                                                  }
-                                                )
-                                        ),
+                                                UpdateAnimalScreen(animal: {
+                                                  'id': animal['id'].toString(),
+                                                  'nom': animal['nom'],
+                                                  'sexe': animal['sexe'],
+                                                  'dateNaiss':
+                                                      animal['dateNaiss'],
+                                                  'photo': animal['photo'],
+                                                  'race': animal['race'],
+                                                  'poids': animal['poids'],
+                                                  'taille': animal['taille'],
+                                                  'idCategorie':
+                                                      animal['idCategorie']
+                                                          .toString(),
+                                                  'idCollier':
+                                                      animal['idCollier']
+                                                          .toString()
+                                                })),
                                       );
                                     },
                                     child: const FaIcon(
@@ -730,7 +693,7 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
                                   SizedBox(width: 8),
                                   GestureDetector(
                                     onTap: () {
-                                       showConfirmationDialog(context);
+                                      showConfirmationDialog(context);
                                     },
                                     child: const FaIcon(
                                       FontAwesomeIcons.trash,
@@ -738,10 +701,9 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
                                       size: 18,
                                     ),
                                   ),
-                            
                                 ],
                               ),
-                              ],
+                            ],
                           ),
                           Center(
                             child: Container(
@@ -834,7 +796,7 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
                                                           right: 12.0),
                                                   isDense: true,
                                                 ),
-                                                 style: TextStyle(
+                                                style: TextStyle(
                                                   color: Colors.black,
                                                 ),
                                               ),
@@ -884,7 +846,7 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
                                                           right: 12.0),
                                                   isDense: true,
                                                 ),
-                                                 style: TextStyle(
+                                                style: TextStyle(
                                                   color: Colors.black,
                                                 ),
                                               ),
@@ -934,7 +896,7 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
                                                           right: 12.0),
                                                   isDense: true,
                                                 ),
-                                                 style: TextStyle(
+                                                style: TextStyle(
                                                   color: Colors.black,
                                                 ),
                                               ),
@@ -984,7 +946,7 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
                                                           right: 12.0),
                                                   isDense: true,
                                                 ),
-                                                 style: TextStyle(
+                                                style: TextStyle(
                                                   color: Colors.black,
                                                 ),
                                               ),
@@ -1034,7 +996,7 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
                                                           right: 12.0),
                                                   isDense: true,
                                                 ),
-                                                 style: TextStyle(
+                                                style: TextStyle(
                                                   color: Colors.black,
                                                 ),
                                               ),
@@ -1107,7 +1069,7 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
                         ],
                       ),
                     ),
-                    SizedBox(height: screenHeight * 0.007),
+                    SizedBox(height: screenHeight * 0.003),
 
                     Container(
                       width: screenWidth * 0.85,
@@ -1285,58 +1247,6 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
                                 ],
                               ),
                             ),
-                            const SizedBox(height: 2),
-                            Container(
-                              width: screenWidth * 0.85,
-                              height: screenHeight * 0.07,
-                              decoration: BoxDecoration(
-                                border: Border.all(color: AppColors.gris),
-                                borderRadius: BorderRadius.circular(8.0),
-                                color: AppColors.vertClair,
-                                boxShadow: const [
-                                  BoxShadow(
-                                    color: AppColors.gris,
-                                    spreadRadius: 2,
-                                    blurRadius: 5,
-                                    offset: Offset(0, 3),
-                                  ),
-                                ],
-                              ),
-                              padding: EdgeInsets.all(12),
-                              child: Row(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  Container(
-                                    child: Row(
-                                      children: [
-                                        Image.asset(
-                                          'assets/images/freqres.png',
-                                          height: 24,
-                                          width: 24,
-                                        ),
-                                        SizedBox(width: 12),
-                                        const Text(
-                                          'Fréquence respiratoire',
-                                          style: TextStyle(
-                                            color: AppColors.noir,
-                                            fontWeight: FontWeight.w600,
-                                          ),
-                                        )
-                                      ],
-                                    ),
-                                  ),
-                                  const Spacer(),
-                                  const Expanded(
-                                    child: Text(
-                                      '50 bpm',
-                                      style: TextStyle(
-                                        fontSize: 16,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
                           ],
                         ),
                       ),
@@ -1348,6 +1258,67 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
           );
         },
       );
+    }
+
+    void _removeOverlay() {
+      _overlayEntry?.remove();
+      _overlayEntry = null;
+    }
+
+    final GlobalKey _nameAnimalKey = GlobalKey();
+
+    OverlayEntry _createOverlayEntry() {
+      RenderBox? renderBox =
+          _nameAnimalKey.currentContext?.findRenderObject() as RenderBox?;
+      if (renderBox == null) {
+        return OverlayEntry(builder: (_) => Container());
+      }
+      var size = renderBox.size;
+      var offset = renderBox.localToGlobal(Offset.zero);
+
+      return OverlayEntry(
+        builder: (context) {
+          return Positioned(
+            width: size.width,
+            left: offset.dx,
+            top: offset.dy + size.height,
+            child: Material(
+              elevation: 4.0,
+              borderRadius: BorderRadius.circular(12),
+              child: Container(
+                decoration: BoxDecoration(
+                  border: Border.all(color: AppColors.gris),
+                  borderRadius: BorderRadius.circular(12),
+                  color: AppColors.blanc,
+                ),
+                child: ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: foundAnimals.length,
+                  itemBuilder: (context, index) {
+                    return ListTile(
+                      title: Text(foundAnimals[index]['nom']),
+                      onTap: () {
+                        setState(() {
+                          _nameAnimal.text = foundAnimals[index]['nom'];
+                          _removeOverlay();
+                          print(foundAnimals);
+                          _showAnimalDetails(context, foundAnimals[index + 1]);
+                        });
+                      },
+                    );
+                  },
+                ),
+              ),
+            ),
+          );
+        },
+      );
+    }
+
+    void _showOverlay() {
+      _focusNode.requestFocus(); // Garde le focus sur le TextField
+      _overlayEntry = _createOverlayEntry();
+      Overlay.of(context)?.insert(_overlayEntry!);
     }
 
     return Scaffold(
@@ -1395,71 +1366,173 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
                   padding: const EdgeInsets.all(14),
                   child: Column(
                     children: [
-                      SizedBox(height: screenHeight * 0.015),
+                      SizedBox(height: screenHeight * 0.01),
                       Row(
                         children: [
                           Expanded(
                             child: Container(
-                              height: screenHeight * 0.05,
+                              // height: screenHeight * 0.05,
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(30),
-                                boxShadow: const [
-                                  BoxShadow(
-                                    color: AppColors.gris,
-                                    spreadRadius: 3,
-                                    blurRadius: 6,
-                                    offset: Offset(0, 3),
+                                // boxShadow: const [
+                                //   BoxShadow(
+                                //     color: AppColors.gris,
+                                //     spreadRadius: 3,
+                                //     blurRadius: 6,
+                                //     offset: Offset(0, 3),
+                                //   ),
+                                // ],
+                              ),
+                              child: Column(
+                                children: [
+                                  CompositedTransformTarget(
+                                    link: _layerLink,
+                                    child: TextField(
+                                      key:
+                                          _nameAnimalKey, // Clé pour le TextField
+                                      style: const TextStyle(
+                                        color: Color.fromARGB(255, 0, 0, 0),
+                                      ),
+                                      focusNode: _focusNode,
+                                      controller: _nameAnimal,
+                                      decoration: InputDecoration(
+                                        hintText: 'Search...',
+                                        hintStyle: const TextStyle(
+                                          color: Color.fromARGB(
+                                              255, 200, 199, 197),
+                                        ),
+                                        prefixIcon: const Icon(
+                                          Icons.search,
+                                          color: AppColors.gris,
+                                        ),
+                                        contentPadding:
+                                            const EdgeInsets.symmetric(
+                                                vertical: 10, horizontal: 15),
+                                        border: OutlineInputBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(12),
+                                          borderSide: const BorderSide(
+                                              color: AppColors.gris, width: 1),
+                                        ),
+                                        enabledBorder: OutlineInputBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(12),
+                                          borderSide: const BorderSide(
+                                              color: AppColors.gris, width: 1),
+                                        ),
+                                        focusedBorder: OutlineInputBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(12),
+                                          borderSide: const BorderSide(
+                                              color: AppColors.vert, width: 2),
+                                        ),
+                                        fillColor: AppColors.blanc,
+                                        filled: true,
+                                      ),
+                                      onChanged: (value) {
+                                        setState(() {
+                                          _searchQuery = value;
+                                          foundAnimals = getAnimalSearchResult(
+                                              _searchQuery);
+
+                                          if (foundAnimals.isNotEmpty) {
+                                            // if (_overlayEntry == null) {
+                                            _showOverlay(); // Affiche l'overlay si le dropdown n'est pas déjà affiché
+                                            // }
+                                          } else {
+                                            _removeOverlay(); // Retire l'overlay si aucun résultat n'est trouvé
+                                          }
+                                        });
+                                      },
+                                    ),
                                   ),
                                 ],
-                              ),
-                              child: TextField(
-                                style: const TextStyle(
-                                  color: Color.fromARGB(255, 0, 0, 0),
-                                ),
-                                controller: _nameAnimal,
-                                decoration: InputDecoration(
-                                  hintText: 'Search...',
-                                  hintStyle: const TextStyle(
-                                    color: Color.fromARGB(255, 200, 199, 197),
-                                  ),
-                                  prefixIcon: const Icon(
-                                    Icons.search,
-                                    color: AppColors.gris,
-                                  ),
-                                  contentPadding: const EdgeInsets.symmetric(
-                                      vertical: 10, horizontal: 15),
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(12),
-                                    borderSide: const BorderSide(
-                                      color: AppColors.gris,
-                                      width: 1,
-                                    ),
-                                  ),
-                                  enabledBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(12),
-                                    borderSide: const BorderSide(
-                                      color: AppColors.gris,
-                                      width: 1,
-                                    ),
-                                  ),
-                                  focusedBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(12),
-                                    borderSide: const BorderSide(
-                                      color: AppColors.vert,
-                                      width: 2,
-                                    ),
-                                  ),
-                                  fillColor: AppColors.blanc,
-                                  filled: true,
-                                ),
-                                onChanged: (value) {
-                                  setState(() {
-                                    _searchQuery = value;
-                                    String searchResult =
-                                        getAnimalSearchResult(_searchQuery);
-                                    print(searchResult);
-                                  });
-                                },
+                                // TextField(
+                                //   style: const TextStyle(
+                                //     color: Color.fromARGB(255, 0, 0, 0),
+                                //   ),
+                                //   controller: _nameAnimal,
+                                //   decoration: InputDecoration(
+                                //     hintText: 'Search...',
+                                //     hintStyle: const TextStyle(
+                                //       color:
+                                //           Color.fromARGB(255, 200, 199, 197),
+                                //     ),
+                                //     prefixIcon: const Icon(
+                                //       Icons.search,
+                                //       color: AppColors.gris,
+                                //     ),
+                                //     contentPadding:
+                                //         const EdgeInsets.symmetric(
+                                //             vertical: 10, horizontal: 15),
+                                //     border: OutlineInputBorder(
+                                //       borderRadius: BorderRadius.circular(12),
+                                //       borderSide: const BorderSide(
+                                //         color: AppColors.gris,
+                                //         width: 1,
+                                //       ),
+                                //     ),
+                                //     enabledBorder: OutlineInputBorder(
+                                //       borderRadius: BorderRadius.circular(12),
+                                //       borderSide: const BorderSide(
+                                //         color: AppColors.gris,
+                                //         width: 1,
+                                //       ),
+                                //     ),
+                                //     focusedBorder: OutlineInputBorder(
+                                //       borderRadius: BorderRadius.circular(12),
+                                //       borderSide: const BorderSide(
+                                //         color: AppColors.vert,
+                                //         width: 2,
+                                //       ),
+                                //     ),
+                                //     fillColor: AppColors.blanc,
+                                //     filled: true,
+                                //   ),
+                                //   onChanged: (value) {
+                                //     setState(() {
+                                //       _searchQuery = value;
+                                //       foundAnimals = getAnimalSearchResult(_searchQuery);
+                                //       displayDropdown = foundAnimals.isNotEmpty;
+                                //       print("Display Dropdown: $displayDropdown");
+                                //       print("Found Animals: $foundAnimals");
+                                //     });
+                                //   },
+                                // ),
+
+                                // if (displayDropdown)
+                                //   Expanded(
+                                //     child: Container(
+                                //       decoration: BoxDecoration(
+                                //         border:
+                                //             Border.all(color: AppColors.gris),
+                                //         borderRadius:
+                                //             BorderRadius.circular(12),
+                                //         color: AppColors.blanc,
+                                //       ),
+                                //       child: ListView.builder(
+                                //         shrinkWrap:
+                                //             true,
+                                //         itemCount: foundAnimals.length,
+                                //         itemBuilder: (context, index) {
+                                //           return ListTile(
+                                //             title: Text(
+                                //                 foundAnimals[index]['nom']),
+                                //             onTap: () {
+                                //               setState(() {
+                                //                 _nameAnimal.text =
+                                //                     foundAnimals[index]
+                                //                         ['nom'];
+                                //                 displayDropdown = false;
+                                //               });
+                                //             },
+                                //           );
+                                //         },
+                                //       ),
+                                //     ),
+                                //   ),
+
+                                // ],
                               ),
                             ),
                           ),

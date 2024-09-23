@@ -24,7 +24,6 @@ return new class extends Migration
             $table->integer('heart_rate')->nullable();
             $table->string('localisation')->nullable();
             $table->string('etat')->nullable();
-            $table->foreignIdFor(User::class)->constrained()->onDelete('cascade');
             $table->softDeletes();
             $table->timestamps();
         });

@@ -28,6 +28,7 @@ Route::prefix('necklace')->group(function (){
 });
 
 Route::prefix('category')->group(function (){
+    Route::get('/all', [CategorieController::class, 'index']);
     Route::post('/add',[CategorieController::class,'store']);
     Route::get('/show/{id}',[CategorieController::class,'show']);
     Route::patch('/update/{id}',[CategorieController::class,'update']);
@@ -42,3 +43,4 @@ Route::prefix('animal')->group(function (){
     Route::delete('/delete/{id}',[AnimalController::class,'destroy']);
     Route::post('/restore/{id}',[AnimalController::class,'restore']);
 });
+

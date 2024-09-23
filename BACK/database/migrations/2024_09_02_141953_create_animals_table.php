@@ -2,6 +2,7 @@
 
 use App\Models\Necklace;
 use App\Models\Categorie;
+use App\Models\User;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
@@ -15,15 +16,17 @@ return new class extends Migration
     {
         Schema::create('animals', function (Blueprint $table) {
             $table->id();
-            $table->longtext('photo');
+            $table->longtext('photo')->nullable();
             $table->string('name');
             $table->date('date_birth');
-            $table->enum('sexe',['Male','Female']);
+            $table->enum('sexe', ['Male','Female']);
             $table->string('race');
-            $table->integer('height');
-            $table->integer('weight');
+            $table->integer('taille');
+            $table->integer('poids');
             $table->foreignIdFor(Necklace::class)->constrained()->onDelete('cascade');
             $table->foreignIdFor(Categorie::class)->constrained()->onDelete('cascade');
+            $table->foreignIdFor(User::class)->constrained()->onDelete('cascade');
+            $table->softDeletes();
             $table->timestamps();
         });
     }

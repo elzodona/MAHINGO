@@ -14,8 +14,11 @@ class CategorieCollection extends ResourceCollection
      */
     public function toArray(Request $request): array
     {
-        return  [
-            'data' => $this->collection
+        return [
+            'data' => $this->collection->map(function ($categorie) {
+                return new \App\Http\Resources\Resources\CategorieResource($categorie);
+            }),
         ];
     }
+
 }

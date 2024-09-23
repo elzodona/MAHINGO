@@ -9,6 +9,7 @@ use App\Http\Requests\CategorieRequest;
 use Illuminate\Database\QueryException;
 use App\Http\Resources\Resources\CategorieResource;
 use App\Http\Controllers\Messages\MessageController;
+use App\Http\Resources\Collections\CategorieCollection;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class CategorieController extends Controller
@@ -23,7 +24,8 @@ class CategorieController extends Controller
      */
     public function index(Request $request)
     {
-        
+        $categories = Categorie::all();
+        return new CategorieCollection($categories);
     }
 
     /**
@@ -32,19 +34,18 @@ class CategorieController extends Controller
     public function store(CategorieRequest $request)
     {
         try {
-            
             $validatedData = $request->validated();
             Categorie::create($validatedData);
             return $this->message->succedRequest('Category '.$this->message->handleException[0]);
 
         } catch (QueryException $e){
-                
+
             return $this->message->errorRequest($this->message->handleException[5]);
-    
+
         } catch (Exception $e) {
-                
-            return $this->message->errorRequest($this->message->handleException[6]); 
-        }    
+
+            return $this->message->errorRequest($this->message->handleException[6]);
+        }
     }
 
     /**
@@ -63,13 +64,13 @@ class CategorieController extends Controller
                 return $this->message->failedRequest('Category ID'.$this->message->handleException[4]);
 
             } catch (QueryException $e) {
-                
+
                 return $this->message->errorRequest($this->message->handleException[5]);
-    
+
             } catch (Exception $e) {
-                
-                return $this->message->errorRequest($this->message->handleException[6]); 
-            }      
+
+                return $this->message->errorRequest($this->message->handleException[6]);
+            }
     }
 
     /**
@@ -78,7 +79,7 @@ class CategorieController extends Controller
     public function update(CategorieRequest $request,$id)
     {
         try {
-           
+
             $validatedData =  $request->only(array_keys($request->rules()));
             $categorie = Categorie::findOrFail($id);
             $categorie->update($validatedData);
@@ -88,14 +89,14 @@ class CategorieController extends Controller
 
             return $this->message->failedRequest('Category ID'.$this->message->handleException[4]);
         } catch (QueryException $e) {
-            
+
             return $this->message->errorRequest($this->message->handleException[5]);
 
         } catch (Exception $e) {
 
-            return $this->message->errorRequest($this->message->handleException[6]); 
-        }    
-    
+            return $this->message->errorRequest($this->message->handleException[6]);
+        }
+
     }
 
     /**
@@ -117,10 +118,10 @@ class CategorieController extends Controller
 
             return $this->message->errorRequest($this->message->handleException[5]);
 
-        } catch (Exception $e) {  
+        } catch (Exception $e) {
 
-            return $this->message->errorRequest($this->message->handleException[6]); 
-        }  
+            return $this->message->errorRequest($this->message->handleException[6]);
+        }
     }
 
     /**
@@ -141,10 +142,10 @@ class CategorieController extends Controller
 
             return $this->message->errorRequest($this->message->handleException[5]);
 
-        } catch (Exception $e) { 
+        } catch (Exception $e) {
 
-            return $this->message->errorRequest($this->message->handleException[6]); 
-        }  
+            return $this->message->errorRequest($this->message->handleException[6]);
+        }
 
     }
 }
