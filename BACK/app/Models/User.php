@@ -45,11 +45,11 @@ class User extends Authenticatable
         ];
     }
 
-   
-    public function necklaces()
+
+    public function animal()
     {
-        return $this->hasMany(Necklace::class);
+        return $this->hasMany(Animal::class);
     }
-    
+
 
 }

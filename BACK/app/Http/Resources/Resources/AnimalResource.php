@@ -15,16 +15,18 @@ class AnimalResource extends JsonResource
     public function toArray(Request $request): array
     {
             return [
+                'id' => $this->id,
                 'photo' =>$this->photo,
                 'name'=>$this->name,
                 'date_birth'=>$this->date_birth,
                 'sexe'=>$this->sexe,
                 'race'=>$this->race,
-                'height'=>$this->height,
-                'weight'=>$this->weight,
+                'taille'=>$this->taille,
+                'poids'=>$this->poids,
                 'necklace_id'=> $this->necklace,
-                'categorie_id'=>$this->category
+                'categorie_id'=>$this->category,
+                'user_id' => $this->user
             ];
-        
+
     }
 }

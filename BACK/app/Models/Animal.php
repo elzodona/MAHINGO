@@ -13,7 +13,7 @@ class Animal extends Model
     use HasFactory, SoftDeletes;
 
     protected $guarded = ['id'];
-    
+
     protected $hidden  = [
         'created_at',
         'updated_at',
@@ -25,8 +25,14 @@ class Animal extends Model
         return $this->belongsTo(Categorie::class, 'categorie_id');
     }
 
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
+
     public function necklace()
     {
         return $this->belongsTo(Necklace::class, 'necklace_id');
     }
+
 }

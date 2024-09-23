@@ -10,6 +10,7 @@ use Illuminate\Database\QueryException;
 use App\Http\Resources\Resources\CategorieResource;
 use App\Http\Controllers\Messages\MessageController;
 use App\Http\Resources\Collections\CategorieCollection;
+use App\Models\Animal;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class CategorieController extends Controller
@@ -27,6 +28,7 @@ class CategorieController extends Controller
         $categories = Categorie::all();
         return new CategorieCollection($categories);
     }
+
 
     /**
      * Store a newly created resource in storage.
@@ -76,7 +78,7 @@ class CategorieController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(CategorieRequest $request,$id)
+    public function update(CategorieRequest $request, $id)
     {
         try {
 

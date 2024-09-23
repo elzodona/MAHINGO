@@ -12,6 +12,7 @@ use App\Http\Controllers\CategorieController;
 // })->middleware('auth:sanctum');
 
 Route::prefix('user')->group(function (){
+    Route::get('/all', [UserController::class, 'index']);
     Route::post('/add',[UserController::class,'store']);
     Route::get('/show/{id}',[UserController::class,'show']);
     Route::patch('/update/{id}',[UserController::class,'update']);
@@ -20,6 +21,7 @@ Route::prefix('user')->group(function (){
 });
 
 Route::prefix('necklace')->group(function (){
+    Route::get('/all', [NecklaceController::class, 'index']);
     Route::post('/add',[NecklaceController::class,'store']);
     Route::get('/show/{id}',[NecklaceController::class,'show']);
     Route::patch('/update/{id}',[NecklaceController::class,'update']);
@@ -37,7 +39,9 @@ Route::prefix('category')->group(function (){
 });
 
 Route::prefix('animal')->group(function (){
-    Route::post('/store',[AnimalController::class,'store']);
+    Route::get('/all', [AnimalController::class, 'index']);
+    Route::get('/user/{userId}', [AnimalController::class, 'animalsByUser']);
+    Route::post('/add',[AnimalController::class,'store']);
     Route::get('/show/{id}',[AnimalController::class,'show']);
     Route::patch('/update/{id}',[AnimalController::class,'update']);
     Route::delete('/delete/{id}',[AnimalController::class,'destroy']);

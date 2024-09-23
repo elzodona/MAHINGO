@@ -22,18 +22,20 @@ class NecklaceRequest extends FormRequest
     public function rules(): array
     {
         $neckLaceId = $this->route('id');
+
         return [
-            'identifier'=> $neckLaceId ? 'nullable':'required|string|max:255',
-            'photo'=>$neckLaceId ? 'nullable':'required|string',
-            'enabled_at'=>$neckLaceId ? 'nullable': 'required|date_format:Y/m/d',
-            'desabled_at'=>$neckLaceId ? 'nullable': 'required|date_format:Y/m/d',
-            'battery'=>'nullable',
-            'position'=>'nullable',
-            'temperature'=>'nullable',
-            'heart_rate'=>'nullable',
-            'localisation'=>'nullable',
-            'etat'=>'nullable',
-            'user_id'=> $neckLaceId ? 'nullable':'required'
+            'identifier' => $neckLaceId ? 'nullable|string|max:255' : 'required|string|max:255',
+            'photo' => 'nullable|string',
+            'enabled_at' => 'nullable|date_format:Y/m/d',
+            'desabled_at' => 'nullable|date_format:Y/m/d',
+            'battery' => 'nullable|numeric',
+            'position' => 'nullable|string',
+            'temperature' => 'nullable|numeric',
+            'heart_rate' => 'nullable|numeric',
+            'localisation' => 'nullable|string',
+            'etat' => 'nullable|string',
+            'user_id' => 'nullable|exists:users,id',
         ];
     }
+
 }

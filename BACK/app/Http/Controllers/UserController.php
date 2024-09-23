@@ -3,11 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use Exception;
 use Illuminate\Http\Request;
 use App\Http\Requests\UserRequest;
 use Illuminate\Database\QueryException;
 use App\Http\Resources\Resources\UserResource;
 use App\Http\Controllers\Messages\MessageController;
+use App\Http\Resources\Collections\UserCollection;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class UserController extends Controller
@@ -18,12 +20,23 @@ class UserController extends Controller
     public function __construct(){
         $this->message = new MessageController;
     }
+
+    public function login(Request $request)
+    {
+
+    }
+
+    public function logout(Request $request) {
+
+    }
+
     /**
      * Display a listing of the resource.
      */
     public function index(Request $request)
     {
-        
+        $users = User::all();
+        return new UserCollection($users);
     }
 
     /**
@@ -32,7 +45,7 @@ class UserController extends Controller
     public function store(UserRequest $request)
     {
         try {
-            
+
             $validatedData = $request->validated();
             User::create($validatedData);
             return $this->message->succedRequest('User '.$this->message->handleException[0]);
@@ -40,12 +53,12 @@ class UserController extends Controller
         } catch (QueryException $e){
 
             return $this->message->errorRequest($this->message->handleException[5]);
-    
+
         } catch (Exception $e) {
-                
+
             return $this->message->errorRequest($this->message->handleException[6]);
-             
-        }    
+
+        }
     }
 
     /**
@@ -57,23 +70,23 @@ class UserController extends Controller
 
             $user = User::findOrFail($id);
             $userData = new UserResource($user);
-            return $this->message->succedRequestWithData($userData);
+            return $this->message->succedRequestWithData($user);
 
             } catch (ModelNotFoundException $e) {
 
                 return $this->message->failedRequest('User ID'.$this->message->handleException[4]);
 
             } catch (QueryException $e) {
-                
-               
+
+
                 return $this->message->errorRequest($this->message->handleException[5]);
 
-    
+
             } catch (Exception $e) {
-    
+
                 return $this->message->errorRequest($this->message->handleException[6]);
 
-            }      
+            }
     }
 
     /**
@@ -82,7 +95,7 @@ class UserController extends Controller
     public function update(UserRequest $request,$id)
     {
         try {
-           
+
             $validatedData =  $request->only(array_keys($request->rules()));
             $user = User::findOrFail($id);
             $user->update($validatedData);
@@ -90,21 +103,21 @@ class UserController extends Controller
             return $this->message->succedRequest('User '.$this->message->handleException[1]);
 
         } catch (ModelNotFoundException $e) {
-            
+
                 return $this->message->failedRequest('User ID'.$this->message->handleException[4]);
 
             } catch (QueryException $e) {
-                
-                
+
+
                 return $this->message->errorRequest($this->message->handleException[5]);
 
-    
+
             } catch (Exception $e) {
-                 
+
                 return $this->message->errorRequest($this->message->handleException[6]);
 
-            }    
-    
+            }
+
     }
 
     /**
@@ -124,15 +137,15 @@ class UserController extends Controller
 
         } catch (QueryException $e) {
 
-            
+
             return $this->message->errorRequest($this->message->handleException[5]);
 
 
-        } catch (Exception $e) {  
+        } catch (Exception $e) {
 
             return $this->message->errorRequest($this->message->handleException[6]);
 
-        }  
+        }
     }
 
     /**
@@ -154,11 +167,11 @@ class UserController extends Controller
             return $this->message->errorRequest($this->message->handleException[5]);
 
 
-        } catch (Exception $e) { 
- 
+        } catch (Exception $e) {
+
             return $this->message->errorRequest($this->message->handleException[6]);
 
-        }  
+        }
 
     }
 }

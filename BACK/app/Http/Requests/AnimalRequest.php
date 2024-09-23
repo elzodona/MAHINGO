@@ -21,7 +21,7 @@ class AnimalRequest extends FormRequest
      */
     public function rules(): array
     {
-        $animalId = $this->route('id'); 
+        $animalId = $this->route('id');
         return [
             'photo' =>$animalId ?'nullable':'required',
             'name'=>$animalId ?'nullable':'required',

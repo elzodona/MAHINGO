@@ -13,7 +13,7 @@ class Necklace extends Model
     use HasFactory, SoftDeletes;
 
     protected $guarded = ['id'];
-    
+
     protected $hidden  = [
         'created_at',
         'updated_at',
@@ -26,9 +26,10 @@ class Necklace extends Model
         return $this->belongsTo(User::class, 'user_id');
     }
 
-    
+
     public function animal()
     {
         return $this->hasOne(Animal::class);
     }
+
 }

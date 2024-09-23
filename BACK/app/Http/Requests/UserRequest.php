@@ -21,11 +21,11 @@ class UserRequest extends FormRequest
      */
     public function rules(): array
     {
-        $userId = $this->route('id'); 
+        $userId = $this->route('id');
         return [
             'first_name' => $userId ?  'nullable': 'required|string|max:255',
             'last_name' => $userId ? 'nullable':'required|string|max:255',
-            'telephone' => $userId ?'nullable': 'required|string|max:20',
+            'telephone' => 'required|string|max:20',
             'address' => 'nullable|string',
             'profession' => 'nullable|string|max:255',
             'email' => $userId ? 'email|unique:users,email':'required|email|unique:users,email',

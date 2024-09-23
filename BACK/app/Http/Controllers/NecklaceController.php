@@ -9,13 +9,14 @@ use App\Http\Requests\NecklaceRequest;
 use Illuminate\Database\QueryException;
 use App\Http\Resources\Resources\NecklaceResource;
 use App\Http\Controllers\Messages\MessageController;
+use App\Http\Resources\Collections\NecklaceCollection;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class NecklaceController extends Controller
 {
     private $message;
 
-    
+
     public function __construct(){
         $this->message = new MessageController;
     }
@@ -25,7 +26,8 @@ class NecklaceController extends Controller
      */
     public function index()
     {
-        //
+        $colliers = Necklace::all();
+        return new NecklaceCollection($colliers);
     }
 
     /**
@@ -34,19 +36,19 @@ class NecklaceController extends Controller
     public function store(NecklaceRequest $request)
     {
         try {
-            
+
             $neckLaceData = $request->validated();
             Necklace::create($neckLaceData);
             return $this->message->succedRequest('Necklace '.$this->message->handleException[0]);
 
         } catch (QueryException $e){
-                
+
             return $this->message->errorRequest($this->message->handleException[5]);
-    
+
         } catch (Exception $e) {
-                
-            return $this->message->errorRequest($this->message->handleException[6]); 
-        }    
+
+            return $this->message->errorRequest($this->message->handleException[6]);
+        }
 
     }
 
@@ -66,13 +68,13 @@ class NecklaceController extends Controller
                 return $this->message->failedRequest('Necklace ID'.$this->message->handleException[4]);
 
             } catch (QueryException $e) {
-                
+
                 return $this->message->failedRequest($this->message->handleException[5]);
-    
+
             } catch (Exception $e) {
-                
-                return $this->message->failedRequest($this->message->handleException[6]); 
-            }    
+
+                return $this->message->failedRequest($this->message->handleException[6]);
+            }
     }
 
     /**
@@ -81,7 +83,7 @@ class NecklaceController extends Controller
     public function update(NecklaceRequest $request, $id)
     {
         try {
-           
+
             $validatedData =  $request->only(array_keys($request->rules()));
             $necklace = Necklace::findOrFail($id);
             $necklace->update($validatedData);
@@ -92,13 +94,13 @@ class NecklaceController extends Controller
             return $this->message->failedRequest('Necklace ID'.$this->message->handleException[4]);
 
         } catch (QueryException $e) {
-            
+
             return $this->message->errorRequest($this->message->handleException[5]);
 
         } catch (Exception $e) {
 
-            return $this->message->errorRequest($this->message->handleException[6]); 
-        }    
+            return $this->message->errorRequest($this->message->handleException[6]);
+        }
     }
 
     /**
@@ -120,10 +122,10 @@ class NecklaceController extends Controller
 
             return $this->message->errorRequest($this->message->handleException[5]);
 
-        } catch (Exception $e) {  
+        } catch (Exception $e) {
 
-            return $this->message->errorRequest($this->message->handleException[6]); 
-        }  
+            return $this->message->errorRequest($this->message->handleException[6]);
+        }
     }
 
     /**
@@ -131,10 +133,10 @@ class NecklaceController extends Controller
      */
     public function restore($id){
         try {
-            
+
             $necklace = Necklace::onlyTrashed()->findOrFail($id);
             $necklace->restore();
-            return $this->message->succedRequest('necklace '.$this->message->handleException[2]);
+            return $this->message->succedRequest('necklace '.$this->message->handleException[3]);
 
         } catch (ModelNotFoundException $e){
 
@@ -142,12 +144,12 @@ class NecklaceController extends Controller
 
         }catch (QueryException $e) {
 
-            return $this->message->errorRequest($this->message->handleException[5]);
+            return $this->message->errorRequest($this->message->handleException[6]);
 
-        } catch (Exception $e) { 
+        } catch (Exception $e) {
 
-            return $this->message->errorRequest($this->message->handleException[6]); 
-        }  
+            return $this->message->errorRequest($this->message->handleException[6]);
+        }
 
     }
 }

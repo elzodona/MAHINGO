@@ -15,9 +15,9 @@ return new class extends Migration
         Schema::create('necklaces', function (Blueprint $table) {
             $table->id();
             $table->string('identifier');
-            $table->longtext('photo');
-            $table->date('enabled_at');
-            $table->date('desabled_at');
+            $table->longtext('photo')->nullable();;
+            $table->date('enabled_at')->nullable();;
+            $table->date('desabled_at')->nullable();;
             $table->integer('battery')->nullable();
             $table->string('position')->nullable();
             $table->integer('temperature')->nullable();

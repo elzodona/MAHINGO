@@ -1,4 +1,5 @@
 import 'dart:ffi';
+import 'package:mahingo/services/call_api/animal_service.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -65,6 +66,8 @@ class AnimalsScreen extends StatefulWidget {
 }
 
 class _AnimalsScreenState extends State<AnimalsScreen> {
+  List<dynamic> animaux = [];
+
   int _selectedFilterIndex = 0;
   int _selectedCountIndex = 0;
   String couleur = 'couleur';
@@ -79,104 +82,104 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
 
   final TextEditingController _nameAnimal = TextEditingController();
 
-  final List<Map<String, dynamic>> animaux = [
-    {
-      'id': 1,
-      'libelle': "Mouton",
-      'animaux': [
-        {
-          'id': 1,
-          'nom': "MacGyver",
-          'sexe': "Male",
-          'dateNaiss': "28/03/2020",
-          'photo': "image.jpeg",
-          'race': "Ladoum",
-          'poids': "150kg",
-          'taille': "30Cm",
-          'idCategorie': 1,
-          'idCollier': 1
-        },
-        {
-          'id': 2,
-          'nom': "Bozer",
-          'sexe': "Male",
-          'dateNaiss': "28/03/2020",
-          'photo': "image.jpeg",
-          'race': "Ladoum",
-          'poids': "130kg",
-          'taille': "35cm",
-          'idCategorie': 1,
-          'idCollier': 2
-        },
-        {
-          'id': 6,
-          'nom': "Diallo",
-          'sexe': "Male",
-          'dateNaiss': "28/03/2020",
-          'photo': "image.jpeg",
-          'race': "Ladoum",
-          'poids': "130kg",
-          'taille': "35cm",
-          'idCategorie': 1,
-          'idCollier': 6
-        },
-        {
-          'id': 7,
-          'nom': "Douks",
-          'sexe': "Male",
-          'dateNaiss': "28/03/2020",
-          'photo': "image.jpeg",
-          'race': "Ladoum",
-          'poids': "130kg",
-          'taille': "35cm",
-          'idCategorie': 1,
-          'idCollier': 7
-        }
-      ]
-    },
-    {
-      'id': 2,
-      'libelle': "Vache",
-      'animaux': [
-        // {
-        //   'id': 3,
-        //   'nom': "Maty",
-        //   'sexe': "Femelle",
-        //   'dateNaiss': "28/03/2020",
-        //   'photo': "image.jpeg",
-        //   'race': "race 1",
-        //   'poids': "150kg",
-        //   'taille': "30m",
-        //   'idCategorie': 2,
-        //   'idCollier': 3
-        // },
-        // {
-        //   'id': 4,
-        //   'nom': "Riley",
-        //   'sexe': "Femelle",
-        //   'dateNaiss': "28/03/2020",
-        //   'photo': "image.jpeg",
-        //   'race': "race 2",
-        //   'poids': "130kg",
-        //   'taille': "33m",
-        //   'idCategorie': 2,
-        //   'idCollier': 4
-        // },
-        {
-          'id': 5,
-          'nom': "Jack",
-          'sexe': "Male",
-          'dateNaiss': "28/03/2020",
-          'photo': "image.jpeg",
-          'race': "race 3",
-          'poids': "110kg",
-          'taille': "30m",
-          'idCategorie': 2,
-          'idCollier': 5
-        }
-      ]
-    },
-  ];
+  // final List<Map<String, dynamic>> animaux = [
+  //   {
+  //     'id': 1,
+  //     'libelle': "Mouton",
+  //     'animaux': [
+  //       {
+  //         'id': 1,
+  //         'nom': "MacGyver",
+  //         'sexe': "Male",
+  //         'dateNaiss': "28/03/2020",
+  //         'photo': "image.jpeg",
+  //         'race': "Ladoum",
+  //         'poids': "150kg",
+  //         'taille': "30Cm",
+  //         'idCategorie': 1,
+  //         'idCollier': 1
+  //       },
+  //       {
+  //         'id': 2,
+  //         'nom': "Bozer",
+  //         'sexe': "Male",
+  //         'dateNaiss': "28/03/2020",
+  //         'photo': "image.jpeg",
+  //         'race': "Ladoum",
+  //         'poids': "130kg",
+  //         'taille': "35cm",
+  //         'idCategorie': 1,
+  //         'idCollier': 2
+  //       },
+  //       {
+  //         'id': 6,
+  //         'nom': "Diallo",
+  //         'sexe': "Male",
+  //         'dateNaiss': "28/03/2020",
+  //         'photo': "image.jpeg",
+  //         'race': "Ladoum",
+  //         'poids': "130kg",
+  //         'taille': "35cm",
+  //         'idCategorie': 1,
+  //         'idCollier': 6
+  //       },
+  //       {
+  //         'id': 7,
+  //         'nom': "Douks",
+  //         'sexe': "Male",
+  //         'dateNaiss': "28/03/2020",
+  //         'photo': "image.jpeg",
+  //         'race': "Ladoum",
+  //         'poids': "130kg",
+  //         'taille': "35cm",
+  //         'idCategorie': 1,
+  //         'idCollier': 7
+  //       }
+  //     ]
+  //   },
+  //   {
+  //     'id': 2,
+  //     'libelle': "Vache",
+  //     'animaux': [
+  //       // {
+  //       //   'id': 3,
+  //       //   'nom': "Maty",
+  //       //   'sexe': "Femelle",
+  //       //   'dateNaiss': "28/03/2020",
+  //       //   'photo': "image.jpeg",
+  //       //   'race': "race 1",
+  //       //   'poids': "150kg",
+  //       //   'taille': "30m",
+  //       //   'idCategorie': 2,
+  //       //   'idCollier': 3
+  //       // },
+  //       // {
+  //       //   'id': 4,
+  //       //   'nom': "Riley",
+  //       //   'sexe': "Femelle",
+  //       //   'dateNaiss': "28/03/2020",
+  //       //   'photo': "image.jpeg",
+  //       //   'race': "race 2",
+  //       //   'poids': "130kg",
+  //       //   'taille': "33m",
+  //       //   'idCategorie': 2,
+  //       //   'idCollier': 4
+  //       // },
+  //       {
+  //         'id': 5,
+  //         'nom': "Jack",
+  //         'sexe': "Male",
+  //         'dateNaiss': "28/03/2020",
+  //         'photo': "image.jpeg",
+  //         'race': "race 3",
+  //         'poids': "110kg",
+  //         'taille': "30m",
+  //         'idCategorie': 2,
+  //         'idCollier': 5
+  //       }
+  //     ]
+  //   },
+  // ];
 
   final List<Map<String, dynamic>> colliers = [
     {
@@ -206,7 +209,7 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
       'etat': 'sensible'
     },
     {
-      'id': 3,
+      'id': 12,
       'timestamp': '12:40',
       'batterie': "70%",
       'position': "debout",
@@ -276,6 +279,8 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
   void initState() {
     super.initState();
     _focusNode = FocusNode();
+    // animals = ApiService().fetchAnimals();
+    _loadAnimals();
   }
 
   @override
@@ -285,8 +290,19 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
     super.dispose();
   }
 
+  Future<void> _loadAnimals() async {
+    try {
+      ApiService apiService = ApiService();
+      animaux = await apiService.fetchAnimals(2);
+      print(animaux);
+      setState(() {});
+    } catch (e) {
+      print('Erreur : $e');
+    }
+  }
+
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) {    
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
 
@@ -395,32 +411,43 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
     }
 
     int nombreMoutons = animaux
-        .firstWhere((categorie) => categorie['libelle'] == 'Mouton')['animaux']
+        .firstWhere((categorie) => categorie['libelle'] == 'Mouton',
+            orElse: () => {'animaux': []})['animaux']
         .length;
+
     int nombreVaches = animaux
-        .firstWhere((categorie) => categorie['libelle'] == 'Vache')['animaux']
+        .firstWhere((categorie) => categorie['libelle'] == 'Vache',
+            orElse: () => {'animaux': []})['animaux']
         .length;
+
 
     int nombreColliersNormaux = 0;
     int nombreColliersSensibles = 0;
     int nombreColliersAnormaux = 0;
 
-    for (var animal in animaux[_selectedFilterIndex]['animaux']) {
-      Map<String, dynamic>? collier = colliers.firstWhere(
-        (c) => c['id'] == animal['idCollier'],
-        orElse: () => <String, dynamic>{},
-      );
+    if (animaux.isNotEmpty &&
+        _selectedFilterIndex >= 0 &&
+        _selectedFilterIndex < animaux.length &&
+        animaux[_selectedFilterIndex].containsKey('animaux') &&
+        animaux[_selectedFilterIndex]['animaux'].isNotEmpty) {
+      for (var animal in animaux[_selectedFilterIndex]['animaux']) {
+        Map<String, dynamic>? collier = colliers.firstWhere(
+          (c) => c['id'] == animal['necklace_id']['id'],
+          orElse: () => <String, dynamic>{},
+        );
 
-      if (collier != null) {
-        if (collier['etat'] == 'normal') {
-          nombreColliersNormaux++;
-        } else if (collier['etat'] == 'sensible') {
-          nombreColliersSensibles++;
-        } else if (collier['etat'] == 'anormal') {
-          nombreColliersAnormaux++;
+        if (collier.isNotEmpty) {
+          if (collier['etat'] == 'normal') {
+            nombreColliersNormaux++;
+          } else if (collier['etat'] == 'sensible') {
+            nombreColliersSensibles++;
+          } else if (collier['etat'] == 'anormal') {
+            nombreColliersAnormaux++;
+          }
         }
       }
     }
+
 
     if (nombreColliersAnormaux == 0) {
       couleur = 'rouge';
@@ -432,25 +459,54 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
       couleur = 'couleur';
     }
 
-    List<Map<String, dynamic>> filteredAnimaux =
-        animaux[_selectedFilterIndex]['animaux'].where((animal) {
-      Map<String, dynamic>? collier = colliers.firstWhere(
-        (c) => c['id'] == animal['idCollier'],
-        orElse: () => <String, dynamic>{},
-      );
+    // List<Map<String, dynamic>> filteredAnimaux =
+    //     animaux[_selectedFilterIndex]['animaux'].where((animal) {
+    //   Map<String, dynamic>? collier = colliers.firstWhere(
+    //     (c) => c['id'] == animal['necklace_id']['id'],
+    //     orElse: () => <String, dynamic>{},
+    //   );
 
-      if (collier != null) {
-        if (_selectedCountIndex == 0 && collier['etat'] == 'normal') {
-          return true;
-        } else if (_selectedCountIndex == 1 && collier['etat'] == 'sensible') {
-          return true;
-        } else if (_selectedCountIndex == 2 && collier['etat'] == 'anormal') {
-          return true;
+    //   if (collier != null) {
+    //     if (_selectedCountIndex == 0 && collier['etat'] == 'normal') {
+    //       return true;
+    //     } else if (_selectedCountIndex == 1 && collier['etat'] == 'sensible') {
+    //       return true;
+    //     } else if (_selectedCountIndex == 2 && collier['etat'] == 'anormal') {
+    //       return true;
+    //     }
+    //   }
+
+    //   return false;
+    // }).toList();
+
+    List<Map<String, dynamic>> filteredAnimaux = [];
+
+    if (animaux.isNotEmpty &&
+        animaux[_selectedFilterIndex]['animaux'] is List) {
+      List<Map<String, dynamic>> animalList = List<Map<String, dynamic>>.from(
+          animaux[_selectedFilterIndex]['animaux'] as List);
+
+      filteredAnimaux = animalList.where((animal) {
+        Map<String, dynamic>? collier = colliers.firstWhere(
+          (c) => c['id'] == animal['necklace_id']['id'],
+          orElse: () => <String, dynamic>{},
+        );
+
+        if (collier.isNotEmpty) {
+          if (_selectedCountIndex == 0 && collier['etat'] == 'normal') {
+            return true;
+          } else if (_selectedCountIndex == 1 &&
+              collier['etat'] == 'sensible') {
+            return true;
+          } else if (_selectedCountIndex == 2 && collier['etat'] == 'anormal') {
+            return true;
+          }
         }
-      }
 
-      return false;
-    }).toList();
+        return false;
+      }).toList();
+    }
+
 
     List<dynamic> getAnimalSearchResult(String searchQuery) {
       List<dynamic> found = [];
@@ -566,12 +622,11 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
       // DateTime dateNaiss = DateTime.parse(dateNaissString);
       // int age = _calculateAge(dateNaiss);
 
-      _textController.text = animal['idCollier'].toString();
-      _ageController.text = animal['dateNaiss'];
-      _tailleController.text = animal['taille'];
-      _poidsController.text = animal['poids'];
+      _textController.text = animal['necklace_id']['identifier'].toString();
+      _tailleController.text = animal['taille'].toString() + "m";
+      _poidsController.text = animal['poids'].toString() + "kg";
       _genreController.text = animal['sexe'];
-      _ageController.text = animal['dateNaiss'];
+      _ageController.text = animal['date_birth'];
       _raceController.text = animal['race'];
 
       showModalBottomSheet(
@@ -739,7 +794,7 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
                         children: [
                           Center(
                             child: Text(
-                              animal['nom'],
+                              animal['name'],
                               style: TextStyle(
                                   fontSize: 16,
                                   color: AppColors.noir,
@@ -1329,27 +1384,22 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
         builder: (context) {
           return Stack(
             children: [
-              // GestureDetector to detect taps outside the overlay
               Positioned.fill(
                 child: GestureDetector(
                   onTap: () {
-                    _removeOverlay(); // Close the overlay
+                    _removeOverlay();
                   },
                   child: Container(
-                    color: Colors
-                        .transparent, // Ensure this container is invisible
+                    color: Colors.transparent,
                   ),
                 ),
               ),
-              // The actual overlay positioned based on the element's position
               Positioned(
                 width: size.width,
                 left: offset.dx,
                 top: offset.dy + size.height,
                 child: GestureDetector(
-                  onTap: () {
-                    // Prevent tap propagation by absorbing tap events inside the overlay
-                  },
+                  onTap: () {},
                   child: Material(
                     elevation: 4.0,
                     borderRadius: BorderRadius.circular(12),
@@ -1445,21 +1495,20 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
                               // height: screenHeight * 0.05,
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(30),
-                                // boxShadow: const [
-                                //   BoxShadow(
-                                //     color: AppColors.gris,
-                                //     spreadRadius: 3,
-                                //     blurRadius: 6,
-                                //     offset: Offset(0, 3),
-                                //   ),
-                                // ],
+                                boxShadow: const [
+                                  BoxShadow(
+                                    color: AppColors.gris,
+                                    spreadRadius: 3,
+                                    blurRadius: 6,
+                                    offset: Offset(0, 3),
+                                  ),
+                                ],
                               ),
                               child: Column(
                                 children: [
                                   CompositedTransformTarget(
-                                    link: _layerLink,
-                                    child: 
-                                    TextField(
+                                      link: _layerLink,
+                                      child: TextField(
                                         key: _nameAnimalKey,
                                         focusNode: _focusNode,
                                         style: const TextStyle(
@@ -1513,8 +1562,7 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
                                             }
                                           });
                                         },
-                                      )
-                                  ),
+                                      )),
                                 ],
                                 // TextField(
                                 //   style: const TextStyle(
@@ -1976,7 +2024,7 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
                                                         const EdgeInsets.only(
                                                             left: 10, top: 12),
                                                     child: Text(
-                                                      animal['nom']!,
+                                                      animal['name']!,
                                                       style: const TextStyle(
                                                         fontSize: 16,
                                                         color:
@@ -2031,8 +2079,7 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
                                                   children: [
                                                     const SizedBox(width: 20),
                                                     Text(
-                                                      'N ' +
-                                                          animal['idCollier']
+                                                      animal['necklace_id']['identifier']
                                                               .toString(),
                                                       style: const TextStyle(
                                                         fontSize: 16,

@@ -23,7 +23,7 @@ class UserResource extends JsonResource
             'profession' => $this->profession,
             'email' => $this->email,
             'photo' => $this->photo,
-            'necklaces'=>$this->necklaces
+            'necklaces'=>$this->necklaces ? $this->necklaces : null
         ];
     }
 }
