@@ -71,7 +71,10 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
   String _searchQuery = '';
   bool display = false;
 
-  late FocusNode _focusNode;
+  final GlobalKey _nameAnimalKey = GlobalKey();
+
+  // late FocusNode _focusNode;
+  FocusNode _focusNode = FocusNode();
   OverlayEntry? _overlayEntry;
 
   final TextEditingController _nameAnimal = TextEditingController();
@@ -290,7 +293,8 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
     Widget selectedContainer = Container();
 
     // bool displayDropdown = false;
-    List<Map<String, dynamic>> foundAnimals = [];
+    // List<Map<String, dynamic>> foundAnimals = [];
+    List<dynamic> foundAnimals = [];
 
     final LayerLink _layerLink = LayerLink();
 
@@ -448,20 +452,18 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
       return false;
     }).toList();
 
-    List<Map<String, dynamic>> getAnimalSearchResult(String searchQuery) {
-      List<Map<String, dynamic>> foundAnimals = [];
+    List<dynamic> getAnimalSearchResult(String searchQuery) {
+      List<dynamic> found = [];
       for (var category in animaux) {
         for (var animal in category['animaux']) {
           if (animal['nom']
               .toLowerCase()
               .startsWith(searchQuery.toLowerCase())) {
-            foundAnimals.add(animal);
+            found.add(animal);
           }
         }
       }
-
-      print('Résultats trouvés : $foundAnimals');
-      return foundAnimals;
+      return found;
     }
 
     TextEditingController _textController = TextEditingController(text: 'M001');
@@ -1261,11 +1263,58 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
     }
 
     void _removeOverlay() {
-      _overlayEntry?.remove();
-      _overlayEntry = null;
+      if (_overlayEntry != null) {
+        _overlayEntry!.remove();
+        _overlayEntry = null;
+      }
     }
+    // OverlayEntry _createOverlayEntry() {
+    //   RenderBox? renderBox =
+    //       _nameAnimalKey.currentContext?.findRenderObject() as RenderBox?;
+    //   if (renderBox == null) {
+    //     return OverlayEntry(builder: (_) => Container());
+    //   }
+    //   var size = renderBox.size;
+    //   var offset = renderBox.localToGlobal(Offset.zero);
 
-    final GlobalKey _nameAnimalKey = GlobalKey();
+    //   return OverlayEntry(
+    //     builder: (context) {
+    //       return Positioned(
+    //         width: size.width,
+    //         left: offset.dx,
+    //         top: offset.dy + size.height,
+    //         child: Material(
+    //           elevation: 4.0,
+    //           borderRadius: BorderRadius.circular(12),
+    //           child: Container(
+    //             decoration: BoxDecoration(
+    //               border: Border.all(color: AppColors.gris),
+    //               borderRadius: BorderRadius.circular(12),
+    //               color: AppColors.blanc,
+    //             ),
+    //             child: ListView.builder(
+    //               shrinkWrap: true,
+    //               itemCount: foundAnimals.length,
+    //               itemBuilder: (context, index) {
+    //                 return ListTile(
+    //                   title: Text(foundAnimals[index]['nom']),
+    //                   onTap: () {
+    //                     setState(() {
+    //                       _nameAnimal.text = foundAnimals[index]['nom'];
+    //                       _removeOverlay();
+    //                       print(foundAnimals);
+    //                       _showAnimalDetails(context, foundAnimals[index + 1]);
+    //                     });
+    //                   },
+    //                 );
+    //               },
+    //             ),
+    //           ),
+    //         ),
+    //       );
+    //     },
+    //   );
+    // }
 
     OverlayEntry _createOverlayEntry() {
       RenderBox? renderBox =
@@ -1282,31 +1331,35 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
             width: size.width,
             left: offset.dx,
             top: offset.dy + size.height,
-            child: Material(
-              elevation: 4.0,
-              borderRadius: BorderRadius.circular(12),
-              child: Container(
-                decoration: BoxDecoration(
-                  border: Border.all(color: AppColors.gris),
-                  borderRadius: BorderRadius.circular(12),
-                  color: AppColors.blanc,
-                ),
-                child: ListView.builder(
-                  shrinkWrap: true,
-                  itemCount: foundAnimals.length,
-                  itemBuilder: (context, index) {
-                    return ListTile(
-                      title: Text(foundAnimals[index]['nom']),
-                      onTap: () {
-                        setState(() {
-                          _nameAnimal.text = foundAnimals[index]['nom'];
-                          _removeOverlay();
-                          print(foundAnimals);
-                          _showAnimalDetails(context, foundAnimals[index + 1]);
-                        });
-                      },
-                    );
-                  },
+            child: GestureDetector(
+              onTap: () {
+                _removeOverlay();
+              },
+              child: Material(
+                elevation: 4.0,
+                borderRadius: BorderRadius.circular(12),
+                child: Container(
+                  decoration: BoxDecoration(
+                    border: Border.all(color: AppColors.gris),
+                    borderRadius: BorderRadius.circular(12),
+                    color: AppColors.blanc,
+                  ),
+                  child: ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: foundAnimals.length,
+                    itemBuilder: (context, index) {
+                      return ListTile(
+                        title: Text(foundAnimals[index]['nom']),
+                        onTap: () {
+                          setState(() {
+                            _removeOverlay();
+                            _showAnimalDetails(context, foundAnimals[index]);
+                            _nameAnimal.text = '';
+                          });
+                        },
+                      );
+                    },
+                  ),
                 ),
               ),
             ),
@@ -1316,7 +1369,7 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
     }
 
     void _showOverlay() {
-      _focusNode.requestFocus(); // Garde le focus sur le TextField
+      _focusNode.requestFocus();
       _overlayEntry = _createOverlayEntry();
       Overlay.of(context)?.insert(_overlayEntry!);
     }
@@ -1387,64 +1440,62 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
                                 children: [
                                   CompositedTransformTarget(
                                     link: _layerLink,
-                                    child: TextField(
-                                      key:
-                                          _nameAnimalKey, // Clé pour le TextField
-                                      style: const TextStyle(
-                                        color: Color.fromARGB(255, 0, 0, 0),
-                                      ),
-                                      focusNode: _focusNode,
-                                      controller: _nameAnimal,
-                                      decoration: InputDecoration(
-                                        hintText: 'Search...',
-                                        hintStyle: const TextStyle(
-                                          color: Color.fromARGB(
-                                              255, 200, 199, 197),
+                                    child: 
+                                    TextField(
+                                        key: _nameAnimalKey,
+                                        focusNode: _focusNode,
+                                        style: const TextStyle(
+                                            color:
+                                                Color.fromARGB(255, 0, 0, 0)),
+                                        controller: _nameAnimal,
+                                        decoration: InputDecoration(
+                                          hintText: 'Search...',
+                                          hintStyle: const TextStyle(
+                                              color: Color.fromARGB(
+                                                  255, 200, 199, 197)),
+                                          prefixIcon: const Icon(Icons.search,
+                                              color: AppColors.gris),
+                                          contentPadding:
+                                              const EdgeInsets.symmetric(
+                                                  vertical: 10, horizontal: 15),
+                                          border: OutlineInputBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(12),
+                                            borderSide: const BorderSide(
+                                                color: AppColors.gris,
+                                                width: 1),
+                                          ),
+                                          enabledBorder: OutlineInputBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(12),
+                                            borderSide: const BorderSide(
+                                                color: AppColors.gris,
+                                                width: 1),
+                                          ),
+                                          focusedBorder: OutlineInputBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(12),
+                                            borderSide: const BorderSide(
+                                                color: AppColors.vert,
+                                                width: 2),
+                                          ),
+                                          fillColor: AppColors.blanc,
+                                          filled: true,
                                         ),
-                                        prefixIcon: const Icon(
-                                          Icons.search,
-                                          color: AppColors.gris,
-                                        ),
-                                        contentPadding:
-                                            const EdgeInsets.symmetric(
-                                                vertical: 10, horizontal: 15),
-                                        border: OutlineInputBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(12),
-                                          borderSide: const BorderSide(
-                                              color: AppColors.gris, width: 1),
-                                        ),
-                                        enabledBorder: OutlineInputBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(12),
-                                          borderSide: const BorderSide(
-                                              color: AppColors.gris, width: 1),
-                                        ),
-                                        focusedBorder: OutlineInputBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(12),
-                                          borderSide: const BorderSide(
-                                              color: AppColors.vert, width: 2),
-                                        ),
-                                        fillColor: AppColors.blanc,
-                                        filled: true,
-                                      ),
-                                      onChanged: (value) {
-                                        setState(() {
-                                          _searchQuery = value;
-                                          foundAnimals = getAnimalSearchResult(
-                                              _searchQuery);
-
-                                          if (foundAnimals.isNotEmpty) {
-                                            // if (_overlayEntry == null) {
-                                            _showOverlay(); // Affiche l'overlay si le dropdown n'est pas déjà affiché
-                                            // }
-                                          } else {
-                                            _removeOverlay(); // Retire l'overlay si aucun résultat n'est trouvé
-                                          }
-                                        });
-                                      },
-                                    ),
+                                        onChanged: (value) {
+                                          setState(() {
+                                            _searchQuery = value;
+                                            foundAnimals =
+                                                getAnimalSearchResult(
+                                                    _searchQuery);
+                                            if (foundAnimals.isNotEmpty) {
+                                              _showOverlay(); // Affiche l'overlay si le dropdown n'est pas déjà affiché
+                                            } else {
+                                              _removeOverlay(); // Retire l'overlay si aucun résultat n'est trouvé
+                                            }
+                                          });
+                                        },
+                                      )
                                   ),
                                 ],
                                 // TextField(
