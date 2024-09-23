@@ -1327,42 +1327,60 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
 
       return OverlayEntry(
         builder: (context) {
-          return Positioned(
-            width: size.width,
-            left: offset.dx,
-            top: offset.dy + size.height,
-            child: GestureDetector(
-              onTap: () {
-                _removeOverlay();
-              },
-              child: Material(
-                elevation: 4.0,
-                borderRadius: BorderRadius.circular(12),
-                child: Container(
-                  decoration: BoxDecoration(
-                    border: Border.all(color: AppColors.gris),
-                    borderRadius: BorderRadius.circular(12),
-                    color: AppColors.blanc,
-                  ),
-                  child: ListView.builder(
-                    shrinkWrap: true,
-                    itemCount: foundAnimals.length,
-                    itemBuilder: (context, index) {
-                      return ListTile(
-                        title: Text(foundAnimals[index]['nom']),
-                        onTap: () {
-                          setState(() {
-                            _removeOverlay();
-                            _showAnimalDetails(context, foundAnimals[index]);
-                            _nameAnimal.text = '';
-                          });
-                        },
-                      );
-                    },
+          return Stack(
+            children: [
+              // GestureDetector to detect taps outside the overlay
+              Positioned.fill(
+                child: GestureDetector(
+                  onTap: () {
+                    _removeOverlay(); // Close the overlay
+                  },
+                  child: Container(
+                    color: Colors
+                        .transparent, // Ensure this container is invisible
                   ),
                 ),
               ),
-            ),
+              // The actual overlay positioned based on the element's position
+              Positioned(
+                width: size.width,
+                left: offset.dx,
+                top: offset.dy + size.height,
+                child: GestureDetector(
+                  onTap: () {
+                    // Prevent tap propagation by absorbing tap events inside the overlay
+                  },
+                  child: Material(
+                    elevation: 4.0,
+                    borderRadius: BorderRadius.circular(12),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        border: Border.all(color: AppColors.gris),
+                        borderRadius: BorderRadius.circular(12),
+                        color: AppColors.blanc,
+                      ),
+                      child: ListView.builder(
+                        shrinkWrap: true,
+                        itemCount: foundAnimals.length,
+                        itemBuilder: (context, index) {
+                          return ListTile(
+                            title: Text(foundAnimals[index]['nom']),
+                            onTap: () {
+                              setState(() {
+                                _removeOverlay();
+                                _showAnimalDetails(
+                                    context, foundAnimals[index]);
+                                _nameAnimal.text = '';
+                              });
+                            },
+                          );
+                        },
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
           );
         },
       );
