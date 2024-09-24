@@ -9,42 +9,50 @@ import 'package:mahingo/screens/update_animal_screen.dart';
 import 'package:mahingo/utils/colors.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
+import 'package:mahingo/services/call_api/animal_service.dart';
 
 void showInfoDialog(BuildContext context) {
   AwesomeDialog(
     context: context,
     dialogType: DialogType.info,
+    customHeader: Icon(
+      Icons.info,
+      color: AppColors.vert,
+      size: 70,
+    ),
     animType: AnimType.bottomSlide,
-    title: 'Information',
-    desc: 'Voici des informations importantes.',
-    btnOkOnPress: () {},
-  )..show();
+    title: 'Succès',
+    desc: 'Suppression effectuée avec succès',
+    btnOkOnPress: () {
+      Navigator.of(context).pop();
+    },
+    btnOkColor: AppColors.vert,
+  ).show();
 }
 
-void showErrorDialog(BuildContext context) {
-  AwesomeDialog(
-    context: context,
-    dialogType: DialogType.error,
-    animType: AnimType.bottomSlide,
-    title: 'Erreur',
-    desc: 'Quelque chose a mal tourné !',
-    btnCancelOnPress: () {},
-    btnOkOnPress: () {},
-  )..show();
-}
 
 void showSuccessDialog(BuildContext context) {
   AwesomeDialog(
     context: context,
     dialogType: DialogType.success,
-    animType: AnimType.scale,
+    customHeader: Icon(
+      Icons.check_circle,
+      color: AppColors.vert,
+      size: 70,
+    ),
+    animType: AnimType.bottomSlide,
     title: 'Succès',
-    desc: 'L\'animal a été supprimé avec succès.',
-    btnOkOnPress: () {},
+    desc: 'Suppression effectuée avec succès',
+    btnOkOnPress: () {
+      // Ferme le showModalBottomSheet ici
+      Navigator.of(context).pop();
+    },
+    btnOkColor: AppColors.vert,
   )..show();
 }
 
-void showConfirmationDialog(BuildContext context) {
+
+void showConfirmationDialog(BuildContext context, int id) {
   AwesomeDialog(
     context: context,
     dialogType: DialogType.question,
@@ -52,11 +60,28 @@ void showConfirmationDialog(BuildContext context) {
     title: 'Confirmation',
     desc: 'Êtes-vous sûr de vouloir supprimer cet animal ?',
     btnCancelOnPress: () {},
-    btnOkOnPress: () {
-      showSuccessDialog(context);
+    btnOkOnPress: () async {
+      try {
+        await ApiService().deleteAnimal(id);
+        showSuccessDialog(context); // Affiche le dialogue de succès
+      } catch (e) {
+        print('Erreur lors de la suppression : $e');
+      }
     },
   )..show();
 }
+
+void showErrorDialog(BuildContext context, String title, String message) {
+  AwesomeDialog(
+    context: context,
+    dialogType: DialogType.error,
+    animType: AnimType.bottomSlide,
+    title: title,
+    desc: message,
+    btnOkOnPress: () {},
+  )..show();
+}
+
 
 class AnimalsScreen extends StatefulWidget {
   const AnimalsScreen({super.key});
@@ -184,6 +209,7 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
   final List<Map<String, dynamic>> colliers = [
     {
       'id': 1,
+      'identifier': 'M001',
       'timestamp': '12:40',
       'batterie': "70%",
       'position': "debout",
@@ -197,6 +223,7 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
     },
     {
       'id': 2,
+      'identifier': 'M002',
       'timestamp': '12:40',
       'batterie': "70%",
       'position': "debout",
@@ -210,6 +237,7 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
     },
     {
       'id': 12,
+      'identifier': 'V001',
       'timestamp': '12:40',
       'batterie': "70%",
       'position': "debout",
@@ -223,6 +251,7 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
     },
     {
       'id': 4,
+      'identifier': 'V002',
       'timestamp': '12:40',
       'batterie': "70%",
       'position': "debout",
@@ -235,7 +264,22 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
       'etat': 'normal'
     },
     {
-      'id': 5,
+      'id': 4,
+      'identifier': 'V003',
+      'timestamp': '12:40',
+      'batterie': "70%",
+      'position': "debout",
+      'température': {'value': "15°C", 'etat': "sensible"},
+      'frequence': {'value': "15bpm", 'etat': "normale"},
+      'localisation': {
+        'altitude': "",
+        'longitude': "",
+      },
+      'etat': 'normal'
+    },
+    {
+      'id': 4,
+      'identifier': 'V004',
       'timestamp': '12:40',
       'batterie': "70%",
       'position': "debout",
@@ -248,7 +292,22 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
       'etat': 'anormal'
     },
     {
-      'id': 6,
+      'id': 4,
+      'identifier': 'M004',
+      'timestamp': '12:40',
+      'batterie': "70%",
+      'position': "debout",
+      'température': {'value': "15°C", 'etat': "sensible"},
+      'frequence': {'value': "15bpm", 'etat': "normale"},
+      'localisation': {
+        'altitude': "",
+        'longitude': "",
+      },
+      'etat': 'sensible'
+    },
+    {
+      'id': 4,
+      'identifier': 'M003',
       'timestamp': '12:40',
       'batterie': "70%",
       'position': "debout",
@@ -261,7 +320,8 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
       'etat': 'normal'
     },
     {
-      'id': 7,
+      'id': 4,
+      'identifier': 'M005',
       'timestamp': '12:40',
       'batterie': "70%",
       'position': "debout",
@@ -272,7 +332,7 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
         'longitude': "",
       },
       'etat': 'normal'
-    }
+    },
   ];
 
   @override
@@ -290,6 +350,11 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
     super.dispose();
   }
 
+  @override
+  void didPopNext() {
+    _loadAnimals();
+  }
+
   Future<void> _loadAnimals() async {
     try {
       ApiService apiService = ApiService();
@@ -301,8 +366,19 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
     }
   }
 
+  void _onNewAnimal() async {
+    final result = await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => NewAnimalsScreen()),
+    );
+
+    if (result == true) {
+      _loadAnimals();
+    }
+  }
+
   @override
-  Widget build(BuildContext context) {    
+  Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
 
@@ -420,7 +496,6 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
             orElse: () => {'animaux': []})['animaux']
         .length;
 
-
     int nombreColliersNormaux = 0;
     int nombreColliersSensibles = 0;
     int nombreColliersAnormaux = 0;
@@ -432,7 +507,7 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
         animaux[_selectedFilterIndex]['animaux'].isNotEmpty) {
       for (var animal in animaux[_selectedFilterIndex]['animaux']) {
         Map<String, dynamic>? collier = colliers.firstWhere(
-          (c) => c['id'] == animal['necklace_id']['id'],
+          (c) => c['identifier'] == animal['necklace_id']['identifier'],
           orElse: () => <String, dynamic>{},
         );
 
@@ -448,7 +523,6 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
       }
     }
 
-
     if (nombreColliersAnormaux == 0) {
       couleur = 'rouge';
     } else if (nombreColliersSensibles == 0) {
@@ -459,36 +533,17 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
       couleur = 'couleur';
     }
 
-    // List<Map<String, dynamic>> filteredAnimaux =
-    //     animaux[_selectedFilterIndex]['animaux'].where((animal) {
-    //   Map<String, dynamic>? collier = colliers.firstWhere(
-    //     (c) => c['id'] == animal['necklace_id']['id'],
-    //     orElse: () => <String, dynamic>{},
-    //   );
-
-    //   if (collier != null) {
-    //     if (_selectedCountIndex == 0 && collier['etat'] == 'normal') {
-    //       return true;
-    //     } else if (_selectedCountIndex == 1 && collier['etat'] == 'sensible') {
-    //       return true;
-    //     } else if (_selectedCountIndex == 2 && collier['etat'] == 'anormal') {
-    //       return true;
-    //     }
-    //   }
-
-    //   return false;
-    // }).toList();
-
     List<Map<String, dynamic>> filteredAnimaux = [];
 
     if (animaux.isNotEmpty &&
+        _selectedFilterIndex < animaux.length &&
         animaux[_selectedFilterIndex]['animaux'] is List) {
       List<Map<String, dynamic>> animalList = List<Map<String, dynamic>>.from(
           animaux[_selectedFilterIndex]['animaux'] as List);
 
       filteredAnimaux = animalList.where((animal) {
         Map<String, dynamic>? collier = colliers.firstWhere(
-          (c) => c['id'] == animal['necklace_id']['id'],
+          (c) => c['identifier'] == animal['necklace_id']['identifier'],
           orElse: () => <String, dynamic>{},
         );
 
@@ -507,12 +562,11 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
       }).toList();
     }
 
-
     List<dynamic> getAnimalSearchResult(String searchQuery) {
       List<dynamic> found = [];
       for (var category in animaux) {
         for (var animal in category['animaux']) {
-          if (animal['nom']
+          if (animal['name']
               .toLowerCase()
               .startsWith(searchQuery.toLowerCase())) {
             found.add(animal);
@@ -722,21 +776,21 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
                                         MaterialPageRoute(
                                             builder: (context) =>
                                                 UpdateAnimalScreen(animal: {
-                                                  'id': animal['id'].toString(),
-                                                  'nom': animal['nom'],
+                                                  'id': animal['id'],
+                                                  'name': animal['name'],
                                                   'sexe': animal['sexe'],
-                                                  'dateNaiss':
-                                                      animal['dateNaiss'],
+                                                  'date_birth':
+                                                      animal['date_birth'],
                                                   'photo': animal['photo'],
                                                   'race': animal['race'],
                                                   'poids': animal['poids'],
                                                   'taille': animal['taille'],
-                                                  'idCategorie':
-                                                      animal['idCategorie']
-                                                          .toString(),
-                                                  'idCollier':
-                                                      animal['idCollier']
-                                                          .toString()
+                                                  'categorie':
+                                                      animal['categorie_id']
+                                                          ['libelle'],
+                                                  'collier':
+                                                      animal['necklace_id']
+                                                          ['identifier']
                                                 })),
                                       );
                                     },
@@ -750,7 +804,8 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
                                   SizedBox(width: 8),
                                   GestureDetector(
                                     onTap: () {
-                                      showConfirmationDialog(context);
+                                      showConfirmationDialog(
+                                          context, animal['id']);
                                     },
                                     child: const FaIcon(
                                       FontAwesomeIcons.trash,
@@ -1314,7 +1369,9 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
             },
           );
         },
-      );
+      ).then((_) {
+        _loadAnimals();
+      });
     }
 
     void _removeOverlay() {
@@ -1414,7 +1471,7 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
                         itemCount: foundAnimals.length,
                         itemBuilder: (context, index) {
                           return ListTile(
-                            title: Text(foundAnimals[index]['nom']),
+                            title: Text(foundAnimals[index]['name']),
                             onTap: () {
                               setState(() {
                                 _removeOverlay();
@@ -1656,12 +1713,7 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
                           SizedBox(width: screenWidth * 0.03),
                           GestureDetector(
                             onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) =>
-                                        const NewAnimalsScreen()),
-                              );
+                              _onNewAnimal();
                             },
                             child: Container(
                               height: screenHeight * 0.04,
@@ -2079,8 +2131,9 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
                                                   children: [
                                                     const SizedBox(width: 20),
                                                     Text(
-                                                      animal['necklace_id']['identifier']
-                                                              .toString(),
+                                                      animal['necklace_id']
+                                                              ['identifier']
+                                                          .toString(),
                                                       style: const TextStyle(
                                                         fontSize: 16,
                                                         color: AppColors.blanc,

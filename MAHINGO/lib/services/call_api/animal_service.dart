@@ -14,6 +14,16 @@ class ApiService {
     }
   }
 
+  Future<List<dynamic>> fetchColliers() async {
+    final response = await http.get(Uri.parse('$baseUrl/necklace/all'));
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      return data['data'];
+    } else {
+      throw Exception('Failed to load colliers');
+    }
+  }
+
   Future<dynamic> fetchAnimal(int id) async {
     final response = await http.post(Uri.parse('$baseUrl/animal/$id'));
     if (response.statusCode == 200) {
@@ -25,20 +35,22 @@ class ApiService {
 
   Future<dynamic> createAnimal(Map<String, dynamic> data) async {
     final response = await http.post(
-      Uri.parse('$baseUrl/animal'),
+      Uri.parse('$baseUrl/animal/add'),
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode(data),
     );
+
     if (response.statusCode == 201) {
       return jsonDecode(response.body);
     } else {
-      throw Exception('Failed to create animal');
+      final errorData = jsonDecode(response.body);
+      throw Exception('Failed to create animal: ${errorData['error']}');
     }
   }
 
   Future<dynamic> updateAnimal(int id, Map<String, dynamic> data) async {
     final response = await http.patch(
-      Uri.parse('$baseUrl/animal/$id'),
+      Uri.parse('$baseUrl/animal/update/$id'),
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode(data),
     );
@@ -50,11 +62,13 @@ class ApiService {
   }
 
   Future<void> deleteAnimal(int id) async {
-    final response = await http.delete(Uri.parse('$baseUrl/animal/$id'));
-    if (response.statusCode != 204) {
+    final response = await http.delete(Uri.parse('$baseUrl/animal/delete/$id'));
+
+    if (response.statusCode != 200 && response.statusCode != 204) {
       throw Exception('Failed to delete animal');
     }
   }
+
 
 
 }

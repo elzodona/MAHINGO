@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:mahingo/utils/colors.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
+import 'package:awesome_dialog/awesome_dialog.dart';
+import 'package:mahingo/services/call_api/animal_service.dart';
 
 class UpdateAnimalScreen extends StatefulWidget {
   final Map<String, dynamic> animal;
@@ -14,8 +16,10 @@ class UpdateAnimalScreen extends StatefulWidget {
 
 class _UpdateAnimalScreenState extends State<UpdateAnimalScreen> {
   String? _selectedGender = 'Masculin';
+  String? _selectedCategory;
+  int id = 2;
 
-    late TextEditingController _textController;
+  late TextEditingController _textController;
   late TextEditingController _nomController;
   late TextEditingController _tailleController;
   late TextEditingController _poidsController;
@@ -23,19 +27,49 @@ class _UpdateAnimalScreenState extends State<UpdateAnimalScreen> {
   late TextEditingController _raceController;
   late TextEditingController _birthController;
 
+  void showInfoDialog(BuildContext context, String message, String etat) {
+    AwesomeDialog(
+        context: context,
+        dialogType: DialogType.info,
+        customHeader: Icon(
+          Icons.info,
+          color: AppColors.vert,
+          size: 70,
+        ),
+        // dialogBackgroundColor: Colors.green,
+        animType: AnimType.bottomSlide,
+        title: etat,
+        desc: message,
+        btnOkOnPress: () {},
+        btnOkColor: AppColors.vert)
+      ..show();
+  }
+
   @override
   void initState() {
     super.initState();
 
-    _textController = TextEditingController(text: widget.animal['idCollier'].toString());
-    _nomController = TextEditingController(text: widget.animal['nom']);
-    _birthController = TextEditingController(text: widget.animal['dateNaiss']);
-    _tailleController = TextEditingController(text: widget.animal['taille'].toString());
-    _poidsController = TextEditingController(text: widget.animal['poids'].toString());
-    _genreController = TextEditingController(text: widget.animal['sexe']);
+    _textController = TextEditingController(text: widget.animal['categorie']);
+    _nomController = TextEditingController(text: widget.animal['name']);
+    _birthController = TextEditingController(text: widget.animal['date_birth']);
+    _tailleController =
+        TextEditingController(text: widget.animal['taille'].toString());
+    _poidsController =
+        TextEditingController(text: widget.animal['poids'].toString());
     _raceController = TextEditingController(text: widget.animal['race']);
-  }
+    _genreController = TextEditingController(text: 'Masculin');
 
+    if (widget.animal['sexe'] == 'Male') {
+      _selectedGender = 'Masculin';
+    } else if (widget.animal['sexe'] == 'Female') {
+      _selectedGender = 'Féminin';
+    }
+
+    // print(widget.animal['categorie']);
+    _selectedCategory = widget.animal['categorie'];
+    id = widget.animal['id'];
+
+  }
 
   DateTime? _selectedDate;
 
@@ -144,7 +178,7 @@ class _UpdateAnimalScreenState extends State<UpdateAnimalScreen> {
                   const Spacer(),
                   Center(
                     child: Text(
-                      'Mettre à jour ${widget.animal['nom']}',
+                      'Mettre à jour ${widget.animal['name']}',
                       style: const TextStyle(
                         color: AppColors.blanc,
                         fontSize: 22,
@@ -251,11 +285,11 @@ class _UpdateAnimalScreenState extends State<UpdateAnimalScreen> {
                                   Row(
                                     children: [
                                       Container(
-                                        width: screenWidth * 0.25,
+                                        width: screenWidth * 0.55,
                                         padding: const EdgeInsets.symmetric(
                                             horizontal: 12.0),
                                         child: const Text(
-                                          'Numéro',
+                                          'Categorie',
                                           style: TextStyle(
                                               color: AppColors.noir,
                                               fontWeight: FontWeight.w600),
@@ -265,11 +299,25 @@ class _UpdateAnimalScreenState extends State<UpdateAnimalScreen> {
                                         child: Padding(
                                           padding:
                                               const EdgeInsets.only(left: 12.0),
-                                          child: TextField(
-                                            controller: _textController,
-                                            style: const TextStyle(
-                                                fontWeight: FontWeight.w600),
-                                            textAlign: TextAlign.right,
+                                          child:
+                                              DropdownButtonFormField<String>(
+                                            value: _selectedCategory,
+                                            onChanged: (String? newValue) {
+                                              setState(() {
+                                                _selectedCategory = newValue!;
+                                                _textController.text = newValue;
+                                              });
+                                            },
+                                            items: <String>['Mouton', 'Vache']
+                                                .map<DropdownMenuItem<String>>(
+                                                    (String value) {
+                                              return DropdownMenuItem<String>(
+                                                value: value,
+                                                alignment:
+                                                    Alignment.centerRight,
+                                                child: Text(value),
+                                              );
+                                            }).toList(),
                                             decoration: const InputDecoration(
                                               border: InputBorder.none,
                                               contentPadding:
@@ -687,7 +735,54 @@ class _UpdateAnimalScreenState extends State<UpdateAnimalScreen> {
                               ],
                             ),
                             child: TextButton(
-                              onPressed: () {},
+                              onPressed: () async {
+                                try {
+                                  int categorieId;
+                                  if (_selectedCategory == 'Mouton') {
+                                    categorieId = 1;
+                                  } else if (_selectedCategory == 'Vache') {
+                                    categorieId = 2;
+                                  } else {
+                                    throw Exception('Catégorie invalide');
+                                  }
+
+                                  String genre;
+                                  if (_selectedGender == 'Masculin') {
+                                    genre = "Male";
+                                  } else if (_selectedGender == 'Féminin') {
+                                    genre = "Female";
+                                  } else {
+                                    throw Exception('Genre invalide');
+                                  }
+
+                                  Map<String, dynamic> newAnimalData = {
+                                    'name': _nomController.text,
+                                    'date_birth': _birthController.text,
+                                    'sexe': genre,
+                                    'race': _raceController.text,
+                                    'taille': _tailleController.text,
+                                    'poids': _poidsController.text,
+                                    'categorie_id': categorieId,
+                                    'user_id': 2,
+                                  };
+
+                                  // print(newAnimalData);
+                                  dynamic response = await ApiService()
+                                      .updateAnimal(id, newAnimalData);
+                                  print('$response');
+
+                                  showInfoDialog(context, response['message'], 'Succès');
+                                } catch (e) {
+                                  print('Erreur : $e');
+                                  showInfoDialog(
+                                      context, e.toString(), 'Erreur');
+
+                                  // ScaffoldMessenger.of(context).showSnackBar(
+                                  //     SnackBar(
+                                  //         content: Text(
+                                  //             'Erreur lors de l\'ajout de l\'animal : $e')));
+                                }
+                              },
                               child: const Text(
                                 'Modifier',
                                 style: TextStyle(

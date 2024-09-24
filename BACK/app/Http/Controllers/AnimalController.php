@@ -58,34 +58,31 @@ class AnimalController extends Controller
     public function store(Request $request)
     {
         try {
-            // $validatedData = $request->validated();
-            // return $validatedData;
-            // Animal::create($validatedData);
-            Animal::create([
-                'photo' => $request->photo ? $request->photo : null,
+            $animal = Animal::create([
+                'photo' => $request->photo ?? null,
                 'name' => $request->name,
                 'date_birth' => $request->date_birth,
                 'sexe' => $request->sexe,
                 'race' => $request->race,
                 'taille' => $request->taille,
                 'poids' => $request->poids,
-                'necklace_id' => $request->necklace_id ? $request->necklace_id : null,
+                'necklace_id' => $request->necklace_id ?? null,
                 'categorie_id' => $request->categorie_id,
                 'user_id' => $request->user_id
             ]);
 
             return response()->json([
+                'data' => $animal,
                 'message' => 'Animal ajouté avec succès !'
-            ]);
-
+            ], 201);
         } catch (Exception $e) {
-
             return response()->json([
-                'error' => $e->getMessage()
-            ]);
-
+                'error' => $e->getMessage(),
+                'data_received' => $request->all()
+            ], 500);
         }
     }
+
 
     /**
      * Display the specified resource.
@@ -152,27 +149,19 @@ class AnimalController extends Controller
     public function destroy($id)
     {
         try {
-
             $animal = Animal::findOrFail($id);
             $animal->delete();
-            return $this->message->succedRequest('Animal'. $this->message->handleException[2]);
-
-        } catch (ModelNotFoundException $e) {
-
-            return $this->message->failedRequest('Animal ID'.$this->message->handleException[4]);
-
-        } catch (QueryException $e) {
-
-
-            return $this->message->errorRequest($this->message->handleException[5]);
-
+            return response()->json([
+                'message' => "Suppression effectuée avec succès !"
+            ], 200);
 
         } catch (Exception $e) {
-
-            return $this->message->errorRequest($this->message->handleException[6]);
-
+            return response()->json([
+                'error' => $e->getMessage()
+            ], 500);
         }
     }
+
 
     /**
      * Restrore the specified resource from storage.

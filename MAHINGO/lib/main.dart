@@ -20,7 +20,7 @@ class MyApp extends StatelessWidget {
           create: (BuildContext context) => ToggleBloc(),
         )
       ],
-      child: const MaterialApp(
+      child: MaterialApp(
         debugShowCheckedModeBanner: false,
         initialRoute: AppPaths.start,
         onGenerateRoute: AppRoutes.generateRoute,
