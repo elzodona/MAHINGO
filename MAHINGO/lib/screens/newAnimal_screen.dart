@@ -96,7 +96,7 @@ class _NewAnimalsScreenState extends State<NewAnimalsScreen> {
     AwesomeDialog(
       context: context,
       dialogType: DialogType.info,
-      customHeader: Icon(
+      customHeader: const Icon(
         Icons.info,
         color: AppColors.vert,
         size: 70,
@@ -107,7 +107,7 @@ class _NewAnimalsScreenState extends State<NewAnimalsScreen> {
       desc: message,
       btnOkOnPress: () {},
       btnOkColor: AppColors.vert
-    )..show();
+    ).show();
   }
 
   @override
@@ -185,7 +185,7 @@ class _NewAnimalsScreenState extends State<NewAnimalsScreen> {
                   padding: const EdgeInsets.all(14),
                   child: Column(
                     children: [
-                      Container(
+                      SizedBox(
                         height: screenHeight * 0.17,
                         child: Container(
                           width: 120,
@@ -245,7 +245,7 @@ class _NewAnimalsScreenState extends State<NewAnimalsScreen> {
                         child: Column(
                           children: [
                             Container(
-                              padding: EdgeInsets.all(5),
+                              padding: const EdgeInsets.all(5),
                               height: screenHeight * 0.05,
                               width: screenWidth * 0.85,
                               decoration: BoxDecoration(
@@ -629,7 +629,7 @@ class _NewAnimalsScreenState extends State<NewAnimalsScreen> {
                                 ),
                               ),
                             ),
-                            SizedBox(height: 10),
+                            const SizedBox(height: 10),
                             Container(
                               width: screenWidth * 0.85,
                               height: screenHeight * 0.07,
@@ -646,7 +646,7 @@ class _NewAnimalsScreenState extends State<NewAnimalsScreen> {
                                   ),
                                 ],
                               ),
-                              padding: EdgeInsets.all(12),
+                              padding: const EdgeInsets.all(12),
                               child: Row(
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
@@ -658,7 +658,7 @@ class _NewAnimalsScreenState extends State<NewAnimalsScreen> {
                                           height: 24,
                                           width: 24,
                                         ),
-                                        SizedBox(width: 12),
+                                        const SizedBox(width: 12),
                                         const Text(
                                           'Anniversaire',
                                           style: TextStyle(
@@ -680,7 +680,7 @@ class _NewAnimalsScreenState extends State<NewAnimalsScreen> {
                                         onTap: () => _selectDate(context),
                                         decoration: InputDecoration(
                                           border: InputBorder.none,
-                                          contentPadding: EdgeInsets.symmetric(
+                                          contentPadding: const EdgeInsets.symmetric(
                                               horizontal: 12.0),
                                           isDense: true,
                                           suffixIcon: IconButton(

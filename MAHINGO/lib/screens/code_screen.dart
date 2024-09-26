@@ -21,7 +21,7 @@ class _CodeScreenState extends State<CodeScreen> {
   }
 
   void _startTimer() {
-    _timer = Timer.periodic(Duration(seconds: 1), (Timer timer) {
+    _timer = Timer.periodic(const Duration(seconds: 1), (Timer timer) {
       if (_start == 0) {
         setState(() {
           timer.cancel();
@@ -56,11 +56,11 @@ class _CodeScreenState extends State<CodeScreen> {
       backgroundColor: AppColors.vert,
       body: Column(
         children: [
-          Container(
+          SizedBox(
             height: screenHeight * 0.25,
             width: screenWidth,
             child: Row(children: [
-              Container(
+              SizedBox(
                 width: screenWidth * 0.2,
                 child: IconButton(
                   icon: const Icon(Icons.arrow_back, color: AppColors.blanc),
@@ -69,7 +69,7 @@ class _CodeScreenState extends State<CodeScreen> {
                   },
                 ),
               ),
-              Container(
+              SizedBox(
                 width: screenWidth * 0.7,
                 child: Image.asset(
                   'assets/images/tetes_bovins.png',
@@ -133,7 +133,7 @@ class _CodeScreenState extends State<CodeScreen> {
                           _start == 0
                               ? 'Renvoyer le code'
                               : 'Renvoyer le code dans 0:${_start.toString().padLeft(2, '0')}',
-                          style: TextStyle(
+                          style: const TextStyle(
                             color: AppColors.vert,
                           ),
                         ),

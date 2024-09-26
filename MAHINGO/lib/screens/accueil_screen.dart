@@ -126,6 +126,14 @@ class AccueilScreen extends StatelessWidget {
                       alignment: Alignment.center,
                       height: screenHeight * 0.12,
                       width: screenWidth * 0.3,
+                      decoration: BoxDecoration(
+                        color: AppColors.blanc,
+                        borderRadius: const BorderRadius.all(Radius.circular(20)),
+                        border: Border.all(
+                          color: AppColors.vert,
+                          width: 2,
+                        ),
+                      ),
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         crossAxisAlignment: CrossAxisAlignment.center,
@@ -151,20 +159,20 @@ class AccueilScreen extends StatelessWidget {
                           ),
                         ],
                       ),
-                      decoration: BoxDecoration(
-                        color: AppColors.blanc,
-                        borderRadius: BorderRadius.all(Radius.circular(20)),
-                        border: Border.all(
-                          color: AppColors.vert,
-                          width: 2,
-                        ),
-                      ),
                     ),
                     
                     Container(
                       alignment: Alignment.center,
                       height: screenHeight * 0.12,
                       width: screenWidth * 0.3,
+                      decoration: BoxDecoration(
+                        color: AppColors.blanc,
+                        borderRadius: const BorderRadius.all(Radius.circular(20)),
+                        border: Border.all(
+                          color: AppColors.vert,
+                          width: 2,
+                        ),
+                      ),
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         crossAxisAlignment: CrossAxisAlignment.center,
@@ -190,19 +198,15 @@ class AccueilScreen extends StatelessWidget {
                           ),
                         ],
                       ),
-                      decoration: BoxDecoration(
-                        color: AppColors.blanc,
-                        borderRadius: BorderRadius.all(Radius.circular(20)),
-                        border: Border.all(
-                          color: AppColors.vert,
-                          width: 2,
-                        ),
-                      ),
                     ),
                     Container(
                       alignment: Alignment.center,
                       height: screenHeight * 0.12,
                       width: screenWidth * 0.3,
+                      decoration: const BoxDecoration(
+                        color: AppColors.vert,
+                        borderRadius: BorderRadius.all(Radius.circular(20)),
+                      ),
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         crossAxisAlignment: CrossAxisAlignment.center,
@@ -233,10 +237,6 @@ class AccueilScreen extends StatelessWidget {
                           ),
                         ],
                       ),
-                      decoration: const BoxDecoration(
-                        color: AppColors.vert,
-                        borderRadius: BorderRadius.all(Radius.circular(20)),
-                      ),
                     ),
                   ],
                 ),
@@ -251,7 +251,7 @@ class AccueilScreen extends StatelessWidget {
                     padding: const EdgeInsets.all(8),
                     height: screenHeight * 0.25,
                     width: screenWidth * 0.96,
-                    decoration: BoxDecoration(
+                    decoration: const BoxDecoration(
                       color: Color.fromARGB(255, 203, 222, 201),
                       // border: Border.all(
                       //   color: AppColors.vert,

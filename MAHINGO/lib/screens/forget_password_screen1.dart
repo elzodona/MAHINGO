@@ -19,12 +19,12 @@ class PhoneScreen extends StatelessWidget {
           
           // const Spacer(),
 
-        Container(
+        SizedBox(
             height: screenHeight * 0.25,
             width: screenWidth,
             child: Row(
               children: [
-                Container(
+                SizedBox(
                   width: screenWidth * 0.2,
                   child: IconButton(
                     icon: const Icon(Icons.arrow_back, color: AppColors.blanc),
@@ -34,7 +34,7 @@ class PhoneScreen extends StatelessWidget {
                   ),
                 ),
 
-                Container(
+                SizedBox(
                   width: screenWidth * 0.7,
                   child: Image.asset(
                     'assets/images/tetes_bovins.png',

@@ -21,7 +21,7 @@ class AppRoutes {
       case AppPaths.animals:
         return MaterialPageRoute(builder: (_) => const AnimalsScreen());
       case AppPaths.location:
-        return MaterialPageRoute(builder: (_) => const LocationScreen());
+        return MaterialPageRoute(builder: (_) => LocationScreen());
       case AppPaths.events:
         return MaterialPageRoute(builder: (_) => const EventsScreen());
       case AppPaths.settings:

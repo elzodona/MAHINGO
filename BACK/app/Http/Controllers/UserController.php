@@ -20,16 +20,7 @@ class UserController extends Controller
     public function __construct(){
         $this->message = new MessageController;
     }
-
-    public function login(Request $request)
-    {
-
-    }
-
-    public function logout(Request $request) {
-
-    }
-
+    
     /**
      * Display a listing of the resource.
      */

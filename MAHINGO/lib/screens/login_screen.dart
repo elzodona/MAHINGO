@@ -26,12 +26,12 @@ class _LoginScreenState extends State<LoginScreen> {
             padding: const EdgeInsets.only(top: 30),
             height: screenHeight * 0.25,
             width: screenWidth,
+            decoration: const BoxDecoration(
+              color: AppColors.vert,
+            ),
             child: Image.asset(
               'assets/images/tetes_bovins.png',
               width: 400,
-            ),
-            decoration: const BoxDecoration(
-              color: AppColors.vert,
             ),
           ),
           Expanded(
@@ -50,8 +50,8 @@ class _LoginScreenState extends State<LoginScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const SizedBox(height: 60),
-                    Center(
-                      child: const Text(
+                    const Center(
+                      child: Text(
                         'S\'identifier',
                         style: TextStyle(
                           fontSize: 24,

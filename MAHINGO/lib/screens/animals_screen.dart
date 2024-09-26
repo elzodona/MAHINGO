@@ -15,7 +15,7 @@ void showInfoDialog(BuildContext context) {
   AwesomeDialog(
     context: context,
     dialogType: DialogType.info,
-    customHeader: Icon(
+    customHeader: const Icon(
       Icons.info,
       color: AppColors.vert,
       size: 70,
@@ -35,7 +35,7 @@ void showSuccessDialog(BuildContext context) {
   AwesomeDialog(
     context: context,
     dialogType: DialogType.success,
-    customHeader: Icon(
+    customHeader: const Icon(
       Icons.check_circle,
       color: AppColors.vert,
       size: 70,
@@ -44,11 +44,10 @@ void showSuccessDialog(BuildContext context) {
     title: 'Succès',
     desc: 'Suppression effectuée avec succès',
     btnOkOnPress: () {
-      // Ferme le showModalBottomSheet ici
       Navigator.of(context).pop();
     },
     btnOkColor: AppColors.vert,
-  )..show();
+  ).show();
 }
 
 
@@ -63,15 +62,16 @@ void showConfirmationDialog(BuildContext context, int id) {
     btnOkOnPress: () async {
       try {
         await ApiService().deleteAnimal(id);
-        showSuccessDialog(context); // Affiche le dialogue de succès
+        showSuccessDialog(context);
       } catch (e) {
         print('Erreur lors de la suppression : $e');
       }
     },
-  )..show();
+  ).show();
 }
 
-void showErrorDialog(BuildContext context, String title, String message) {
+void showErrorDialog(BuildContext context, String title, String message) 
+{
   AwesomeDialog(
     context: context,
     dialogType: DialogType.error,
@@ -79,7 +79,7 @@ void showErrorDialog(BuildContext context, String title, String message) {
     title: title,
     desc: message,
     btnOkOnPress: () {},
-  )..show();
+  ).show();
 }
 
 
@@ -333,6 +333,34 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
       },
       'etat': 'normal'
     },
+    {
+      'id': 4,
+      'identifier': 'M006',
+      'timestamp': '12:40',
+      'batterie': "70%",
+      'position': "debout",
+      'température': {'value': "15°C", 'etat': "sensible"},
+      'frequence': {'value': "15bpm", 'etat': "normale"},
+      'localisation': {
+        'altitude': "",
+        'longitude': "",
+      },
+      'etat': 'normal'
+    },
+    {
+      'id': 4,
+      'identifier': 'V005',
+      'timestamp': '12:40',
+      'batterie': "70%",
+      'position': "debout",
+      'température': {'value': "15°C", 'etat': "sensible"},
+      'frequence': {'value': "15bpm", 'etat': "normale"},
+      'localisation': {
+        'altitude': "",
+        'longitude': "",
+      },
+      'etat': 'normal'
+    },
   ];
 
   @override
@@ -369,7 +397,7 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
   void _onNewAnimal() async {
     final result = await Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => NewAnimalsScreen()),
+      MaterialPageRoute(builder: (context) => const NewAnimalsScreen()),
     );
 
     if (result == true) {
@@ -388,11 +416,11 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
     // List<Map<String, dynamic>> foundAnimals = [];
     List<dynamic> foundAnimals = [];
 
-    final LayerLink _layerLink = LayerLink();
+    final LayerLink layerLink = LayerLink();
 
     if (_selectedCountIndex == 0) {
       selectedContainer = Container(
-        margin: EdgeInsets.only(top: 30),
+        margin: const EdgeInsets.only(top: 30),
         height: screenHeight * 0.44,
         decoration: const BoxDecoration(
           image: DecorationImage(
@@ -423,7 +451,7 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
       );
     } else if (_selectedCountIndex == 1) {
       selectedContainer = Container(
-        margin: EdgeInsets.only(top: 30),
+        margin: const EdgeInsets.only(top: 30),
         height: screenHeight * 0.44,
         decoration: const BoxDecoration(
           image: DecorationImage(
@@ -455,7 +483,7 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
       );
     } else if (_selectedCountIndex == 2) {
       selectedContainer = Container(
-        margin: EdgeInsets.only(top: 30),
+        margin: const EdgeInsets.only(top: 30),
         height: screenHeight * 0.44,
         decoration: const BoxDecoration(
           image: DecorationImage(
@@ -576,40 +604,40 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
       return found;
     }
 
-    TextEditingController _textController = TextEditingController(text: 'M001');
-    TextEditingController _nomController =
+    TextEditingController textController = TextEditingController(text: 'M001');
+    TextEditingController nomController =
         TextEditingController(text: 'Saloum Saloum');
-    TextEditingController _ageController = TextEditingController(text: '6 ans');
-    TextEditingController _tailleController =
+    TextEditingController ageController = TextEditingController(text: '6 ans');
+    TextEditingController tailleController =
         TextEditingController(text: '1.70 m');
-    TextEditingController _poidsController =
+    TextEditingController poidsController =
         TextEditingController(text: '306 kg');
-    TextEditingController _genreController =
+    TextEditingController genreController =
         TextEditingController(text: 'Femelle');
-    TextEditingController _raceController =
+    TextEditingController raceController =
         TextEditingController(text: 'Ndama-grande');
     // TextEditingController _birthController =
     //     TextEditingController(text: '6 ans');
 
-    final TextEditingController _birthController = TextEditingController();
-    DateTime? _selectedDate;
+    final TextEditingController birthController = TextEditingController();
+    DateTime? selectedDate;
 
-    Future<void> _selectDate(BuildContext context) async {
+    Future<void> selectDate(BuildContext context) async {
       final DateTime? picked = await showDatePicker(
         context: context,
-        initialDate: _selectedDate ?? DateTime.now(),
+        initialDate: selectedDate ?? DateTime.now(),
         firstDate: DateTime(2000),
         lastDate: DateTime(2101),
       );
-      if (picked != null && picked != _selectedDate) {
+      if (picked != null && picked != selectedDate) {
         setState(() {
-          _selectedDate = picked;
-          _birthController.text = '${picked.toLocal()}'.split(' ')[0];
+          selectedDate = picked;
+          birthController.text = '${picked.toLocal()}'.split(' ')[0];
         });
       }
     }
 
-    int _calculateAge(DateTime birthDate) {
+    int calculateAge(DateTime birthDate) {
       DateTime now = DateTime.now();
       int age = now.year - birthDate.year;
 
@@ -671,17 +699,17 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
     //   );
     // }
 
-    void _showAnimalDetails(BuildContext context, Map<String, dynamic> animal) {
+    void showAnimalDetails(BuildContext context, Map<String, dynamic> animal) {
       // String dateNaissString = animal['dateNaiss'];
       // DateTime dateNaiss = DateTime.parse(dateNaissString);
       // int age = _calculateAge(dateNaiss);
 
-      _textController.text = animal['necklace_id']['identifier'].toString();
-      _tailleController.text = animal['taille'].toString() + "m";
-      _poidsController.text = animal['poids'].toString() + "kg";
-      _genreController.text = animal['sexe'];
-      _ageController.text = animal['date_birth'];
-      _raceController.text = animal['race'];
+      textController.text = animal['necklace_id']['identifier'].toString();
+      tailleController.text = "${animal['taille']}m";
+      poidsController.text = "${animal['poids']}kg";
+      genreController.text = animal['sexe'];
+      ageController.text = animal['date_birth'];
+      raceController.text = animal['race'];
 
       showModalBottomSheet(
         context: context,
@@ -716,7 +744,7 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
                       ),
                     ),
 
-                    Container(
+                    SizedBox(
                       height: screenHeight * 0.17,
                       child: Column(
                         children: [
@@ -801,7 +829,7 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
                                     ),
                                   ),
                                   // Spacer(),
-                                  SizedBox(width: 8),
+                                  const SizedBox(width: 8),
                                   GestureDetector(
                                     onTap: () {
                                       showConfirmationDialog(
@@ -850,7 +878,7 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
                           Center(
                             child: Text(
                               animal['name'],
-                              style: TextStyle(
+                              style: const TextStyle(
                                   fontSize: 16,
                                   color: AppColors.noir,
                                   fontWeight: FontWeight.bold),
@@ -897,7 +925,7 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
                                               padding: const EdgeInsets.only(
                                                   left: 12.0),
                                               child: TextField(
-                                                controller: _raceController,
+                                                controller: raceController,
                                                 textAlign: TextAlign.right,
                                                 enabled: false,
                                                 decoration:
@@ -908,7 +936,7 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
                                                           right: 12.0),
                                                   isDense: true,
                                                 ),
-                                                style: TextStyle(
+                                                style: const TextStyle(
                                                   color: Colors.black,
                                                 ),
                                               ),
@@ -947,7 +975,7 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
                                               padding: const EdgeInsets.only(
                                                   left: 12.0),
                                               child: TextField(
-                                                controller: _ageController,
+                                                controller: ageController,
                                                 textAlign: TextAlign.right,
                                                 enabled: false,
                                                 decoration:
@@ -958,7 +986,7 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
                                                           right: 12.0),
                                                   isDense: true,
                                                 ),
-                                                style: TextStyle(
+                                                style: const TextStyle(
                                                   color: Colors.black,
                                                 ),
                                               ),
@@ -997,7 +1025,7 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
                                               padding: const EdgeInsets.only(
                                                   left: 12.0),
                                               child: TextField(
-                                                controller: _tailleController,
+                                                controller: tailleController,
                                                 textAlign: TextAlign.right,
                                                 enabled: false,
                                                 decoration:
@@ -1008,7 +1036,7 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
                                                           right: 12.0),
                                                   isDense: true,
                                                 ),
-                                                style: TextStyle(
+                                                style: const TextStyle(
                                                   color: Colors.black,
                                                 ),
                                               ),
@@ -1047,7 +1075,7 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
                                               padding: const EdgeInsets.only(
                                                   left: 12.0),
                                               child: TextField(
-                                                controller: _poidsController,
+                                                controller: poidsController,
                                                 textAlign: TextAlign.right,
                                                 enabled: false,
                                                 decoration:
@@ -1058,7 +1086,7 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
                                                           right: 12.0),
                                                   isDense: true,
                                                 ),
-                                                style: TextStyle(
+                                                style: const TextStyle(
                                                   color: Colors.black,
                                                 ),
                                               ),
@@ -1097,7 +1125,7 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
                                               padding: const EdgeInsets.only(
                                                   left: 12.0),
                                               child: TextField(
-                                                controller: _genreController,
+                                                controller: genreController,
                                                 textAlign: TextAlign.right,
                                                 enabled: false,
                                                 decoration:
@@ -1108,7 +1136,7 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
                                                           right: 12.0),
                                                   isDense: true,
                                                 ),
-                                                style: TextStyle(
+                                                style: const TextStyle(
                                                   color: Colors.black,
                                                 ),
                                               ),
@@ -1147,7 +1175,7 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
                                               padding: const EdgeInsets.only(
                                                   left: 12.0),
                                               child: TextField(
-                                                controller: _textController,
+                                                controller: textController,
                                                 textAlign: TextAlign.right,
                                                 enabled: false,
                                                 decoration:
@@ -1158,7 +1186,7 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
                                                           right: 12.0),
                                                   isDense: true,
                                                 ),
-                                                style: TextStyle(
+                                                style: const TextStyle(
                                                   color: Colors.black,
                                                 ),
                                               ),
@@ -1186,7 +1214,7 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
                     Container(
                       width: screenWidth * 0.85,
                       height: screenHeight * 0.06,
-                      padding: EdgeInsets.all(10),
+                      padding: const EdgeInsets.all(10),
                       decoration: BoxDecoration(
                         border: Border.all(color: AppColors.gris),
                         borderRadius: BorderRadius.circular(8.0),
@@ -1255,7 +1283,7 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
                                 ),
                               ),
                             ),
-                            SizedBox(height: 10),
+                            const SizedBox(height: 10),
                             Container(
                               width: screenWidth * 0.85,
                               height: screenHeight * 0.07,
@@ -1272,7 +1300,7 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
                                   ),
                                 ],
                               ),
-                              padding: EdgeInsets.all(12),
+                              padding: const EdgeInsets.all(12),
                               child: Row(
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
@@ -1284,7 +1312,7 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
                                           height: 24,
                                           width: 24,
                                         ),
-                                        SizedBox(width: 12),
+                                        const SizedBox(width: 12),
                                         const Text(
                                           'Fréquence cardiaque',
                                           style: TextStyle(
@@ -1324,7 +1352,7 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
                                   ),
                                 ],
                               ),
-                              padding: EdgeInsets.all(12),
+                              padding: const EdgeInsets.all(12),
                               child: Row(
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
@@ -1336,7 +1364,7 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
                                           height: 24,
                                           width: 24,
                                         ),
-                                        SizedBox(width: 12),
+                                        const SizedBox(width: 12),
                                         const Text(
                                           'Température corporelle',
                                           style: TextStyle(
@@ -1374,7 +1402,7 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
       });
     }
 
-    void _removeOverlay() {
+    void removeOverlay() {
       if (_overlayEntry != null) {
         _overlayEntry!.remove();
         _overlayEntry = null;
@@ -1428,7 +1456,7 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
     //   );
     // }
 
-    OverlayEntry _createOverlayEntry() {
+    OverlayEntry createOverlayEntry() {
       RenderBox? renderBox =
           _nameAnimalKey.currentContext?.findRenderObject() as RenderBox?;
       if (renderBox == null) {
@@ -1444,7 +1472,7 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
               Positioned.fill(
                 child: GestureDetector(
                   onTap: () {
-                    _removeOverlay();
+                    removeOverlay();
                   },
                   child: Container(
                     color: Colors.transparent,
@@ -1474,8 +1502,8 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
                             title: Text(foundAnimals[index]['name']),
                             onTap: () {
                               setState(() {
-                                _removeOverlay();
-                                _showAnimalDetails(
+                                removeOverlay();
+                                showAnimalDetails(
                                     context, foundAnimals[index]);
                                 _nameAnimal.text = '';
                               });
@@ -1493,10 +1521,10 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
       );
     }
 
-    void _showOverlay() {
+    void showOverlay() {
       _focusNode.requestFocus();
-      _overlayEntry = _createOverlayEntry();
-      Overlay.of(context)?.insert(_overlayEntry!);
+      _overlayEntry = createOverlayEntry();
+      Overlay.of(context).insert(_overlayEntry!);
     }
 
     return Scaffold(
@@ -1564,7 +1592,7 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
                               child: Column(
                                 children: [
                                   CompositedTransformTarget(
-                                      link: _layerLink,
+                                      link: layerLink,
                                       child: TextField(
                                         key: _nameAnimalKey,
                                         focusNode: _focusNode,
@@ -1613,9 +1641,9 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
                                                 getAnimalSearchResult(
                                                     _searchQuery);
                                             if (foundAnimals.isNotEmpty) {
-                                              _showOverlay(); // Affiche l'overlay si le dropdown n'est pas déjà affiché
+                                              showOverlay(); // Affiche l'overlay si le dropdown n'est pas déjà affiché
                                             } else {
-                                              _removeOverlay(); // Retire l'overlay si aucun résultat n'est trouvé
+                                              removeOverlay(); // Retire l'overlay si aucun résultat n'est trouvé
                                             }
                                           });
                                         },
@@ -2145,7 +2173,7 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
                                                     const Spacer(),
                                                     GestureDetector(
                                                       onTap: () {
-                                                        _showAnimalDetails(
+                                                        showAnimalDetails(
                                                             context, animal);
                                                       },
                                                       child: Container(

@@ -9,6 +9,9 @@
 	<key>NSMicrophoneUsageDescription</key>
 	<string>Nous avons besoin d'accéder à votre microphone pour l'enregistrement vidéo.</string>
 	
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Nous avons besoin de votre localisation pour afficher la carte.</string>
+
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>

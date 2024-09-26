@@ -8,7 +8,7 @@ import 'package:mahingo/services/call_api/animal_service.dart';
 class UpdateAnimalScreen extends StatefulWidget {
   final Map<String, dynamic> animal;
 
-  const UpdateAnimalScreen({required this.animal, Key? key}) : super(key: key);
+  const UpdateAnimalScreen({required this.animal, super.key});
 
   @override
   _UpdateAnimalScreenState createState() => _UpdateAnimalScreenState();
@@ -31,7 +31,7 @@ class _UpdateAnimalScreenState extends State<UpdateAnimalScreen> {
     AwesomeDialog(
         context: context,
         dialogType: DialogType.info,
-        customHeader: Icon(
+        customHeader: const Icon(
           Icons.info,
           color: AppColors.vert,
           size: 70,
@@ -42,7 +42,7 @@ class _UpdateAnimalScreenState extends State<UpdateAnimalScreen> {
         desc: message,
         btnOkOnPress: () {},
         btnOkColor: AppColors.vert)
-      ..show();
+      .show();
   }
 
   @override
@@ -206,7 +206,7 @@ class _UpdateAnimalScreenState extends State<UpdateAnimalScreen> {
                   padding: const EdgeInsets.all(14),
                   child: Column(
                     children: [
-                      Container(
+                      SizedBox(
                         height: screenHeight * 0.17,
                         child: Container(
                           width: 120,
@@ -264,7 +264,7 @@ class _UpdateAnimalScreenState extends State<UpdateAnimalScreen> {
                         child: Column(
                           children: [
                             Container(
-                              padding: EdgeInsets.all(5),
+                              padding: const EdgeInsets.all(5),
                               height: screenHeight * 0.05,
                               width: screenWidth * 0.85,
                               decoration: BoxDecoration(
@@ -646,7 +646,7 @@ class _UpdateAnimalScreenState extends State<UpdateAnimalScreen> {
                                 ),
                               ),
                             ),
-                            SizedBox(height: 10),
+                            const SizedBox(height: 10),
                             Container(
                               width: screenWidth * 0.85,
                               height: screenHeight * 0.07,
@@ -663,7 +663,7 @@ class _UpdateAnimalScreenState extends State<UpdateAnimalScreen> {
                                   ),
                                 ],
                               ),
-                              padding: EdgeInsets.all(12),
+                              padding: const EdgeInsets.all(12),
                               child: Row(
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
@@ -675,7 +675,7 @@ class _UpdateAnimalScreenState extends State<UpdateAnimalScreen> {
                                           height: 24,
                                           width: 24,
                                         ),
-                                        SizedBox(width: 12),
+                                        const SizedBox(width: 12),
                                         const Text(
                                           'Anniversaire',
                                           style: TextStyle(
@@ -697,7 +697,7 @@ class _UpdateAnimalScreenState extends State<UpdateAnimalScreen> {
                                         onTap: () => _selectDate(context),
                                         decoration: InputDecoration(
                                           border: InputBorder.none,
-                                          contentPadding: EdgeInsets.symmetric(
+                                          contentPadding: const EdgeInsets.symmetric(
                                               horizontal: 12.0),
                                           isDense: true,
                                           suffixIcon: IconButton(

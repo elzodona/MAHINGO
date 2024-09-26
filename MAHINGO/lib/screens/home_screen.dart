@@ -21,7 +21,7 @@ class _HomePageState extends State<HomePage> {
   final List<Widget> _pages = [
     AccueilScreen(),
     const AnimalsScreen(),
-    const LocationScreen(),
+    LocationScreen(),
     const EventsScreen(),
   ];
 
@@ -47,8 +47,8 @@ class _HomePageState extends State<HomePage> {
       body: PageView(
         controller: _pageController,
         onPageChanged: _onPageChanged,
-        children: _pages,
         physics: const BouncingScrollPhysics(),
+        children: _pages,
       ),
       bottomNavigationBar: CurvedNavigationBar(
         height: 60,
