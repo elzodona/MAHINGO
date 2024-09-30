@@ -13,8 +13,7 @@ class _LocationScreenState extends State<LocationScreen> {
   late GoogleMapController mapController;
   final Location location = Location();
   LatLng _initialPosition = const LatLng(14.6928, -17.4467);
-  bool _showInZone =
-      true; // True: Afficher les animaux dans la zone, False: hors zone
+  bool _showInZone = true;
 
   final List<Map<String, dynamic>> _animals = [
     {
