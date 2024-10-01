@@ -47,6 +47,18 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
       'position': LatLng(14.6990, -17.4450),
       'photo': 'assets/images/five.jpeg'
     },
+    {
+      'id': 4,
+      'name': 'Shelly',
+      'position': LatLng(14.6985, -17.4465),
+      'photo': 'assets/images/four.jpeg'
+    },
+    {
+      'id': 5,
+      'name': 'Leonard',
+      'position': LatLng(14.6995, -17.4455),
+      'photo': 'assets/images/five.jpeg'
+    },
   ];
 
   final List<LatLng> _pastureZone = [

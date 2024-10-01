@@ -1,12 +1,35 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:mahingo/screens/location_screen.dart';
+import 'package:mahingo/screens/welcome_screen.dart';
 import 'package:mahingo/utils/colors.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:mahingo/widgets/app_bar.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
+import 'package:mahingo/services/call_api/animal_service.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:location/location.dart';
 
-class AccueilScreen extends StatelessWidget {
-   AccueilScreen({super.key});
+class AccueilScreen extends StatefulWidget {
+  const AccueilScreen({super.key});
+
+  @override
+  _AccueilScreenState createState() => _AccueilScreenState();
+}
+
+class _AccueilScreenState extends State<AccueilScreen> {
+
+late GoogleMapController mapController;
+  final Location location = Location();
+  LatLng _initialPosition = const LatLng(14.6928, -17.4467);
+  bool _showInZone = true;
+
+  final List<LatLng> _pastureZone = [
+    LatLng(14.6940, -17.4470),
+    LatLng(14.6940, -17.4420),
+    LatLng(14.6980, -17.4420),
+    LatLng(14.6980, -17.4470),
+  ];
 
   final List<Map<String, dynamic>> animaux = [
     {
@@ -82,6 +105,138 @@ class AccueilScreen extends StatelessWidget {
       ]
     },
   ];
+
+  final List<Map<String, dynamic>> _animals = [
+    {
+      'id': 1,
+      'name': 'MacGyver',
+      'position': LatLng(14.6950, -17.4440),
+      'photo': 'assets/images/one.jpeg'
+    },
+    {
+      'id': 2,
+      'name': 'Bozer',
+      'position': LatLng(14.6960, -17.4450),
+      'photo': 'assets/images/two.jpeg'
+    },
+    {
+      'id': 3,
+      'name': 'Maty',
+      'position': LatLng(14.6970, -17.4430),
+      'photo': 'assets/images/three.jpeg'
+    },
+    {
+      'id': 4,
+      'name': 'Riley',
+      'position': LatLng(14.6980, -17.4460),
+      'photo': 'assets/images/four.jpeg'
+    },
+    {
+      'id': 5,
+      'name': 'Jack',
+      'position': LatLng(14.6990, -17.4450),
+      'photo': 'assets/images/five.jpeg'
+    },
+    {
+      'id': 4,
+      'name': 'Shelly',
+      'position': LatLng(14.6985, -17.4465),
+      'photo': 'assets/images/four.jpeg'
+    },
+    {
+      'id': 5,
+      'name': 'Leonard',
+      'position': LatLng(14.6995, -17.4455),
+      'photo': 'assets/images/five.jpeg'
+    },
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+    _getUserLocation();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
+  void _getUserLocation() async {
+    bool _serviceEnabled;
+    PermissionStatus _permissionGranted;
+    LocationData _userLocation;
+
+    _serviceEnabled = await location.serviceEnabled();
+    if (!_serviceEnabled) {
+      _serviceEnabled = await location.requestService();
+      if (!_serviceEnabled) {
+        return;
+      }
+    }
+
+    _permissionGranted = await location.hasPermission();
+    if (_permissionGranted == PermissionStatus.denied) {
+      _permissionGranted = await location.requestPermission();
+      if (_permissionGranted != PermissionStatus.granted) {
+        return;
+      }
+    }
+
+    _userLocation = await location.getLocation();
+    setState(() {
+      _initialPosition =
+          LatLng(_userLocation.latitude!, _userLocation.longitude!);
+    });
+
+    mapController.animateCamera(
+      CameraUpdate.newCameraPosition(
+        CameraPosition(target: _initialPosition, zoom: 14.0),
+      ),
+    );
+  }
+
+  bool _isPointInPolygon(LatLng point, List<LatLng> polygon) {
+    int intersectCount = 0;
+    for (int j = 0; j < polygon.length - 1; j++) {
+      if ((polygon[j].longitude <= point.longitude &&
+              polygon[j + 1].longitude > point.longitude) ||
+          (polygon[j].longitude > point.longitude &&
+              polygon[j + 1].longitude <= point.longitude)) {
+        double atX = (point.longitude - polygon[j].longitude) /
+                (polygon[j + 1].longitude - polygon[j].longitude) *
+                (polygon[j + 1].latitude - polygon[j].latitude) +
+            polygon[j].latitude;
+        if (point.latitude < atX) {
+          intersectCount++;
+        }
+      }
+    }
+    return intersectCount % 2 != 0;
+  }
+
+Set<Marker> _buildMarkers() {
+    return _animals.map((animal) {
+      bool isInZone = _isPointInPolygon(animal['position'], _pastureZone);
+
+      return Marker(
+        markerId: MarkerId(animal['id'].toString()),
+        position: animal['position'],
+        icon: BitmapDescriptor.defaultMarkerWithHue(
+          isInZone ? BitmapDescriptor.hueGreen : BitmapDescriptor.hueRed,
+        ),
+        infoWindow: InfoWindow(
+          title: animal['name'],
+          onTap: () {
+            // showModalBottomSheet(
+            //   context: context,
+            //   builder: (context) => _buildAnimalInfo(animal),
+            // );
+          },
+        ),
+      );
+    }).toSet();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -248,21 +403,59 @@ class AccueilScreen extends StatelessWidget {
               child: Column(
                 children: [
                   Container(
-                    padding: const EdgeInsets.all(8),
+                    padding: const EdgeInsets.all(4),
                     height: screenHeight * 0.25,
                     width: screenWidth * 0.96,
                     decoration: const BoxDecoration(
-                      color: Color.fromARGB(255, 203, 222, 201),
-                      // border: Border.all(
-                      //   color: AppColors.vert,
-                      //   width: 2.0,
-                      // ),
+                      // color: Color.fromARGB(255, 203, 222, 201),
                       borderRadius: BorderRadius.only(
                         topLeft: Radius.circular(12.5),
                         topRight: Radius.circular(12.5),
                       ),
                     ),
-                    // child: const Text('Contenu du container'),
+                    child: Stack(
+                        children: [
+                          GoogleMap(
+                            onMapCreated: (controller) {
+                              mapController = controller;
+                            },
+                            initialCameraPosition: CameraPosition(
+                              target: _initialPosition,
+                              zoom: 14.0,
+                            ),
+                            myLocationEnabled: true,
+                            polygons: {
+                              Polygon(
+                                polygonId: const PolygonId('pastureZone'),
+                                points: _pastureZone,
+                                fillColor: Colors.green.withOpacity(0.3),
+                                strokeColor: Colors.green,
+                                strokeWidth: 2,
+                              ),
+                            },
+                            markers: _buildMarkers(),
+                          ),
+                          Positioned(
+                            top: 0,
+                            right: 0,
+                            child: GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          const WelcomeScreen()),
+                                );
+                              },
+                              child: Image.asset(
+                                'assets/images/zoom.png',
+                                width: 30,
+                                height: 30,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
                   ),
                   // const SizedBox(height: 5),
                   Container(
@@ -278,7 +471,7 @@ class AccueilScreen extends StatelessWidget {
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: const Text(
-                      'Localisation',
+                      'Médina rue 39×22, Dakar',
                       style: TextStyle(
                         color: AppColors.blanc,
                         fontSize: 18,

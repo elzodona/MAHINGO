@@ -216,7 +216,20 @@ class _LocationScreenState extends State<LocationScreen> {
       'position': LatLng(14.6990, -17.4450),
       'photo': 'assets/images/five.jpeg'
     },
+    {
+      'id': 4,
+      'name': 'Shelly',
+      'position': LatLng(14.6985, -17.4465),
+      'photo': 'assets/images/four.jpeg'
+    },
+    {
+      'id': 5,
+      'name': 'Leonard',
+      'position': LatLng(14.6995, -17.4455),
+      'photo': 'assets/images/five.jpeg'
+    },
   ];
+
 
   @override
   void initState() {
@@ -316,11 +329,16 @@ class _LocationScreenState extends State<LocationScreen> {
       print('Erreur : $e');
     }
   }
-
+      
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
+
+
+    List<Map<String, dynamic>> animalsOutsideZone = _animals
+        .where((animal) => !_isPointInPolygon(animal['position'], _pastureZone))
+        .toList();
 
     // List<Map<String, dynamic>> animauxAnormaux = [];
     // for (var categorie in animaux) {
@@ -372,352 +390,346 @@ class _LocationScreenState extends State<LocationScreen> {
                 ),
               ),
             ),
-            Expanded(
+            Container(
+              height: screenHeight * 0.7852, // Conserve la hauteur désirée
+              width: screenWidth, // Conserve la largeur désirée
+              decoration: const BoxDecoration(
+                color: AppColors.blanc,
+                borderRadius: BorderRadius.only(
+                  topRight: Radius.circular(23),
+                  topLeft: Radius.circular(23),
+                ),
+              ),
+              padding: const EdgeInsets.all(14),
               child: SingleChildScrollView(
-                child: Container(
-                  height: screenHeight * 0.98,
-                  width: screenWidth,
-                  decoration: const BoxDecoration(
-                    color: AppColors.blanc,
-                    borderRadius: BorderRadius.only(
-                      topRight: Radius.circular(23),
-                      topLeft: Radius.circular(23),
-                    ),
-                  ),
-                  padding: const EdgeInsets.all(14),
-                  child: Column(
-                    children: [
-                      SizedBox(height: screenHeight * 0.01),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: Container(
-                              // height: screenHeight * 0.05,
-                              child: Column(
-                                children: [
-                                  TextField(
-                                    style: const TextStyle(
-                                        color: Color.fromARGB(255, 0, 0, 0)),
-                                    decoration: InputDecoration(
-                                      hintText: 'Search...',
-                                      hintStyle: const TextStyle(
-                                          color: Color.fromARGB(
-                                              255, 200, 199, 197)),
-                                      prefixIcon: const Icon(Icons.search,
-                                          color: AppColors.gris),
-                                      contentPadding:
-                                          const EdgeInsets.symmetric(
-                                              vertical: 10, horizontal: 15),
-                                      border: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(12),
-                                        borderSide: const BorderSide(
-                                            color: AppColors.gris, width: 1),
-                                      ),
-                                      enabledBorder: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(12),
-                                        borderSide: const BorderSide(
-                                            color: AppColors.gris, width: 1),
-                                      ),
-                                      focusedBorder: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(12),
-                                        borderSide: const BorderSide(
-                                            color: AppColors.vert, width: 2),
-                                      ),
-                                      fillColor: AppColors.blanc,
-                                      filled: true,
-                                    ),
-                                    onChanged: (value) {},
-                                  ),
-                                  SizedBox(height: screenHeight * 0.025),
-                                  Container(
-                                    height: screenHeight * 0.35,
-                                    width: screenWidth * 0.85,
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(8),
-                                      color:
-                                          Colors.white,
-                                    ),
-                                    child: Stack(
-                                      children: [
-                                        GoogleMap(
-                                          onMapCreated: (controller) {
-                                            mapController = controller;
-                                          },
-                                          initialCameraPosition: CameraPosition(
-                                            target: _initialPosition,
-                                            zoom: 14.0,
-                                          ),
-                                          myLocationEnabled: true,
-                                          polygons: {
-                                            Polygon(
-                                              polygonId: const PolygonId('pastureZone'),
-                                              points: _pastureZone,
-                                              fillColor: Colors.green.withOpacity(0.3),
-                                              strokeColor: Colors.green,
-                                              strokeWidth: 2,
-                                            ),
-                                          },
-                                          markers: _buildMarkers(),
-                                        ),
-                                        Positioned(
-                                          top:
-                                              0,
-                                          right:
-                                              0,
-                                          child: GestureDetector(
-                                            onTap: () {
-                                              Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        const WelcomeScreen()),
-                                              );
-                                            },
-                                            child: Image.asset(
-                                              'assets/images/zoom.png',
-                                              width: 30,
-                                              height: 30,
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  Container(
-                                    height: screenHeight * 0.09,
-                                    width: screenWidth * 0.85,
-                                    decoration: BoxDecoration(
-                                      color: AppColors.vertb,
+                child: Column(
+                  crossAxisAlignment:
+                      CrossAxisAlignment.start,
+                  children: [
+                    SizedBox(height: screenHeight * 0.01),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Container(
+                            // height: screenHeight,
+                            child: Column(
+                              children: [
+                                TextField(
+                                  style: const TextStyle(
+                                      color: Color.fromARGB(255, 0, 0, 0)),
+                                  decoration: InputDecoration(
+                                    hintText: 'Search...',
+                                    hintStyle: const TextStyle(
+                                        color:
+                                            Color.fromARGB(255, 200, 199, 197)),
+                                    prefixIcon: const Icon(Icons.search,
+                                        color: AppColors.gris),
+                                    contentPadding: const EdgeInsets.symmetric(
+                                        vertical: 10, horizontal: 15),
+                                    border: OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(12),
-                                      boxShadow: [
-                                        BoxShadow(
-                                          color: Colors.black.withOpacity(0.1),
-                                          spreadRadius: 2,
-                                          blurRadius: 5,
-                                          offset: Offset(0, 3),
-                                        ),
-                                      ],
+                                      borderSide: const BorderSide(
+                                          color: AppColors.gris, width: 1),
                                     ),
-                                    child: Container(
-                                      padding: EdgeInsets.all(12),
-                                      alignment: Alignment.topLeft,
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          const Text(
-                                            "Médina rue 22, Dakar",
-                                            style: TextStyle(
-                                                fontWeight: FontWeight.w500,
-                                                fontSize: 15),
-                                          ),
-                                          SizedBox(
-                                              height: screenHeight * 0.005),
-                                          const Text(
-                                            "09.06.2023  |  16:00",
-                                            style: TextStyle(fontSize: 13),
-                                          )
-                                        ],
-                                      ),
+                                    enabledBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                      borderSide: const BorderSide(
+                                          color: AppColors.gris, width: 1),
                                     ),
+                                    focusedBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                      borderSide: const BorderSide(
+                                          color: AppColors.vert, width: 2),
+                                    ),
+                                    fillColor: AppColors.blanc,
+                                    filled: true,
                                   ),
-                                  SizedBox(height: screenHeight * 0.018),
-                                  Container(
-                                    // decoration: BoxDecoration(
-                                    //   color: AppColors.vertb,
-                                    // ),
-                                    padding: EdgeInsets.all(10),
+                                  onChanged: (value) {},
+                                ),
+                                SizedBox(height: screenHeight * 0.025),
+                                Container(
+                                  height: screenHeight * 0.35,
+                                  width: screenWidth * 0.85,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(8),
+                                    color: Colors.white,
+                                  ),
+                                  child: Stack(
+                                    children: [
+                                      GoogleMap(
+                                        onMapCreated: (controller) {
+                                          mapController = controller;
+                                        },
+                                        initialCameraPosition: CameraPosition(
+                                          target: _initialPosition,
+                                          zoom: 14.0,
+                                        ),
+                                        myLocationEnabled: true,
+                                        polygons: {
+                                          Polygon(
+                                            polygonId:
+                                                const PolygonId('pastureZone'),
+                                            points: _pastureZone,
+                                            fillColor:
+                                                Colors.green.withOpacity(0.3),
+                                            strokeColor: Colors.green,
+                                            strokeWidth: 2,
+                                          ),
+                                        },
+                                        markers: _buildMarkers(),
+                                      ),
+                                      Positioned(
+                                        top: 0,
+                                        right: 0,
+                                        child: GestureDetector(
+                                          onTap: () {
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      const WelcomeScreen()),
+                                            );
+                                          },
+                                          child: Image.asset(
+                                            'assets/images/zoom.png',
+                                            width: 30,
+                                            height: 30,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                Container(
+                                  height: screenHeight * 0.09,
+                                  width: screenWidth * 0.85,
+                                  decoration: BoxDecoration(
+                                    color: AppColors.vertb,
+                                    borderRadius: BorderRadius.circular(12),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.black.withOpacity(0.1),
+                                        spreadRadius: 2,
+                                        blurRadius: 5,
+                                        offset: Offset(0, 3),
+                                      ),
+                                    ],
+                                  ),
+                                  child: Container(
+                                    padding: EdgeInsets.all(12),
+                                    alignment: Alignment.topLeft,
                                     child: Column(
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
                                       children: [
                                         const Text(
-                                          "Animaux hors zone",
+                                          "Médina rue 22, Dakar",
                                           style: TextStyle(
-                                              fontSize: 18,
-                                              fontWeight: FontWeight.w600),
+                                              fontWeight: FontWeight.w500,
+                                              fontSize: 15),
                                         ),
-                                        SizedBox(height: screenHeight * 0.01),
-                                        Column(
-                                          children: [
-
-                                            // ...animauxAnormaux
-                                            //     .map<Widget>((animal) {
-                                            //   return Padding(
-                                            //     padding: const EdgeInsets.only(
-                                            //         bottom: 8.0),
-                                            //     child: Container(
-                                            //       height: screenHeight * 0.08,
-                                            //       width: screenWidth * 0.94,
-                                            //       decoration: BoxDecoration(
-                                            //         color: const Color(
-                                            //                     0xFFFFE2E0),
-                                            //         borderRadius:
-                                            //             BorderRadius.circular(
-                                            //                 14),
-                                            //         boxShadow: const [
-                                            //           BoxShadow(
-                                            //             color: AppColors.gris,
-                                            //             spreadRadius: 1,
-                                            //             blurRadius: 1,
-                                            //             offset: Offset(0, 1),
-                                            //           ),
-                                            //         ],
-                                            //       ),
-                                            //       child: Row(
-                                            //         children: [
-                                            //           Expanded(
-                                            //             child: Column(
-                                            //               crossAxisAlignment:
-                                            //                   CrossAxisAlignment
-                                            //                       .start,
-                                            //               children: [
-                                            //                 Padding(
-                                            //                   padding:
-                                            //                       const EdgeInsets
-                                            //                           .only(
-                                            //                           left: 10,
-                                            //                           top: 12),
-                                            //                   child: Text(
-                                            //                     animal['name']!,
-                                            //                     style:
-                                            //                         const TextStyle(
-                                            //                       fontSize: 16,
-                                            //                       color: Color(
-                                            //                           0xFF39434F),
-                                            //                       fontFamily:
-                                            //                           'Roboto',
-                                            //                       fontWeight:
-                                            //                           FontWeight
-                                            //                               .w600,
-                                            //                     ),
-                                            //                   ),
-                                            //                 ),
-                                            //                 SizedBox(
-                                            //                     height:
-                                            //                         screenHeight *
-                                            //                             0.01),
-                                            //                 Padding(
-                                            //                   padding:
-                                            //                       const EdgeInsets
-                                            //                           .only(
-                                            //                           left: 10),
-                                            //                   child: Text(
-                                            //                     '${animal['sexe']}    ${animal['race']}',
-                                            //                     style:
-                                            //                         const TextStyle(
-                                            //                       fontSize: 14,
-                                            //                       fontFamily:
-                                            //                           'Roboto',
-                                            //                     ),
-                                            //                   ),
-                                            //                 ),
-                                            //               ],
-                                            //             ),
-                                            //           ),
-                                            //           Container(
-                                            //               // padding: const EdgeInsets.all(5),
-                                            //               width: screenWidth *
-                                            //                   0.38,
-                                            //               height: screenHeight *
-                                            //                   0.04,
-                                            //               decoration:
-                                            //                   const BoxDecoration(
-                                            //                 color: Color(
-                                            //                             0xFFFF3B30),
-                                            //                 borderRadius: BorderRadius
-                                            //                     .only(
-                                            //                     topLeft: Radius
-                                            //                         .circular(
-                                            //                             100),
-                                            //                     bottomLeft: Radius
-                                            //                         .circular(
-                                            //                             100)),
-                                            //               ),
-                                            //               child: Row(
-                                            //                 children: [
-                                            //                   const SizedBox(
-                                            //                       width: 20),
-                                            //                   Text(
-                                            //                     animal['necklace_id']
-                                            //                             [
-                                            //                             'identifier']
-                                            //                         .toString(),
-                                            //                     style:
-                                            //                         const TextStyle(
-                                            //                       fontSize: 16,
-                                            //                       color:
-                                            //                           AppColors
-                                            //                               .blanc,
-                                            //                       fontFamily:
-                                            //                           'Roboto',
-                                            //                       fontWeight:
-                                            //                           FontWeight
-                                            //                               .w600,
-                                            //                     ),
-                                            //                   ),
-                                            //                   const Spacer(),
-                                            //                   GestureDetector(
-                                            //                     onTap: () {
-                                                                  
-                                            //                     },
-                                            //                     child:
-                                            //                         Container(
-                                            //                       width:
-                                            //                           screenWidth *
-                                            //                               0.13,
-                                            //                       height:
-                                            //                           screenHeight *
-                                            //                               0.04,
-                                            //                       decoration:
-                                            //                           const BoxDecoration(
-                                            //                         color:  Color.fromARGB(
-                                            //                                     255,
-                                            //                                     248,
-                                            //                                     100,
-                                            //                                     92),
-                                            //                         borderRadius:
-                                            //                             BorderRadius
-                                            //                                 .only(
-                                            //                           topLeft: Radius
-                                            //                               .circular(
-                                            //                                   5),
-                                            //                           bottomLeft:
-                                            //                               Radius.circular(
-                                            //                                   5),
-                                            //                         ),
-                                            //                       ),
-                                            //                       child:
-                                            //                           const Icon(
-                                            //                         Icons
-                                            //                             .arrow_forward,
-                                            //                         color: AppColors
-                                            //                             .blanc,
-                                            //                         size: 20,
-                                            //                       ),
-                                            //                     ),
-                                            //                   ),
-                                            //                 ],
-                                            //               )),
-                                            //         ],
-                                            //       ),
-                                            //     ),
-                                            //   );
-                                            // }).toList()
-                                          
-                                          ],
+                                        SizedBox(height: screenHeight * 0.005),
+                                        const Text(
+                                          "09.06.2023  |  16:00",
+                                          style: TextStyle(fontSize: 13),
                                         )
                                       ],
                                     ),
-                                  )
-                                ],
-                              ),
+                                  ),
+                                ),
+                                SizedBox(height: screenHeight * 0.018),
+                                Container(
+                                  height: screenHeight,
+                                  // decoration: BoxDecoration(
+                                  //   color: AppColors.vertb,
+                                  // ),
+                                  padding: EdgeInsets.all(10),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      const Text(
+                                        "Animaux hors zone",
+                                        style: TextStyle(
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.w600),
+                                      ),
+                                      SizedBox(height: screenHeight * 0.01),
+                                      Column(
+                                        children: [
+                                          ...animalsOutsideZone
+                                              .map<Widget>((animal) {
+                                            return Padding(
+                                              padding: const EdgeInsets.only(
+                                                  bottom: 8.0),
+                                              child: Container(
+                                                height: screenHeight * 0.08,
+                                                width: screenWidth * 0.94,
+                                                decoration: BoxDecoration(
+                                                  color:
+                                                      const Color(0xFFFFE2E0),
+                                                  borderRadius:
+                                                      BorderRadius.circular(14),
+                                                  boxShadow: const [
+                                                    BoxShadow(
+                                                      color: AppColors.gris,
+                                                      spreadRadius: 1,
+                                                      blurRadius: 1,
+                                                      offset: Offset(0, 1),
+                                                    ),
+                                                  ],
+                                                ),
+                                                child: Row(
+                                                  children: [
+                                                    Expanded(
+                                                      child: Column(
+                                                        crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .start,
+                                                        children: [
+                                                          Padding(
+                                                            padding:
+                                                                const EdgeInsets
+                                                                    .only(
+                                                                    left: 10,
+                                                                    top: 12),
+                                                            child: Text(
+                                                              animal['name']!,
+                                                              style:
+                                                                  const TextStyle(
+                                                                fontSize: 16,
+                                                                color: Color(
+                                                                    0xFF39434F),
+                                                                fontFamily:
+                                                                    'Roboto',
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w600,
+                                                              ),
+                                                            ),
+                                                          ),
+                                                          SizedBox(
+                                                              height:
+                                                                  screenHeight *
+                                                                      0.01),
+                                                          Padding(
+                                                            padding:
+                                                                const EdgeInsets
+                                                                    .only(
+                                                                    left: 10),
+                                                            child: Text(
+                                                              '${animal['sexe']}    ${animal['race']}',
+                                                              style:
+                                                                  const TextStyle(
+                                                                fontSize: 14,
+                                                                fontFamily:
+                                                                    'Roboto',
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                    Container(
+                                                        // padding: const EdgeInsets.all(5),
+                                                        width:
+                                                            screenWidth * 0.38,
+                                                        height:
+                                                            screenHeight * 0.04,
+                                                        decoration:
+                                                            const BoxDecoration(
+                                                          color:
+                                                              Color(0xFFFF3B30),
+                                                          borderRadius:
+                                                              BorderRadius.only(
+                                                                  topLeft: Radius
+                                                                      .circular(
+                                                                          100),
+                                                                  bottomLeft: Radius
+                                                                      .circular(
+                                                                          100)),
+                                                        ),
+                                                        child: Row(
+                                                          children: [
+                                                            const SizedBox(
+                                                                width: 20),
+                                                            Text(
+                                                              // animal['necklace_id']
+                                                              //         [
+                                                              //         'identifier']
+                                                              //     .toString(),
+                                                              "wesh",
+                                                              style:
+                                                                  const TextStyle(
+                                                                fontSize: 16,
+                                                                color: AppColors
+                                                                    .blanc,
+                                                                fontFamily:
+                                                                    'Roboto',
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w600,
+                                                              ),
+                                                            ),
+                                                            const Spacer(),
+                                                            GestureDetector(
+                                                              onTap: () {},
+                                                              child: Container(
+                                                                width:
+                                                                    screenWidth *
+                                                                        0.13,
+                                                                height:
+                                                                    screenHeight *
+                                                                        0.04,
+                                                                decoration:
+                                                                    const BoxDecoration(
+                                                                  color: Color
+                                                                      .fromARGB(
+                                                                          255,
+                                                                          248,
+                                                                          100,
+                                                                          92),
+                                                                  borderRadius:
+                                                                      BorderRadius
+                                                                          .only(
+                                                                    topLeft: Radius
+                                                                        .circular(
+                                                                            5),
+                                                                    bottomLeft:
+                                                                        Radius.circular(
+                                                                            5),
+                                                                  ),
+                                                                ),
+                                                                child:
+                                                                    const Icon(
+                                                                  Icons
+                                                                      .arrow_forward,
+                                                                  color:
+                                                                      AppColors
+                                                                          .blanc,
+                                                                  size: 20,
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        )),
+                                                  ],
+                                                ),
+                                              ),
+                                            );
+                                          }).toList()
+                                        ],
+                                      )
+                                    ],
+                                  ),
+                                )
+                              ],
                             ),
                           ),
-                        ],
-                      ),
-                    ],
-                  ),
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
               ),
             ),
