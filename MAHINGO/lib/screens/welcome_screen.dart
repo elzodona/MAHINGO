@@ -15,6 +15,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
   final Location location = Location();
   LatLng _initialPosition = const LatLng(14.6928, -17.4467);
   bool _showInZone = true;
+  TextEditingController _searchController = TextEditingController();
 
   final List<Map<String, dynamic>> colliers = [
     {
@@ -313,8 +314,47 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
     );
   }
 
+  void showAnimalPositionByName(String animalName) {
+    animalName = animalName.toLowerCase();
+    Set<Marker> _markers = {};
+
+    Map<String, dynamic>? animal = _animals.firstWhere(
+      (animal) => animal['name'].toLowerCase() == animalName,
+      orElse: () => {},
+    );
+
+    if (animal != null && animal['necklace_id'] != null) {
+      Map<String, dynamic>? collar = colliers.firstWhere(
+        (collar) => collar['identifier'] == animal['necklace_id']['identifier'],
+        orElse: () => {},
+      );
+
+      if (collar != null) {
+        LatLng animalPosition = LatLng(
+          double.parse(collar['localisation']['altitude']),
+          double.parse(collar['localisation']['longitude']),
+        );
+
+        mapController.animateCamera(
+          CameraUpdate.newLatLngZoom(animalPosition, 18.0),
+        );
+
+        setState(() {
+          _markers = _buildMarkers();
+        });
+      } else {
+        print("Collier introuvable pour cet animal.");
+      }
+    } else {
+      print("Animal non trouvé.");
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
+    double screenHeight = MediaQuery.of(context).size.height;
+    
     return Scaffold(
       appBar: AppBar(
       title: const Text(
@@ -347,6 +387,43 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
               ),
             },
             markers: _buildMarkers(),
+          ),
+          Positioned(
+            top: 10,
+            left: 10,
+            right: 60,
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(12),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.2),
+                    spreadRadius: 2,
+                    blurRadius: 5,
+                    offset: Offset(0, 2),
+                  ),
+                ],
+              ),
+              child: TextField(
+                controller: _searchController,
+                style: const TextStyle(color: Colors.black),
+                decoration: const InputDecoration(
+                  hintText: 'Search...',
+                  hintStyle: TextStyle(
+                      color: Color.fromARGB(255, 200, 199, 197)),
+                  prefixIcon: Icon(Icons.search, color: Colors.grey),
+                  contentPadding:
+                      EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+                  border: InputBorder.none,
+                ),
+                onChanged: (value) {
+                  setState(() {
+                    showAnimalPositionByName(value.trim());
+                  });
+                },
+              ),
+            ),
           ),
           Positioned(
             right: 10,
