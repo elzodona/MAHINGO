@@ -52,6 +52,13 @@ class AnimalController extends Controller
         return response()->json(['data' => $result]);
     }
 
+    public function animalsByUserb($userId)
+    {
+        $animaux = Animal::where('user_id', $userId)->get();
+
+        return response()->json(['data' => AnimalResource::collection($animaux)]);
+    }
+
     /**
      * Store a newly created resource in storage.
      */
@@ -161,7 +168,6 @@ class AnimalController extends Controller
             ], 500);
         }
     }
-
 
     /**
      * Restrore the specified resource from storage.

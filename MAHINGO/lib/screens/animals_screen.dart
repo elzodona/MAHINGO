@@ -11,6 +11,7 @@ import 'package:material_design_icons_flutter/material_design_icons_flutter.dart
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:mahingo/services/call_api/animal_service.dart';
 
+
 void showInfoDialog(BuildContext context) {
   AwesomeDialog(
     context: context,
@@ -70,8 +71,7 @@ void showConfirmationDialog(BuildContext context, int id) {
   ).show();
 }
 
-void showErrorDialog(BuildContext context, String title, String message) 
-{
+void showErrorDialog(BuildContext context, String title, String message) {
   AwesomeDialog(
     context: context,
     dialogType: DialogType.error,

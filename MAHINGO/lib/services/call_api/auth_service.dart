@@ -5,7 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthService {
   final String baseUrl =
-      'https://ton-api.com/api';
+      'http://10.0.2.2:8000/api';
 
   Future<bool> login(String telephone, String password) async {
     final url = Uri.parse('$baseUrl/login');
@@ -24,6 +24,7 @@ class AuthService {
 
         SharedPreferences prefs = await SharedPreferences.getInstance();
         await prefs.setString('token', data['token']);
+        await prefs.setString('user', json.encode(data['user']));
 
         return true;
       } else {
@@ -39,6 +40,16 @@ class AuthService {
   Future<void> logout() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.remove('token');
+    await prefs.remove('user');
+  }
+
+  Future<Map<String, dynamic>?> getUser() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    if (prefs.containsKey('user')) {
+      String userString = prefs.getString('user')!;
+      return json.decode(userString);
+    }
+    return null;
   }
 
   Future<bool> isLoggedIn() async {

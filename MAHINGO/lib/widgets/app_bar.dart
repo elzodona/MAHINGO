@@ -1,9 +1,41 @@
 import 'package:flutter/material.dart';
 import 'package:mahingo/screens/login_screen.dart';
 import 'package:mahingo/utils/colors.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:convert';
 
-class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
+class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
   const CustomAppBar({super.key});
+
+  @override
+  _CustomAppBarState createState() => _CustomAppBarState();
+
+  @override
+  Size get preferredSize => const Size.fromHeight(kToolbarHeight);
+}
+
+class _CustomAppBarState extends State<CustomAppBar> {
+  Map<String, dynamic>? user;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserInfo();
+  }
+
+  Future<void> _loadUserInfo() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    if (prefs.containsKey('user')) {
+      String userString = prefs.getString('user')!;
+      Map<String, dynamic> userData = json.decode(userString);
+      setState(() {
+        user = userData;
+      });
+      print(user);
+    } else {
+      print('Aucun utilisateur trouvé dans les préférences partagées');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -34,15 +66,17 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
             ),
           ),
 
-          const Expanded(
+          Expanded(
             child: Center(
               child: Text(
-                'Bonjour Elhadji Malick!',
-                style: TextStyle(
-                  color: AppColors.noir, 
+                user != null
+                    ? 'Bonjour ${user!['first_name']}!'
+                    : 'Bonjour Elhadji Malick!',
+                style: const TextStyle(
+                  color: AppColors.noir,
                   fontSize: 22,
                   fontWeight: FontWeight.bold,
-                  fontFamily: 'Poppins'
+                  fontFamily: 'Poppins',
                 ),
               ),
             ),
@@ -50,9 +84,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
 
           // Icône à droite
           GestureDetector(
-            onTap: () {
-
-            },
+            onTap: () {},
             child: const Icon(
               Icons.notifications,
               color: AppColors.vert,
@@ -63,7 +95,4 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
       ),
     );
   }
-
-  @override
-  Size get preferredSize => const Size.fromHeight(kToolbarHeight);
 }

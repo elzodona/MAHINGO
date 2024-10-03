@@ -14,6 +14,16 @@ class ApiService {
     }
   }
 
+  Future<List<dynamic>> fetchAnimalsb(int id) async {
+    final response = await http.get(Uri.parse('$baseUrl/animal/userb/$id'));
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      return data['data'];
+    } else {
+      throw Exception('Failed to load animals');
+    }
+  }
+
   Future<List<dynamic>> fetchColliers() async {
     final response = await http.get(Uri.parse('$baseUrl/necklace/all'));
     if (response.statusCode == 200) {

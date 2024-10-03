@@ -45,6 +45,7 @@ Route::prefix('category')->group(function (){
 Route::prefix('animal')->group(function (){
     Route::get('/all', [AnimalController::class, 'index']);
     Route::get('/user/{userId}', [AnimalController::class, 'animalsByUser']);
+    Route::get('/userb/{userId}', [AnimalController::class, 'animalsByUserb']);
     Route::post('/add',[AnimalController::class,'store']);
     Route::get('/show/{id}',[AnimalController::class,'show']);
     Route::patch('/update/{id}',[AnimalController::class,'update']);
