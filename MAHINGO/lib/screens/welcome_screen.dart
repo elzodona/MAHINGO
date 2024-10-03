@@ -16,48 +16,177 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
   LatLng _initialPosition = const LatLng(14.6928, -17.4467);
   bool _showInZone = true;
 
-  final List<Map<String, dynamic>> _animals = [
+  final List<Map<String, dynamic>> colliers = [
     {
       'id': 1,
-      'name': 'MacGyver',
-      'position': LatLng(14.6950, -17.4440),
-      'photo': 'assets/images/one.jpeg'
+      'identifier': 'M001',
+      'timestamp': '12:40',
+      'batterie': "70%",
+      'position': "debout",
+      'température': {'value': "15°C", 'etat': "sensible"},
+      'frequence': {'value': "15bpm", 'etat': "normale"},
+      'localisation': {
+        'altitude': "14.6960", // Coordonnées dans la zone
+        'longitude': "-17.4450",
+      },
+      'etat': 'normal'
     },
     {
       'id': 2,
-      'name': 'Bozer',
-      'position': LatLng(14.6960, -17.4450),
-      'photo': 'assets/images/two.jpeg'
+      'identifier': 'M002',
+      'timestamp': '12:40',
+      'batterie': "70%",
+      'position': "debout",
+      'température': {'value': "15°C", 'etat': "sensible"},
+      'frequence': {'value': "15bpm", 'etat': "normale"},
+      'localisation': {
+        'altitude': "14.6950", // Coordonnées dans la zone
+        'longitude': "-17.4435",
+      },
+      'etat': 'sensible'
     },
     {
       'id': 3,
-      'name': 'Maty',
-      'position': LatLng(14.6970, -17.4430),
-      'photo': 'assets/images/three.jpeg'
+      'identifier': 'V001',
+      'timestamp': '12:40',
+      'batterie': "70%",
+      'position': "debout",
+      'température': {'value': "15°C", 'etat': "sensible"},
+      'frequence': {'value': "15bpm", 'etat': "normale"},
+      'localisation': {
+        'altitude': "14.6970", // Coordonnées dans la zone
+        'longitude': "-17.4430",
+      },
+      'etat': 'sensible'
     },
     {
       'id': 4,
-      'name': 'Riley',
-      'position': LatLng(14.6980, -17.4460),
-      'photo': 'assets/images/four.jpeg'
+      'identifier': 'V002',
+      'timestamp': '12:40',
+      'batterie': "70%",
+      'position': "debout",
+      'température': {'value': "15°C", 'etat': "sensible"},
+      'frequence': {'value': "15bpm", 'etat': "normale"},
+      'localisation': {
+        'altitude': "14.6980", // Coordonnées dans la zone
+        'longitude': "-17.4460",
+      },
+      'etat': 'normal'
     },
     {
       'id': 5,
-      'name': 'Jack',
-      'position': LatLng(14.6990, -17.4450),
-      'photo': 'assets/images/five.jpeg'
+      'identifier': 'V003',
+      'timestamp': '12:40',
+      'batterie': "70%",
+      'position': "debout",
+      'température': {'value': "15°C", 'etat': "sensible"},
+      'frequence': {'value': "15bpm", 'etat': "normale"},
+      'localisation': {
+        'altitude': "14.6995", // Coordonnées hors zone
+        'longitude': "-17.4480",
+      },
+      'etat': 'normal'
     },
     {
-      'id': 4,
-      'name': 'Shelly',
-      'position': LatLng(14.6985, -17.4465),
-      'photo': 'assets/images/four.jpeg'
+      'id': 6,
+      'identifier': 'V004',
+      'timestamp': '12:40',
+      'batterie': "70%",
+      'position': "debout",
+      'température': {'value': "15°C", 'etat': "sensible"},
+      'frequence': {'value': "15bpm", 'etat': "normale"},
+      'localisation': {
+        'altitude': "14.7000", // Coordonnées hors zone
+        'longitude': "-17.4490",
+      },
+      'etat': 'anormal'
+    },
+  ];
+
+  final List<Map<String, dynamic>> _animals = [
+    {
+      "id": 1,
+      "photo": null,
+      "name": "Dudu",
+      "date_birth": "2024-09-01",
+      "sexe": "Male",
+      "race": "Ladoum",
+      "taille": 2,
+      "poids": 200,
+      "necklace_id": {
+        "id": 1,
+        "identifier": "M001",
+      }
     },
     {
-      'id': 5,
-      'name': 'Leonard',
-      'position': LatLng(14.6995, -17.4455),
-      'photo': 'assets/images/five.jpeg'
+      "id": 2,
+      "photo": null,
+      "name": "Abdou",
+      "date_birth": "2024-09-01",
+      "sexe": "Male",
+      "race": "Ladoum",
+      "taille": 2,
+      "poids": 200,
+      "necklace_id": {
+        "id": 2,
+        "identifier": "M002",
+      }
+    },
+    {
+      "id": 3,
+      "photo": null,
+      "name": "Tapha",
+      "date_birth": "2024-09-01",
+      "sexe": "Male",
+      "race": "Ladoum",
+      "taille": 2,
+      "poids": 200,
+      "necklace_id": {
+        "id": 3,
+        "identifier": "V001",
+      }
+    },
+    {
+      "id": 4,
+      "photo": null,
+      "name": "Meuz",
+      "date_birth": "2024-09-01",
+      "sexe": "Male",
+      "race": "Ladoum",
+      "taille": 2,
+      "poids": 200,
+      "necklace_id": {
+        "id": 4,
+        "identifier": "V003",
+      }
+    },
+    {
+      "id": 5,
+      "photo": null,
+      "name": "Ass",
+      "date_birth": "2024-09-01",
+      "sexe": "Male",
+      "race": "Ladoum",
+      "taille": 2,
+      "poids": 200,
+      "necklace_id": {
+        "id": 5,
+        "identifier": "V004",
+      }
+    },
+    {
+      "id": 6,
+      "photo": null,
+      "name": "Wesh",
+      "date_birth": "2024-09-01",
+      "sexe": "Male",
+      "race": "Ladoum",
+      "taille": 2,
+      "poids": 200,
+      "necklace_id": {
+        "id": 6,
+        "identifier": "V002",
+      }
     },
   ];
 
@@ -71,7 +200,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
   @override
   void initState() {
     super.initState();
-    _getUserLocation();
+    // _getUserLocation();
   }
 
   void _getUserLocation() async {
@@ -128,23 +257,31 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
   }
 
   Set<Marker> _buildMarkers() {
-    return _animals.map((animal) {
-      bool isInZone = _isPointInPolygon(animal['position'], _pastureZone);
+    return colliers.map((collar) {
+      LatLng position = LatLng(
+        double.parse(collar['localisation']['altitude']),
+        double.parse(collar['localisation']['longitude']),
+      );
+
+      bool isInZone = _isPointInPolygon(position, _pastureZone);
+
+      String? animalName;
+      for (var animal in _animals) {
+        if (animal['necklace_id']['identifier'] == collar['identifier']) {
+          animalName = animal['name'];
+          break;
+        }
+      }
 
       return Marker(
-        markerId: MarkerId(animal['id'].toString()),
-        position: animal['position'],
+        markerId: MarkerId(collar['identifier']),
+        position: position,
         icon: BitmapDescriptor.defaultMarkerWithHue(
           isInZone ? BitmapDescriptor.hueGreen : BitmapDescriptor.hueRed,
         ),
         infoWindow: InfoWindow(
-          title: animal['name'],
-          onTap: () {
-            showModalBottomSheet(
-              context: context,
-              builder: (context) => _buildAnimalInfo(animal),
-            );
-          },
+          title: animalName ?? 'Animal inconnu',
+          snippet: isInZone ? "Dans la zone" : "Hors de la zone",
         ),
       );
     }).toSet();
@@ -248,11 +385,24 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
   }
 
   void _showAnimalList() {
-    List<Map<String, dynamic>> animals = _animals
-        .where((animal) => _showInZone
-            ? _isPointInPolygon(animal['position'], _pastureZone)
-            : !_isPointInPolygon(animal['position'], _pastureZone))
-        .toList();
+    List<Map<String, dynamic>> animals = _animals.where((animal) {
+      final collar = colliers.firstWhere(
+        (c) => c['id'] == animal['necklace_id']['id'],
+        orElse: () => {},
+      );
+
+      if (collar == null)
+        return false; 
+        
+      LatLng collarPosition = LatLng(
+        double.parse(collar['localisation']['altitude']),
+        double.parse(collar['localisation']['longitude']),
+      );
+
+      return _showInZone
+          ? _isPointInPolygon(collarPosition, _pastureZone)
+          : !_isPointInPolygon(collarPosition, _pastureZone);
+    }).toList();
 
     showModalBottomSheet(
       context: context,
@@ -266,7 +416,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                 _showInZone ? 'Animaux dans la zone' : 'Animaux hors zone',
                 style: const TextStyle(
                   fontSize: 20,
-                  fontWeight: FontWeight.bold,
+                  fontWeight: FontWeight.w600,
                 ),
               ),
               Expanded(
@@ -276,11 +426,20 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                     final animal = animals[index];
                     return ListTile(
                       leading: CircleAvatar(
-                        backgroundImage: AssetImage(animal['photo']),
+                        backgroundImage: animal['photo'] != null
+                            ? AssetImage(animal['photo'])
+                            : AssetImage(
+                                'assets/images/me.jpeg'),
                       ),
-                      title: Text(animal['name']),
-                      subtitle: Text(
-                          _showInZone ? "Dans la zone" : "Hors de la zone"),
+                      title: Text(
+                        animal['name'],
+                        style: TextStyle(
+                          fontWeight: FontWeight.w500,
+                          fontSize: 18
+                        ),
+                      ),
+                      // subtitle: Text(
+                      //     _showInZone ? "Dans la zone" : "Hors de la zone"),
                       onTap: () {
                         showModalBottomSheet(
                           context: context,
@@ -297,4 +456,5 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
       },
     );
   }
+
 }
