@@ -856,7 +856,7 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
                               child: const Center(
                                 child: CircleAvatar(
                                   backgroundImage:
-                                      AssetImage('assets/images/me.jpeg'),
+                                      AssetImage('assets/images/two.jpeg'),
                                   radius: 40,
                                 ),
                               ),

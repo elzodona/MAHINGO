@@ -192,7 +192,7 @@ class _AccueilScreenState extends State<AccueilScreen> {
       'température': {'value': "15°C", 'etat': "sensible"},
       'frequence': {'value': "15bpm", 'etat': "normale"},
       'localisation': {
-        'altitude': "14.7000", // Coordonnées hors zone
+        'altitude': "14.7000",
         'longitude': "-17.4490",
       },
       'etat': 'anormal'
@@ -653,7 +653,7 @@ class _AccueilScreenState extends State<AccueilScreen> {
                           borderRadius: BorderRadius.circular(10),
                         ),
                         child: const Text(
-                          'Médina rue 39×22, Dakar',
+                          'Colobane rue 39×22, Dakar',
                           style: TextStyle(
                               color: AppColors.blanc,
                               fontSize: 18,

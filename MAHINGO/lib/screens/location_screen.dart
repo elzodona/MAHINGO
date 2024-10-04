@@ -592,7 +592,7 @@ class _LocationScreenState extends State<LocationScreen> {
                                                   width: screenWidth * 0.94,
                                                   decoration: BoxDecoration(
                                                     color:
-                                                        const Color(0xFFFFE2E0),
+                                                        AppColors.vertClair,
                                                     borderRadius:
                                                         BorderRadius.circular(
                                                             14),
@@ -664,8 +664,7 @@ class _LocationScreenState extends State<LocationScreen> {
                                                               0.04,
                                                           decoration:
                                                               const BoxDecoration(
-                                                            color: Color(
-                                                                0xFFFF3B30),
+                                                            color: AppColors.vert,
                                                             borderRadius: BorderRadius.only(
                                                                 topLeft: Radius
                                                                     .circular(
@@ -714,9 +713,9 @@ class _LocationScreenState extends State<LocationScreen> {
                                                                     color: Color
                                                                         .fromARGB(
                                                                             255,
-                                                                            248,
-                                                                            100,
-                                                                            92),
+                                                                            81,
+                                                                            170,
+                                                                            77),
                                                                     borderRadius:
                                                                         BorderRadius
                                                                             .only(

@@ -202,7 +202,7 @@ class _NewAnimalsScreenState extends State<NewAnimalsScreen> {
                                   backgroundImage: _selectedImage != null
                                       ? FileImage(File(_selectedImage!.path))
                                       : const AssetImage(
-                                              'assets/images/me.jpeg')
+                                              'assets/images/two.jpeg')
                                           as ImageProvider,
                                   radius: 50,
                                 ),
