@@ -4,6 +4,8 @@ import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import 'package:mahingo/services/call_api/animal_service.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
+import 'package:mahingo/routes/paths.dart';
+
 
 class NewAnimalsScreen extends StatefulWidget {
   const NewAnimalsScreen({super.key});
@@ -809,6 +811,10 @@ class _NewAnimalsScreenState extends State<NewAnimalsScreen> {
                                   // print('${response['message']}');
 
                                   showInfoDialog(context, response['message'], 'Succès');
+                                  
+                                  // Navigator.pushReplacementNamed(
+                                  //     context, AppPaths.animals);
+
                                 } catch (e) {
                                   print('Erreur : $e');
                                   showInfoDialog(

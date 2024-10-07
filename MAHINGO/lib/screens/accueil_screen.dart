@@ -23,6 +23,7 @@ class _AccueilScreenState extends State<AccueilScreen> {
   Map<String, dynamic> user = {};
   List<dynamic> animaux = [];
   List<dynamic> _animals = [];
+  double? percentage;
 
   late GoogleMapController mapController;
   final Location location = Location();
@@ -346,8 +347,10 @@ class _AccueilScreenState extends State<AccueilScreen> {
   @override
   void initState() {
     super.initState();
-    _loadUserInfo();
-    // _loadAnimals();
+    // _loadUserInfo();
+    _loadUserInfo().then((_) {
+      calculateGoodStatePercentage(_animals, colliers);
+    });
     // _getUserLocation();
   }
 
@@ -377,7 +380,7 @@ class _AccueilScreenState extends State<AccueilScreen> {
     try {
       ApiService apiService = ApiService();
       animaux = await apiService.fetchAnimals(user["id"]);
-      _animals = await apiService.fetchAnimalsb(2);
+      _animals = await apiService.fetchAnimalsb(user["id"]);
       // print(animaux);
       setState(() {});
     } catch (e) {
@@ -483,6 +486,46 @@ class _AccueilScreenState extends State<AccueilScreen> {
         ),
       );
     }).toSet();
+  }
+
+  void calculateGoodStatePercentage(
+      List<dynamic> animals, List<Map<String, dynamic>> colliers) {
+    // Cast de la liste des animaux pour correspondre au type Map<String, dynamic>
+    List<Map<String, dynamic>> animalsWithCollar = animals
+        .where((animal) {
+          return colliers.any((collar) =>
+              collar['identifier'] == animal['necklace_id']['identifier']);
+        })
+        .cast<Map<String, dynamic>>()
+        .toList(); // Conversion ici
+
+    // Vérifier le nombre d'animaux avec un collier en état "normal"
+    int goodStateAnimals = animalsWithCollar.where((animal) {
+      final collar = colliers.firstWhere(
+          (collar) =>
+              collar['identifier'] == animal['necklace_id']['identifier'],
+          orElse: () => {});
+
+      if (collar != null && collar['etat'] == 'normal') {
+        return true;
+      }
+      return false;
+    }).length;
+
+    // Calcul du pourcentage si des animaux avec des colliers existent
+    if (animalsWithCollar.isNotEmpty) {
+      setState(() {
+        percentage = (goodStateAnimals / animalsWithCollar.length) * 100;
+      });
+    } else {
+      setState(() {
+        percentage = 0; // Aucun animal avec collier trouvé
+      });
+    }
+
+    print(
+        "Pourcentage d'animaux avec des colliers en bon état : ${percentage?.toStringAsFixed(2) ?? '0.00'}%");
+
   }
 
 
@@ -622,7 +665,7 @@ class _AccueilScreenState extends State<AccueilScreen> {
                               width: 26,
                             ),
                             Text(
-                              '95%',
+                              '${percentage?.toStringAsFixed(2)}%',
                               style: TextStyle(
                                 color: AppColors.blanc,
                                 fontSize: 26,

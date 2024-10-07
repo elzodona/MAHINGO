@@ -20,7 +20,7 @@ class UserController extends Controller
     public function __construct(){
         $this->message = new MessageController;
     }
-    
+
     /**
      * Display a listing of the resource.
      */

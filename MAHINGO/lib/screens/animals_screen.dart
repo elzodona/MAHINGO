@@ -10,6 +10,8 @@ import 'package:mahingo/utils/colors.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:mahingo/services/call_api/animal_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:convert';
 
 
 void showInfoDialog(BuildContext context) {
@@ -92,6 +94,9 @@ class AnimalsScreen extends StatefulWidget {
 
 class _AnimalsScreenState extends State<AnimalsScreen> {
   List<dynamic> animaux = [];
+  List<dynamic> _animals = [];
+  int id = 2;
+
 
   int _selectedFilterIndex = 0;
   int _selectedCountIndex = 0;
@@ -348,12 +353,12 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
       'etat': 'normal'
     },
   ];
+  
   @override
   void initState() {
     super.initState();
     _focusNode = FocusNode();
-    // animals = ApiService().fetchAnimals();
-    _loadAnimals();
+    _loadUserInfo();
   }
 
   @override
@@ -365,14 +370,31 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
 
   @override
   void didPopNext() {
-    _loadAnimals();
+    _loadUserInfo();
   }
 
-  Future<void> _loadAnimals() async {
+  Future<void> _loadUserInfo() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    if (prefs.containsKey('user')) {
+      String userString = prefs.getString('user')!;
+      Map<String, dynamic> userData = json.decode(userString);
+      setState(() {
+        id = userData["id"];
+      });
+      // print("User ID: ${id}");
+
+      await _loadAnimals(id);
+    } else {
+      print('Aucun utilisateur trouvé dans les préférences partagées');
+    }
+  }
+
+  Future<void> _loadAnimals(int id) async {
     try {
       ApiService apiService = ApiService();
-      animaux = await apiService.fetchAnimals(2);
-      print(animaux);
+      animaux = await apiService.fetchAnimals(id);
+      _animals = await apiService.fetchAnimalsb(id);
+      // print(animaux);
       setState(() {});
     } catch (e) {
       print('Erreur : $e');
@@ -386,7 +408,7 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
     );
 
     if (result == true) {
-      _loadAnimals();
+      _loadAnimals(id);
     }
   }
 
@@ -1383,7 +1405,7 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
           );
         },
       ).then((_) {
-        _loadAnimals();
+        _loadAnimals(id);
       });
     }
 
