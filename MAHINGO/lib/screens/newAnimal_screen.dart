@@ -18,6 +18,8 @@ class _NewAnimalsScreenState extends State<NewAnimalsScreen> {
 
   final TextEditingController _textController =
       TextEditingController(text: 'M001');
+  final TextEditingController _idController =
+      TextEditingController(text: 'M000');
   final TextEditingController _nomController =
       TextEditingController(text: 'Saloum saloum');
   final TextEditingController _tailleController =
@@ -113,6 +115,7 @@ class _NewAnimalsScreenState extends State<NewAnimalsScreen> {
   @override
   void dispose() {
     _textController.dispose();
+    _idController.dispose();
     _nomController.dispose();
     _tailleController.dispose();
     _poidsController.dispose();
@@ -238,7 +241,7 @@ class _NewAnimalsScreenState extends State<NewAnimalsScreen> {
                       SizedBox(height: screenHeight * 0.025),
 
                       Container(
-                        height: screenHeight * 0.35,
+                        height: screenHeight * 0.4,
                         decoration: const BoxDecoration(
                             // color: AppColors.vert
                             ),
@@ -322,7 +325,7 @@ class _NewAnimalsScreenState extends State<NewAnimalsScreen> {
                             SizedBox(height: screenHeight * 0.015),
                             Container(
                               padding: const EdgeInsets.all(5),
-                              height: screenHeight * 0.25,
+                              height: screenHeight * 0.3,
                               width: screenWidth * 0.85,
                               decoration: BoxDecoration(
                                 border: Border.all(color: AppColors.gris),
@@ -339,6 +342,54 @@ class _NewAnimalsScreenState extends State<NewAnimalsScreen> {
                               ),
                               child: Column(
                                 children: [
+                                  Container(
+                                    child: Column(
+                                      children: [
+                                        Row(
+                                          children: [
+                                            Container(
+                                              width: screenWidth * 0.25,
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 12.0),
+                                              child: const Text(
+                                                'Collier',
+                                                style: TextStyle(
+                                                    color: AppColors.noir,
+                                                    fontWeight:
+                                                        FontWeight.w600),
+                                              ),
+                                            ),
+                                            Expanded(
+                                              child: Padding(
+                                                padding: const EdgeInsets.only(
+                                                    left: 12.0),
+                                                child: TextField(
+                                                  controller: _idController,
+                                                  textAlign: TextAlign.right,
+                                                  decoration:
+                                                      const InputDecoration(
+                                                    border: InputBorder.none,
+                                                    contentPadding:
+                                                        EdgeInsets.only(
+                                                            right: 12.0),
+                                                    isDense: true,
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        SizedBox(height: screenHeight * 0.003),
+                                        Container(
+                                          height: 1.0,
+                                          color: AppColors.gris,
+                                          width: screenWidth * 0.75,
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  SizedBox(height: screenHeight * 0.015),
                                   Container(
                                     child: Column(
                                       children: [
@@ -749,6 +800,7 @@ class _NewAnimalsScreenState extends State<NewAnimalsScreen> {
                                     'poids': _poidsController.text,
                                     'categorie_id': categorieId,
                                     'user_id': 2,
+                                    'necklace_id': _idController.text,
                                   };
 
                                   // print(newAnimalData);

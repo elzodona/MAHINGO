@@ -11,6 +11,7 @@ use App\Http\Resources\Resources\AnimalResource;
 use App\Http\Controllers\Messages\MessageController;
 use App\Http\Resources\Collections\AnimalCollection;
 use App\Models\Categorie;
+use App\Models\Necklace;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class AnimalController extends Controller
@@ -65,6 +66,8 @@ class AnimalController extends Controller
     public function store(Request $request)
     {
         try {
+            $necklace_id = Necklace::where('identifier', $request->necklace_id)->first()->id;
+
             $animal = Animal::create([
                 'photo' => $request->photo ?? null,
                 'name' => $request->name,
@@ -73,14 +76,14 @@ class AnimalController extends Controller
                 'race' => $request->race,
                 'taille' => $request->taille,
                 'poids' => $request->poids,
-                'necklace_id' => $request->necklace_id ?? null,
+                'necklace_id' => $necklace_id,
                 'categorie_id' => $request->categorie_id,
                 'user_id' => $request->user_id
             ]);
 
             return response()->json([
-                'data' => $animal,
-                'message' => 'Animal ajouté avec succès !'
+                'message' => 'Animal ajouté avec succès !',
+                'data' => $animal
             ], 201);
         } catch (Exception $e) {
             return response()->json([

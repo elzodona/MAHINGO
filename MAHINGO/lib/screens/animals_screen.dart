@@ -261,7 +261,7 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
         'altitude': "14.6980", // Coordonnées dans la zone
         'longitude': "-17.4460",
       },
-      'etat': 'sensible'
+      'etat': 'normal'
     },
     {
       'id': 5,
@@ -300,10 +300,52 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
       'température': {'value': "15°C", 'etat': "sensible"},
       'frequence': {'value': "15bpm", 'etat': "normale"},
       'localisation': {
-        'altitude': "14.7000",
-        'longitude': "-17.4490",
+        'altitude': "14.7005",
+        'longitude': "-17.4495",
       },
       'etat': 'anormal'
+    },
+    {
+      'id': 7,
+      'identifier': 'M007',
+      'timestamp': '12:40',
+      'batterie': "70%",
+      'position': "debout",
+      'température': {'value': "15°C", 'etat': "sensible"},
+      'frequence': {'value': "15bpm", 'etat': "normale"},
+      'localisation': {
+        'altitude': "14.7010",
+        'longitude': "-17.4500",
+      },
+      'etat': 'normal'
+    },
+    {
+      'id': 8,
+      'identifier': 'M008',
+      'timestamp': '12:40',
+      'batterie': "70%",
+      'position': "debout",
+      'température': {'value': "15°C", 'etat': "sensible"},
+      'frequence': {'value': "15bpm", 'etat': "normale"},
+      'localisation': {
+        'altitude': "14.7015",
+        'longitude': "-17.4505",
+      },
+      'etat': 'normal'
+    },
+    {
+      'id': 9,
+      'identifier': 'V006',
+      'timestamp': '12:40',
+      'batterie': "70%",
+      'position': "debout",
+      'température': {'value': "15°C", 'etat': "sensible"},
+      'frequence': {'value': "15bpm", 'etat': "normale"},
+      'localisation': {
+        'altitude': "14.7020",
+        'longitude': "-17.4510",
+      },
+      'etat': 'normal'
     },
   ];
   @override
