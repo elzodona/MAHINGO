@@ -209,20 +209,6 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
   final List<Map<String, dynamic>> colliers = [
     {
       'id': 1,
-      'identifier': 'M001',
-      'timestamp': '12:40',
-      'batterie': "70%",
-      'position': "debout",
-      'température': {'value': "15°C", 'etat': "sensible"},
-      'frequence': {'value': "15bpm", 'etat': "normale"},
-      'localisation': {
-        'altitude': "",
-        'longitude': "",
-      },
-      'etat': 'normal'
-    },
-    {
-      'id': 2,
       'identifier': 'M002',
       'timestamp': '12:40',
       'batterie': "70%",
@@ -230,27 +216,13 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
       'température': {'value': "15°C", 'etat': "sensible"},
       'frequence': {'value': "15bpm", 'etat': "normale"},
       'localisation': {
-        'altitude': "",
-        'longitude': "",
+        'altitude': "14.6960", // Coordonnées dans la zone
+        'longitude': "-17.4450",
       },
-      'etat': 'sensible'
+      'etat': 'normal'
     },
     {
-      'id': 12,
-      'identifier': 'V001',
-      'timestamp': '12:40',
-      'batterie': "70%",
-      'position': "debout",
-      'température': {'value': "15°C", 'etat': "sensible"},
-      'frequence': {'value': "15bpm", 'etat': "normale"},
-      'localisation': {
-        'altitude': "",
-        'longitude': "",
-      },
-      'etat': 'sensible'
-    },
-    {
-      'id': 4,
+      'id': 2,
       'identifier': 'V002',
       'timestamp': '12:40',
       'batterie': "70%",
@@ -258,13 +230,13 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
       'température': {'value': "15°C", 'etat': "sensible"},
       'frequence': {'value': "15bpm", 'etat': "normale"},
       'localisation': {
-        'altitude': "",
-        'longitude': "",
+        'altitude': "14.6950", // Coordonnées dans la zone
+        'longitude': "-17.4435",
       },
-      'etat': 'normal'
+      'etat': 'sensible'
     },
     {
-      'id': 4,
+      'id': 3,
       'identifier': 'V003',
       'timestamp': '12:40',
       'batterie': "70%",
@@ -272,36 +244,8 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
       'température': {'value': "15°C", 'etat': "sensible"},
       'frequence': {'value': "15bpm", 'etat': "normale"},
       'localisation': {
-        'altitude': "",
-        'longitude': "",
-      },
-      'etat': 'normal'
-    },
-    {
-      'id': 4,
-      'identifier': 'V004',
-      'timestamp': '12:40',
-      'batterie': "70%",
-      'position': "debout",
-      'température': {'value': "15°C", 'etat': "sensible"},
-      'frequence': {'value': "15bpm", 'etat': "normale"},
-      'localisation': {
-        'altitude': "",
-        'longitude': "",
-      },
-      'etat': 'anormal'
-    },
-    {
-      'id': 4,
-      'identifier': 'M004',
-      'timestamp': '12:40',
-      'batterie': "70%",
-      'position': "debout",
-      'température': {'value': "15°C", 'etat': "sensible"},
-      'frequence': {'value': "15bpm", 'etat': "normale"},
-      'localisation': {
-        'altitude': "",
-        'longitude': "",
+        'altitude': "14.6970", // Coordonnées dans la zone
+        'longitude': "-17.4430",
       },
       'etat': 'sensible'
     },
@@ -314,27 +258,27 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
       'température': {'value': "15°C", 'etat': "sensible"},
       'frequence': {'value': "15bpm", 'etat': "normale"},
       'localisation': {
-        'altitude': "",
-        'longitude': "",
+        'altitude': "14.6980", // Coordonnées dans la zone
+        'longitude': "-17.4460",
       },
-      'etat': 'normal'
+      'etat': 'sensible'
     },
     {
-      'id': 4,
-      'identifier': 'M005',
+      'id': 5,
+      'identifier': 'V001',
       'timestamp': '12:40',
       'batterie': "70%",
       'position': "debout",
       'température': {'value': "15°C", 'etat': "sensible"},
       'frequence': {'value': "15bpm", 'etat': "normale"},
       'localisation': {
-        'altitude': "",
-        'longitude': "",
+        'altitude': "14.6995", // Coordonnées hors zone
+        'longitude': "-17.4480",
       },
       'etat': 'normal'
     },
     {
-      'id': 4,
+      'id': 6,
       'identifier': 'M006',
       'timestamp': '12:40',
       'batterie': "70%",
@@ -342,27 +286,26 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
       'température': {'value': "15°C", 'etat': "sensible"},
       'frequence': {'value': "15bpm", 'etat': "normale"},
       'localisation': {
-        'altitude': "",
-        'longitude': "",
+        'altitude': "14.7000",
+        'longitude': "-17.4490",
       },
-      'etat': 'normal'
+      'etat': 'anormal'
     },
     {
-      'id': 4,
-      'identifier': 'V005',
+      'id': 6,
+      'identifier': 'M001',
       'timestamp': '12:40',
       'batterie': "70%",
       'position': "debout",
       'température': {'value': "15°C", 'etat': "sensible"},
       'frequence': {'value': "15bpm", 'etat': "normale"},
       'localisation': {
-        'altitude': "",
-        'longitude': "",
+        'altitude': "14.7000",
+        'longitude': "-17.4490",
       },
-      'etat': 'normal'
+      'etat': 'anormal'
     },
   ];
-
   @override
   void initState() {
     super.initState();
@@ -2231,6 +2174,7 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
                                       ),
                                     );
                                   }).toList(),
+                          
                           ),
                         ),
                       ),

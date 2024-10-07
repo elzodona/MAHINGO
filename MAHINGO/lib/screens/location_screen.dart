@@ -4,6 +4,9 @@ import 'package:mahingo/utils/colors.dart';
 import 'package:mahingo/services/call_api/animal_service.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:convert';
+
 
 class LocationScreen extends StatefulWidget {
   const LocationScreen({super.key});
@@ -13,7 +16,8 @@ class LocationScreen extends StatefulWidget {
 }
 
 class _LocationScreenState extends State<LocationScreen> {
-  List<dynamic> animaux = [];
+  List<dynamic> _animals = [];
+  int id = 2;
 
   TextEditingController _searchController = TextEditingController();
 
@@ -32,7 +36,7 @@ class _LocationScreenState extends State<LocationScreen> {
   final List<Map<String, dynamic>> colliers = [
     {
       'id': 1,
-      'identifier': 'M001',
+      'identifier': 'M002',
       'timestamp': '12:40',
       'batterie': "70%",
       'position': "debout",
@@ -46,7 +50,7 @@ class _LocationScreenState extends State<LocationScreen> {
     },
     {
       'id': 2,
-      'identifier': 'M002',
+      'identifier': 'V002',
       'timestamp': '12:40',
       'batterie': "70%",
       'position': "debout",
@@ -60,7 +64,7 @@ class _LocationScreenState extends State<LocationScreen> {
     },
     {
       'id': 3,
-      'identifier': 'V001',
+      'identifier': 'V003',
       'timestamp': '12:40',
       'batterie': "70%",
       'position': "debout",
@@ -74,7 +78,7 @@ class _LocationScreenState extends State<LocationScreen> {
     },
     {
       'id': 4,
-      'identifier': 'V002',
+      'identifier': 'M003',
       'timestamp': '12:40',
       'batterie': "70%",
       'position': "debout",
@@ -84,11 +88,11 @@ class _LocationScreenState extends State<LocationScreen> {
         'altitude': "14.6980", // Coordonnées dans la zone
         'longitude': "-17.4460",
       },
-      'etat': 'normal'
+      'etat': 'sensible'
     },
     {
       'id': 5,
-      'identifier': 'V003',
+      'identifier': 'V001',
       'timestamp': '12:40',
       'batterie': "70%",
       'position': "debout",
@@ -102,111 +106,125 @@ class _LocationScreenState extends State<LocationScreen> {
     },
     {
       'id': 6,
-      'identifier': 'V004',
+      'identifier': 'M006',
       'timestamp': '12:40',
       'batterie': "70%",
       'position': "debout",
       'température': {'value': "15°C", 'etat': "sensible"},
       'frequence': {'value': "15bpm", 'etat': "normale"},
       'localisation': {
-        'altitude': "14.7000", // Coordonnées hors zone
+        'altitude': "14.7000",
+        'longitude': "-17.4490",
+      },
+      'etat': 'anormal'
+    },
+    {
+      'id': 6,
+      'identifier': 'M001',
+      'timestamp': '12:40',
+      'batterie': "70%",
+      'position': "debout",
+      'température': {'value': "15°C", 'etat': "sensible"},
+      'frequence': {'value': "15bpm", 'etat': "normale"},
+      'localisation': {
+        'altitude': "14.7000",
         'longitude': "-17.4490",
       },
       'etat': 'anormal'
     },
   ];
 
-  final List<Map<String, dynamic>> _animals = [
-    {
-      "id": 1,
-      "photo": null,
-      "name": "Dudu",
-      "date_birth": "2024-09-01",
-      "sexe": "Male",
-      "race": "Ladoum",
-      "taille": 2,
-      "poids": 200,
-      "necklace_id": {
-        "id": 1,
-        "identifier": "M001",
-      }
-    },
-    {
-      "id": 2,
-      "photo": null,
-      "name": "Abdou",
-      "date_birth": "2024-09-01",
-      "sexe": "Male",
-      "race": "Ladoum",
-      "taille": 2,
-      "poids": 200,
-      "necklace_id": {
-        "id": 2,
-        "identifier": "M002",
-      }
-    },
-    {
-      "id": 3,
-      "photo": null,
-      "name": "Tapha",
-      "date_birth": "2024-09-01",
-      "sexe": "Male",
-      "race": "Ladoum",
-      "taille": 2,
-      "poids": 200,
-      "necklace_id": {
-        "id": 3,
-        "identifier": "V001",
-      }
-    },
-    {
-      "id": 4,
-      "photo": null,
-      "name": "Meuz",
-      "date_birth": "2024-09-01",
-      "sexe": "Male",
-      "race": "Ladoum",
-      "taille": 2,
-      "poids": 200,
-      "necklace_id": {
-        "id": 4,
-        "identifier": "V003",
-      }
-    },
-    {
-      "id": 5,
-      "photo": null,
-      "name": "Ass",
-      "date_birth": "2024-09-01",
-      "sexe": "Male",
-      "race": "Ladoum",
-      "taille": 2,
-      "poids": 200,
-      "necklace_id": {
-        "id": 5,
-        "identifier": "V004",
-      }
-    },
-    {
-      "id": 6,
-      "photo": null,
-      "name": "Wesh",
-      "date_birth": "2024-09-01",
-      "sexe": "Male",
-      "race": "Ladoum",
-      "taille": 2,
-      "poids": 200,
-      "necklace_id": {
-        "id": 6,
-        "identifier": "V002",
-      }
-    },
-  ];
+  // final List<Map<String, dynamic>> _animals = [
+  //   {
+  //     "id": 1,
+  //     "photo": null,
+  //     "name": "Dudu",
+  //     "date_birth": "2024-09-01",
+  //     "sexe": "Male",
+  //     "race": "Ladoum",
+  //     "taille": 2,
+  //     "poids": 200,
+  //     "necklace_id": {
+  //       "id": 1,
+  //       "identifier": "M001",
+  //     }
+  //   },
+  //   {
+  //     "id": 2,
+  //     "photo": null,
+  //     "name": "Abdou",
+  //     "date_birth": "2024-09-01",
+  //     "sexe": "Male",
+  //     "race": "Ladoum",
+  //     "taille": 2,
+  //     "poids": 200,
+  //     "necklace_id": {
+  //       "id": 2,
+  //       "identifier": "M002",
+  //     }
+  //   },
+  //   {
+  //     "id": 3,
+  //     "photo": null,
+  //     "name": "Tapha",
+  //     "date_birth": "2024-09-01",
+  //     "sexe": "Male",
+  //     "race": "Ladoum",
+  //     "taille": 2,
+  //     "poids": 200,
+  //     "necklace_id": {
+  //       "id": 3,
+  //       "identifier": "V001",
+  //     }
+  //   },
+  //   {
+  //     "id": 4,
+  //     "photo": null,
+  //     "name": "Meuz",
+  //     "date_birth": "2024-09-01",
+  //     "sexe": "Male",
+  //     "race": "Ladoum",
+  //     "taille": 2,
+  //     "poids": 200,
+  //     "necklace_id": {
+  //       "id": 4,
+  //       "identifier": "V003",
+  //     }
+  //   },
+  //   {
+  //     "id": 5,
+  //     "photo": null,
+  //     "name": "Ass",
+  //     "date_birth": "2024-09-01",
+  //     "sexe": "Male",
+  //     "race": "Ladoum",
+  //     "taille": 2,
+  //     "poids": 200,
+  //     "necklace_id": {
+  //       "id": 5,
+  //       "identifier": "V004",
+  //     }
+  //   },
+  //   {
+  //     "id": 6,
+  //     "photo": null,
+  //     "name": "Wesh",
+  //     "date_birth": "2024-09-01",
+  //     "sexe": "Male",
+  //     "race": "Ladoum",
+  //     "taille": 2,
+  //     "poids": 200,
+  //     "necklace_id": {
+  //       "id": 6,
+  //       "identifier": "V002",
+  //     }
+  //   },
+  // ];
 
   @override
   void initState() {
     super.initState();
-    _loadAnimals();
+    _loadUserInfo();
     // _getUserLocation();
   }
 
@@ -271,7 +289,14 @@ class _LocationScreenState extends State<LocationScreen> {
   }
 
   Set<Marker> _buildMarkers() {
-    return colliers.map((collar) {
+    return colliers.where((collar) {
+      return _animals.any((animal) =>
+          animal['necklace_id'] != null &&
+          animal['necklace_id']['identifier'] != null &&
+          collar != null &&
+          collar['identifier'] != null &&
+          animal['necklace_id']['identifier'] == collar['identifier']);
+    }).map((collar) {
       LatLng position = LatLng(
         double.parse(collar['localisation']['altitude']),
         double.parse(collar['localisation']['longitude']),
@@ -279,10 +304,13 @@ class _LocationScreenState extends State<LocationScreen> {
 
       bool isInZone = _isPointInPolygon(position, _pastureZone);
 
-      // Récupérer le nom de l'animal associé au collier
       String? animalName;
       for (var animal in _animals) {
-        if (animal['necklace_id']['identifier'] == collar['identifier']) {
+        if (animal['necklace_id'] != null &&
+            animal['necklace_id']['identifier'] != null &&
+            collar != null &&
+            collar['identifier'] != null &&
+            animal['necklace_id']['identifier'] == collar['identifier']) {
           animalName = animal['name'];
           break;
         }
@@ -296,17 +324,33 @@ class _LocationScreenState extends State<LocationScreen> {
         ),
         infoWindow: InfoWindow(
           title: animalName ?? 'Animal inconnu',
-          // snippet: isInZone ? "Dans la zone" : "Hors de la zone",
+          snippet: isInZone ? "Dans la zone" : "Hors de la zone",
         ),
       );
     }).toSet();
   }
 
-  Future<void> _loadAnimals() async {
+  Future<void> _loadUserInfo() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    if (prefs.containsKey('user')) {
+      String userString = prefs.getString('user')!;
+      Map<String, dynamic> userData = json.decode(userString);
+      setState(() {
+        id = userData["id"];
+      });
+      // print("User ID: ${id}");
+
+      await _loadAnimals(id);
+    } else {
+      print('Aucun utilisateur trouvé dans les préférences partagées');
+    }
+  }
+
+  Future<void> _loadAnimals(int id) async {
     try {
       ApiService apiService = ApiService();
-      animaux = await apiService.fetchAnimals(2);
-      // print(animaux);
+      _animals = await apiService.fetchAnimalsb(id);
+      // print(_animals);
       setState(() {});
     } catch (e) {
       print('Erreur : $e');
@@ -340,8 +384,7 @@ class _LocationScreenState extends State<LocationScreen> {
           );
 
           mapController.animateCamera(
-            CameraUpdate.newLatLngZoom(
-                animalPosition, 18.0),
+            CameraUpdate.newLatLngZoom(animalPosition, 18.0),
           );
 
           setState(() {
@@ -355,23 +398,28 @@ class _LocationScreenState extends State<LocationScreen> {
       }
     }
 
-    List<Map<String, dynamic>> animalsOutsideZone = _animals.where((animal) {
-      var collar = colliers.firstWhere(
-        (c) => c['identifier'] == animal['necklace_id']['identifier'],
-        orElse: () => {},
-      );
+    List<Map<String, dynamic>> animalsOutsideZone = _animals
+        .where((animal) {
+          var collar = colliers.firstWhere(
+            (c) => c['identifier'] == animal['necklace_id']['identifier'],
+            orElse: () =>
+                {},
+          );
 
-      if (collar != null) {
-        LatLng position = LatLng(
-          double.parse(collar['localisation']['altitude']),
-          double.parse(collar['localisation']['longitude']),
-        );
+          if (collar != null) {
+            LatLng position = LatLng(
+              double.parse(collar['localisation']['altitude']),
+              double.parse(collar['localisation']['longitude']),
+            );
 
-        return !_isPointInPolygon(position, _pastureZone);
-      }
+            return !_isPointInPolygon(
+                position, _pastureZone);
+          }
 
-      return true;
-    }).toList();
+          return false;
+        })
+        .cast<Map<String, dynamic>>()
+        .toList();
 
     return Scaffold(
       body: Container(
@@ -584,6 +632,18 @@ class _LocationScreenState extends State<LocationScreen> {
                                           children: [
                                             ...animalsOutsideZone
                                                 .map<Widget>((animal) {
+                                              var collar = colliers.firstWhere(
+                                                (c) =>
+                                                    c['identifier'] ==
+                                                    animal['necklace_id']
+                                                        ['identifier'],
+                                                orElse: () => {},
+                                              );
+
+                                              String etat = collar != null
+                                                  ? collar['etat']
+                                                  : 'normal';
+
                                               return Padding(
                                                 padding: const EdgeInsets.only(
                                                     bottom: 8.0),
@@ -591,8 +651,8 @@ class _LocationScreenState extends State<LocationScreen> {
                                                   height: screenHeight * 0.08,
                                                   width: screenWidth * 0.94,
                                                   decoration: BoxDecoration(
-                                                    color:
-                                                        AppColors.vertClair,
+                                                    color: getCollarColor(
+                                                        etat),
                                                     borderRadius:
                                                         BorderRadius.circular(
                                                             14),
@@ -657,88 +717,85 @@ class _LocationScreenState extends State<LocationScreen> {
                                                         ),
                                                       ),
                                                       Container(
-                                                          // padding: const EdgeInsets.all(5),
-                                                          width: screenWidth *
-                                                              0.38,
-                                                          height: screenHeight *
-                                                              0.04,
-                                                          decoration:
-                                                              const BoxDecoration(
-                                                            color: AppColors.vert,
-                                                            borderRadius: BorderRadius.only(
-                                                                topLeft: Radius
-                                                                    .circular(
-                                                                        100),
-                                                                bottomLeft: Radius
-                                                                    .circular(
-                                                                        100)),
+                                                        width:
+                                                            screenWidth * 0.38,
+                                                        height:
+                                                            screenHeight * 0.04,
+                                                        decoration:
+                                                            BoxDecoration(
+                                                          color: getCollarColor2(
+                                                              etat),
+                                                          borderRadius:
+                                                              const BorderRadius.only(
+                                                            topLeft:
+                                                                Radius.circular(
+                                                                    100),
+                                                            bottomLeft:
+                                                                Radius.circular(
+                                                                    100),
                                                           ),
-                                                          child: Row(
-                                                            children: [
-                                                              const SizedBox(
-                                                                  width: 20),
-                                                              Text(
-                                                                animal['name'],
-                                                                // "wesh",
-                                                                style:
-                                                                    const TextStyle(
-                                                                  fontSize: 16,
+                                                        ),
+                                                        child: Row(
+                                                          children: [
+                                                            const SizedBox(
+                                                                width: 20),
+                                                            Text(
+                                                              animal['name'],
+                                                              style:
+                                                                  const TextStyle(
+                                                                fontSize: 16,
+                                                                color: AppColors
+                                                                    .blanc,
+                                                                fontFamily:
+                                                                    'Roboto',
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w600,
+                                                              ),
+                                                            ),
+                                                            const Spacer(),
+                                                            GestureDetector(
+                                                              onTap: () {
+                                                                showAnimalPositionByName(
+                                                                    animal[
+                                                                        'name']);
+                                                              },
+                                                              child: Container(
+                                                                width:
+                                                                    screenWidth *
+                                                                        0.13,
+                                                                height:
+                                                                    screenHeight *
+                                                                        0.04,
+                                                                decoration:
+                                                                    BoxDecoration(
+                                                                  color: getCollarColor3(
+                                                                          etat),
+                                                                  borderRadius:
+                                                                      const BorderRadius
+                                                                          .only(
+                                                                    topLeft: Radius
+                                                                        .circular(
+                                                                            5),
+                                                                    bottomLeft:
+                                                                        Radius.circular(
+                                                                            5),
+                                                                  ),
+                                                                ),
+                                                                child:
+                                                                    const Icon(
+                                                                  Icons
+                                                                      .arrow_forward,
                                                                   color:
                                                                       AppColors
                                                                           .blanc,
-                                                                  fontFamily:
-                                                                      'Roboto',
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w600,
+                                                                  size: 20,
                                                                 ),
                                                               ),
-                                                              const Spacer(),
-                                                              GestureDetector(
-                                                                onTap: () {
-                                                                  showAnimalPositionByName(
-                                                                      animal[
-                                                                          'name']);
-                                                                },
-                                                                child:
-                                                                    Container(
-                                                                  width:
-                                                                      screenWidth *
-                                                                          0.13,
-                                                                  height:
-                                                                      screenHeight *
-                                                                          0.04,
-                                                                  decoration:
-                                                                      const BoxDecoration(
-                                                                    color: Color
-                                                                        .fromARGB(
-                                                                            255,
-                                                                            81,
-                                                                            170,
-                                                                            77),
-                                                                    borderRadius:
-                                                                        BorderRadius
-                                                                            .only(
-                                                                      topLeft: Radius
-                                                                          .circular(
-                                                                              5),
-                                                                      bottomLeft:
-                                                                          Radius.circular(
-                                                                              5),
-                                                                    ),
-                                                                  ),
-                                                                  child:
-                                                                      const Icon(
-                                                                    Icons
-                                                                        .arrow_forward,
-                                                                    color: AppColors
-                                                                        .blanc,
-                                                                    size: 20,
-                                                                  ),
-                                                                ),
-                                                              ),
-                                                            ],
-                                                          )),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ),
                                                     ],
                                                   ),
                                                 ),
@@ -765,4 +822,45 @@ class _LocationScreenState extends State<LocationScreen> {
       ),
     );
   }
+
+  Color getCollarColor(String etat) {
+    switch (etat) {
+      case 'normal':
+        return AppColors.vertClair;
+      case 'sensible':
+        return Color(0xFFFFEFD9);
+      case 'anormal':
+        return Color(0xFFFFE2E0);
+      default:
+        return AppColors.gris;
+    }
+  }
+
+  Color getCollarColor2(String etat) {
+    switch (etat) {
+      case 'normal':
+        return AppColors.vert;
+      case 'sensible':
+        return const Color(0xFFFF9500);
+      case 'anormal':
+        return const Color(0xFFFF3B30);
+      default:
+        return AppColors.gris;
+    }
+  }
+
+  Color getCollarColor3(String etat) {
+    switch (etat) {
+      case 'normal':
+        return Color.fromARGB(255, 81, 170, 77);
+      case 'sensible':
+        return Color.fromARGB(255, 248, 170, 62);
+      case 'anormal':
+        return Color.fromARGB(255, 248, 100, 92);
+      default:
+        return AppColors.gris;
+    }
+  }
+
+
 }

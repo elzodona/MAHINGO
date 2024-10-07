@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
 import 'package:mahingo/utils/colors.dart';
+import 'package:mahingo/services/call_api/animal_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:convert';
+
 
 class WelcomeScreen extends StatefulWidget {
   const WelcomeScreen({super.key});
@@ -11,6 +15,9 @@ class WelcomeScreen extends StatefulWidget {
 }
 
 class _WelcomeScreenState extends State<WelcomeScreen> {
+  List<dynamic> _animals = [];
+  int id = 2;
+
   late GoogleMapController mapController;
   final Location location = Location();
   LatLng _initialPosition = const LatLng(14.6928, -17.4467);
@@ -20,7 +27,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
   final List<Map<String, dynamic>> colliers = [
     {
       'id': 1,
-      'identifier': 'M001',
+      'identifier': 'M002',
       'timestamp': '12:40',
       'batterie': "70%",
       'position': "debout",
@@ -34,7 +41,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
     },
     {
       'id': 2,
-      'identifier': 'M002',
+      'identifier': 'V002',
       'timestamp': '12:40',
       'batterie': "70%",
       'position': "debout",
@@ -48,7 +55,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
     },
     {
       'id': 3,
-      'identifier': 'V001',
+      'identifier': 'V003',
       'timestamp': '12:40',
       'batterie': "70%",
       'position': "debout",
@@ -62,7 +69,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
     },
     {
       'id': 4,
-      'identifier': 'V002',
+      'identifier': 'M003',
       'timestamp': '12:40',
       'batterie': "70%",
       'position': "debout",
@@ -76,7 +83,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
     },
     {
       'id': 5,
-      'identifier': 'V003',
+      'identifier': 'V001',
       'timestamp': '12:40',
       'batterie': "70%",
       'position': "debout",
@@ -90,107 +97,34 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
     },
     {
       'id': 6,
-      'identifier': 'V004',
+      'identifier': 'M006',
       'timestamp': '12:40',
       'batterie': "70%",
       'position': "debout",
       'température': {'value': "15°C", 'etat': "sensible"},
       'frequence': {'value': "15bpm", 'etat': "normale"},
       'localisation': {
-        'altitude': "14.7000", // Coordonnées hors zone
+        'altitude': "14.7000",
+        'longitude': "-17.4490",
+      },
+      'etat': 'anormal'
+    },
+    {
+      'id': 6,
+      'identifier': 'M001',
+      'timestamp': '12:40',
+      'batterie': "70%",
+      'position': "debout",
+      'température': {'value': "15°C", 'etat': "sensible"},
+      'frequence': {'value': "15bpm", 'etat': "normale"},
+      'localisation': {
+        'altitude': "14.7000",
         'longitude': "-17.4490",
       },
       'etat': 'anormal'
     },
   ];
-
-  final List<Map<String, dynamic>> _animals = [
-    {
-      "id": 1,
-      "photo": null,
-      "name": "Dudu",
-      "date_birth": "2024-09-01",
-      "sexe": "Male",
-      "race": "Ladoum",
-      "taille": 2,
-      "poids": 200,
-      "necklace_id": {
-        "id": 1,
-        "identifier": "M001",
-      }
-    },
-    {
-      "id": 2,
-      "photo": null,
-      "name": "Abdou",
-      "date_birth": "2024-09-01",
-      "sexe": "Male",
-      "race": "Ladoum",
-      "taille": 2,
-      "poids": 200,
-      "necklace_id": {
-        "id": 2,
-        "identifier": "M002",
-      }
-    },
-    {
-      "id": 3,
-      "photo": null,
-      "name": "Tapha",
-      "date_birth": "2024-09-01",
-      "sexe": "Male",
-      "race": "Ladoum",
-      "taille": 2,
-      "poids": 200,
-      "necklace_id": {
-        "id": 3,
-        "identifier": "V001",
-      }
-    },
-    {
-      "id": 4,
-      "photo": null,
-      "name": "Meuz",
-      "date_birth": "2024-09-01",
-      "sexe": "Male",
-      "race": "Ladoum",
-      "taille": 2,
-      "poids": 200,
-      "necklace_id": {
-        "id": 4,
-        "identifier": "V003",
-      }
-    },
-    {
-      "id": 5,
-      "photo": null,
-      "name": "Ass",
-      "date_birth": "2024-09-01",
-      "sexe": "Male",
-      "race": "Ladoum",
-      "taille": 2,
-      "poids": 200,
-      "necklace_id": {
-        "id": 5,
-        "identifier": "V004",
-      }
-    },
-    {
-      "id": 6,
-      "photo": null,
-      "name": "Wesh",
-      "date_birth": "2024-09-01",
-      "sexe": "Male",
-      "race": "Ladoum",
-      "taille": 2,
-      "poids": 200,
-      "necklace_id": {
-        "id": 6,
-        "identifier": "V002",
-      }
-    },
-  ];
-
+  
   final List<LatLng> _pastureZone = [
     LatLng(14.6940, -17.4470),
     LatLng(14.6940, -17.4420),
@@ -201,6 +135,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
   @override
   void initState() {
     super.initState();
+    _loadUserInfo();
     // _getUserLocation();
   }
 
@@ -257,8 +192,42 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
     return intersectCount % 2 != 0;
   }
 
+  Future<void> _loadUserInfo() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    if (prefs.containsKey('user')) {
+      String userString = prefs.getString('user')!;
+      Map<String, dynamic> userData = json.decode(userString);
+      setState(() {
+        id = userData["id"];
+      });
+      // print("User ID: ${id}");
+
+      await _loadAnimals(id);
+    } else {
+      print('Aucun utilisateur trouvé dans les préférences partagées');
+    }
+  }
+
+  Future<void> _loadAnimals(int id) async {
+    try {
+      ApiService apiService = ApiService();
+      _animals = await apiService.fetchAnimalsb(id);
+      // print(_animals);
+      setState(() {});
+    } catch (e) {
+      print('Erreur : $e');
+    }
+  }
+
   Set<Marker> _buildMarkers() {
-    return colliers.map((collar) {
+    return colliers.where((collar) {
+      return _animals.any((animal) =>
+          animal['necklace_id'] != null &&
+          animal['necklace_id']['identifier'] != null &&
+          collar != null &&
+          collar['identifier'] != null &&
+          animal['necklace_id']['identifier'] == collar['identifier']);
+    }).map((collar) {
       LatLng position = LatLng(
         double.parse(collar['localisation']['altitude']),
         double.parse(collar['localisation']['longitude']),
@@ -268,7 +237,11 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
 
       String? animalName;
       for (var animal in _animals) {
-        if (animal['necklace_id']['identifier'] == collar['identifier']) {
+        if (animal['necklace_id'] != null &&
+            animal['necklace_id']['identifier'] != null &&
+            collar != null &&
+            collar['identifier'] != null &&
+            animal['necklace_id']['identifier'] == collar['identifier']) {
           animalName = animal['name'];
           break;
         }
@@ -462,24 +435,31 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
   }
 
   void _showAnimalList() {
-    List<Map<String, dynamic>> animals = _animals.where((animal) {
-      final collar = colliers.firstWhere(
-        (c) => c['id'] == animal['necklace_id']['id'],
-        orElse: () => {},
-      );
+    List<Map<String, dynamic>> animals = _animals
+        .where((animal) {
+          final collar = colliers.firstWhere(
+            (c) => c['identifier'] == animal['necklace_id']['identifier'],
+            orElse: () => {},
+          );
 
-      if (collar == null)
-        return false; 
-        
-      LatLng collarPosition = LatLng(
-        double.parse(collar['localisation']['altitude']),
-        double.parse(collar['localisation']['longitude']),
-      );
+          if (collar == null ||
+              collar['localisation'] == null ||
+              collar['localisation']['altitude'] == null ||
+              collar['localisation']['longitude'] == null) {
+            return false;
+          }
 
-      return _showInZone
-          ? _isPointInPolygon(collarPosition, _pastureZone)
-          : !_isPointInPolygon(collarPosition, _pastureZone);
-    }).toList();
+          LatLng collarPosition = LatLng(
+            double.tryParse(collar['localisation']['altitude']) ?? 0.0,
+            double.tryParse(collar['localisation']['longitude']) ?? 0.0,
+          );
+
+          return _showInZone
+              ? _isPointInPolygon(collarPosition, _pastureZone)
+              : !_isPointInPolygon(collarPosition, _pastureZone);
+        })
+        .cast<Map<String, dynamic>>()
+        .toList();
 
     showModalBottomSheet(
       context: context,
@@ -505,18 +485,15 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                       leading: CircleAvatar(
                         backgroundImage: animal['photo'] != null
                             ? AssetImage(animal['photo'])
-                            : AssetImage(
-                                'assets/images/me.jpeg'),
+                            : const AssetImage('assets/images/me.jpeg'),
                       ),
                       title: Text(
                         animal['name'],
-                        style: TextStyle(
+                        style: const TextStyle(
                           fontWeight: FontWeight.w500,
-                          fontSize: 18
+                          fontSize: 18,
                         ),
                       ),
-                      // subtitle: Text(
-                      //     _showInZone ? "Dans la zone" : "Hors de la zone"),
                       onTap: () {
                         showModalBottomSheet(
                           context: context,

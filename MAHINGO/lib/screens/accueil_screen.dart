@@ -115,7 +115,7 @@ class _AccueilScreenState extends State<AccueilScreen> {
   final List<Map<String, dynamic>> colliers = [
     {
       'id': 1,
-      'identifier': 'M001',
+      'identifier': 'M002',
       'timestamp': '12:40',
       'batterie': "70%",
       'position': "debout",
@@ -129,7 +129,7 @@ class _AccueilScreenState extends State<AccueilScreen> {
     },
     {
       'id': 2,
-      'identifier': 'M002',
+      'identifier': 'V002',
       'timestamp': '12:40',
       'batterie': "70%",
       'position': "debout",
@@ -143,7 +143,7 @@ class _AccueilScreenState extends State<AccueilScreen> {
     },
     {
       'id': 3,
-      'identifier': 'V001',
+      'identifier': 'V003',
       'timestamp': '12:40',
       'batterie': "70%",
       'position': "debout",
@@ -157,7 +157,7 @@ class _AccueilScreenState extends State<AccueilScreen> {
     },
     {
       'id': 4,
-      'identifier': 'V002',
+      'identifier': 'M003',
       'timestamp': '12:40',
       'batterie': "70%",
       'position': "debout",
@@ -171,7 +171,7 @@ class _AccueilScreenState extends State<AccueilScreen> {
     },
     {
       'id': 5,
-      'identifier': 'V003',
+      'identifier': 'V001',
       'timestamp': '12:40',
       'batterie': "70%",
       'position': "debout",
@@ -185,7 +185,21 @@ class _AccueilScreenState extends State<AccueilScreen> {
     },
     {
       'id': 6,
-      'identifier': 'V004',
+      'identifier': 'M006',
+      'timestamp': '12:40',
+      'batterie': "70%",
+      'position': "debout",
+      'température': {'value': "15°C", 'etat': "sensible"},
+      'frequence': {'value': "15bpm", 'etat': "normale"},
+      'localisation': {
+        'altitude': "14.7000",
+        'longitude': "-17.4490",
+      },
+      'etat': 'anormal'
+    },
+    {
+      'id': 6,
+      'identifier': 'M001',
       'timestamp': '12:40',
       'batterie': "70%",
       'position': "debout",
@@ -387,7 +401,14 @@ class _AccueilScreenState extends State<AccueilScreen> {
   }
 
   Set<Marker> _buildMarkers() {
-    return colliers.map((collar) {
+    return colliers.where((collar) {
+      return _animals.any((animal) =>
+          animal['necklace_id'] != null &&
+          animal['necklace_id']['identifier'] != null &&
+          collar != null &&
+          collar['identifier'] != null &&
+          animal['necklace_id']['identifier'] == collar['identifier']);
+    }).map((collar) {
       LatLng position = LatLng(
         double.parse(collar['localisation']['altitude']),
         double.parse(collar['localisation']['longitude']),
@@ -420,6 +441,7 @@ class _AccueilScreenState extends State<AccueilScreen> {
       );
     }).toSet();
   }
+
 
   @override
   Widget build(BuildContext context) {
