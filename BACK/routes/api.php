@@ -7,6 +7,7 @@ use App\Http\Controllers\AnimalController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\NecklaceController;
 use App\Http\Controllers\CategorieController;
+use App\Http\Controllers\EventController;
 
 // Route::get('/user', function (Request $request) {
 //     return $request->user();
@@ -51,5 +52,13 @@ Route::prefix('animal')->group(function (){
     Route::patch('/update/{id}',[AnimalController::class,'update']);
     Route::delete('/delete/{id}',[AnimalController::class,'destroy']);
     Route::post('/restore/{id}',[AnimalController::class,'restore']);
+});
+
+Route::prefix('event')->group(function () {
+    Route::get('/user/{id}', [EventController::class, 'eventByUser']);
+    Route::post('/add', [EventController::class, 'store']);
+    Route::post('/user/{id}', [EventController::class, 'show']);
+    Route::post('/update/{id}', [EventController::class, 'update']);
+    Route::delete('/delete/{id}', [EventController::class, 'destroy']);
 });
 

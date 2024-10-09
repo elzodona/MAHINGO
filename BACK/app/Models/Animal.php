@@ -35,4 +35,9 @@ class Animal extends Model
         return $this->belongsTo(Necklace::class, 'necklace_id');
     }
 
+    public function event()
+    {
+        return $this->hasMany(Event::class);
+    }
+
 }
