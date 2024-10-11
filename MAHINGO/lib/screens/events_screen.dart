@@ -16,74 +16,7 @@ import 'package:intl/date_symbol_data_local.dart';
 import 'package:mahingo/services/call_api/event_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
-
-void showInfoDialog(BuildContext context) {
-  AwesomeDialog(
-    context: context,
-    dialogType: DialogType.info,
-    customHeader: const Icon(
-      Icons.info,
-      color: AppColors.vert,
-      size: 70,
-    ),
-    animType: AnimType.bottomSlide,
-    title: 'Succès',
-    desc: 'Suppression effectuée avec succès',
-    btnOkOnPress: () {
-      Navigator.of(context).pop();
-    },
-    btnOkColor: AppColors.vert,
-  ).show();
-}
-
-void showSuccessDialog(BuildContext context) {
-  AwesomeDialog(
-    context: context,
-    dialogType: DialogType.success,
-    customHeader: const Icon(
-      Icons.check_circle,
-      color: AppColors.vert,
-      size: 70,
-    ),
-    animType: AnimType.bottomSlide,
-    title: 'Succès',
-    desc: 'Suppression effectuée avec succès',
-    btnOkOnPress: () {
-      Navigator.of(context).pop();
-    },
-    btnOkColor: AppColors.vert,
-  ).show();
-}
-
-void showConfirmationDialog(BuildContext context, int id) {
-  AwesomeDialog(
-    context: context,
-    dialogType: DialogType.question,
-    animType: AnimType.scale,
-    title: 'Confirmation',
-    desc: 'Êtes-vous sûr de vouloir supprimer cet animal ?',
-    btnCancelOnPress: () {},
-    btnOkOnPress: () async {
-      try {
-        await ApiService().deleteAnimal(id);
-        showSuccessDialog(context);
-      } catch (e) {
-        print('Erreur lors de la suppression : $e');
-      }
-    },
-  ).show();
-}
-
-void showErrorDialog(BuildContext context, String title, String message) {
-  AwesomeDialog(
-    context: context,
-    dialogType: DialogType.error,
-    animType: AnimType.bottomSlide,
-    title: title,
-    desc: message,
-    btnOkOnPress: () {},
-  ).show();
-}
+import 'package:intl/intl.dart';
 
 class EventsScreen extends StatefulWidget {
   const EventsScreen({super.key});
@@ -164,6 +97,96 @@ class _EventsScreenState extends State<EventsScreen> {
     }
   }
 
+  void showInfoDialog(BuildContext context, String message, String title) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(title),
+          content: Text(message),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('OK'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void showInfoDialoga(
+      BuildContext context, String message, String etat, VoidCallback onClose) {
+    AwesomeDialog(
+      context: context,
+      dialogType: DialogType.info,
+      customHeader: const Icon(
+        Icons.info,
+        color: AppColors.vert,
+        size: 70,
+      ),
+      animType: AnimType.bottomSlide,
+      title: etat,
+      desc: message,
+      btnOkOnPress: () {
+        onClose();
+      },
+      btnOkColor: AppColors.vert,
+    ).show();
+  }
+
+  void showSuccessDialog(BuildContext context) {
+    AwesomeDialog(
+      context: context,
+      dialogType: DialogType.success,
+      customHeader: const Icon(
+        Icons.check_circle,
+        color: AppColors.vert,
+        size: 70,
+      ),
+      animType: AnimType.bottomSlide,
+      title: 'Succès',
+      desc: 'Suppression effectuée avec succès',
+      btnOkOnPress: () {
+        Navigator.of(context).pop();
+      },
+      btnOkColor: AppColors.vert,
+    ).show();
+  }
+
+  void showConfirmationDialog(BuildContext context, int id) {
+    AwesomeDialog(
+      context: context,
+      dialogType: DialogType.question,
+      animType: AnimType.scale,
+      title: 'Confirmation',
+      desc: 'Êtes-vous sûr de vouloir supprimer cet événement ?',
+      btnCancelOnPress: () {},
+      btnOkOnPress: () async {
+        try {
+          await Api2Service().deleteEvent(id);
+          _loadUserInfo();
+          showSuccessDialog(context);
+        } catch (e) {
+          print('Erreur lors de la suppression : $e');
+        }
+      },
+    ).show();
+  }
+
+  void showErrorDialog(BuildContext context, String title, String message) {
+    AwesomeDialog(
+      context: context,
+      dialogType: DialogType.error,
+      animType: AnimType.bottomSlide,
+      title: title,
+      desc: message,
+      btnOkOnPress: () {},
+    ).show();
+  }
+
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
@@ -211,10 +234,10 @@ class _EventsScreenState extends State<EventsScreen> {
                       topLeft: Radius.circular(23),
                     ),
                   ),
-                  padding: const EdgeInsets.all(14),
+                  // padding: const EdgeInsets.all(8),
                   child: Column(
                     children: [
-                      SizedBox(height: screenHeight * 0.01),
+                      // SizedBox(height: screenHeight * 0.01),
                       Container(
                         width: screenWidth * 0.87,
                         child: Row(
@@ -322,13 +345,13 @@ class _EventsScreenState extends State<EventsScreen> {
                           ],
                         ),
                       ),
-                      SizedBox(height: screenHeight * 0.005),
+                      // SizedBox(height: screenHeight * 0.003),
                       Container(
                         child: Column(
                           children: [
                             Container(
                               padding: const EdgeInsets.all(6),
-                              height: screenHeight * 0.44,
+                              height: screenHeight * 0.505,
                               width: screenWidth * 0.8,
                               decoration: const BoxDecoration(
                                 borderRadius: BorderRadius.only(
@@ -336,65 +359,130 @@ class _EventsScreenState extends State<EventsScreen> {
                                   topRight: Radius.circular(12.5),
                                 ),
                               ),
-                              child: TableCalendar(
-                                firstDay: DateTime.utc(2020, 1, 1),
-                                lastDay: DateTime.utc(2030, 12, 31),
-                                focusedDay: _focusedDay,
-                                locale: 'fr_FR',
-                                selectedDayPredicate: (day) {
-                                  return isSameDay(_selectedDay, day);
-                                },
-                                onDaySelected: (selectedDay, focusedDay) {
-                                  setState(() {
-                                    _selectedDay = selectedDay;
-                                    _focusedDay = focusedDay;
-                                  });
-                                  _showEventDetails(selectedDay);
-                                },
-                                startingDayOfWeek: StartingDayOfWeek.monday,
-                                calendarStyle: const CalendarStyle(
-                                  selectedDecoration: BoxDecoration(
-                                    color: Colors.green,
-                                    shape: BoxShape.circle,
+                              child: Column(
+                                children: [
+                                  TableCalendar(
+                                    firstDay: DateTime.utc(2020, 1, 1),
+                                    lastDay: DateTime.utc(2030, 12, 31),
+                                    focusedDay: _focusedDay,
+                                    locale: 'fr_FR',
+                                    selectedDayPredicate: (day) {
+                                      return isSameDay(_selectedDay, day);
+                                    },
+                                    onDaySelected: (selectedDay, focusedDay) {
+                                      setState(() {
+                                        _selectedDay = selectedDay;
+                                        _focusedDay = focusedDay;
+                                      });
+                                      _showEventDetails(selectedDay);
+                                    },
+                                    startingDayOfWeek: StartingDayOfWeek.monday,
+                                    calendarStyle: CalendarStyle(
+                                      defaultDecoration: BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius:
+                                            BorderRadius.circular(6.0),
+                                        boxShadow: const [
+                                          BoxShadow(
+                                            color: Colors.black26,
+                                            blurRadius: 2,
+                                            offset: Offset(0, 1),
+                                          ),
+                                        ],
+                                      ),
+                                      selectedDecoration: BoxDecoration(
+                                        color: Colors.lightGreen,
+                                        borderRadius:
+                                            BorderRadius.circular(6.0),
+                                        boxShadow: const [
+                                          BoxShadow(
+                                            color: Colors.black26,
+                                            blurRadius: 2,
+                                            offset: Offset(0, 1),
+                                          ),
+                                        ],
+                                      ),
+                                      todayDecoration: BoxDecoration(
+                                        color: Colors.orange,
+                                        borderRadius:
+                                            BorderRadius.circular(6.0),
+                                        boxShadow: const [
+                                          BoxShadow(
+                                            color: Colors.black26,
+                                            blurRadius: 2,
+                                            offset: Offset(0, 1),
+                                          ),
+                                        ],
+                                      ),
+                                      outsideDecoration: BoxDecoration(
+                                        color: Colors.grey.shade300,
+                                        borderRadius:
+                                            BorderRadius.circular(6.0),
+                                        boxShadow: const [
+                                          BoxShadow(
+                                            color: Colors.black26,
+                                            blurRadius: 2,
+                                            offset: Offset(0, 1),
+                                          ),
+                                        ],
+                                      ),
+                                      weekendDecoration: BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius:
+                                            BorderRadius.circular(6.0),
+                                        boxShadow: const [
+                                          BoxShadow(
+                                            color: Colors.black26,
+                                            blurRadius: 2,
+                                            offset: Offset(0, 1),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    headerStyle: const HeaderStyle(
+                                      formatButtonVisible: false,
+                                      titleCentered: true,
+                                      titleTextStyle: TextStyle(
+                                        fontSize: 22,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                      leftChevronIcon: Icon(Icons.chevron_left,
+                                          color: Colors.black),
+                                      rightChevronIcon: Icon(
+                                          Icons.chevron_right,
+                                          color: Colors.black),
+                                    ),
+                                    availableCalendarFormats: const {
+                                      CalendarFormat.month: '',
+                                    },
+                                    eventLoader: (day) {
+                                      DateTime dayKey = DateTime(
+                                          day.year, day.month, day.day);
+                                      return _events[dayKey] ?? [];
+                                    },
+                                    calendarBuilders: CalendarBuilders(
+                                      dowBuilder: (context, day) {
+                                        return Container(
+                                          decoration: const BoxDecoration(
+                                            color: Colors.white,
+                                          ),
+                                          alignment: Alignment.center,
+                                          child: Text(
+                                            DateFormat.E('fr_FR').format(day),
+                                            style: const TextStyle(
+                                                color: Colors.black),
+                                          ),
+                                        );
+                                      },
+                                    ),
                                   ),
-                                  todayDecoration: BoxDecoration(
-                                    color: Colors.orange,
-                                    shape: BoxShape.circle,
-                                  ),
-                                ),
-                                headerStyle: const HeaderStyle(
-                                  formatButtonVisible: false,
-                                  titleCentered: true,
-                                  titleTextStyle: TextStyle(
-                                    fontSize: 26,
-                                    fontWeight: FontWeight.w400,
-                                  ),
-                                ),
-                                availableCalendarFormats: const {
-                                  CalendarFormat.month: '',
-                                },
-                                eventLoader: (day) {
-                                  DateTime dayKey =
-                                      DateTime(day.year, day.month, day.day);
-                                  return _events[dayKey] ?? [];
-                                },
-                                calendarBuilders: CalendarBuilders(
-                                  markerBuilder: (context, day, events) {
-                                    if (events.isNotEmpty) {
-                                      return Positioned(
-                                        right: 1,
-                                        bottom: 1,
-                                        child: _buildEventMarker(events),
-                                      );
-                                    }
-                                    return null;
-                                  },
-                                ),
+                                ],
                               ),
                             ),
-                            SizedBox(height: screenHeight * 0.01),
+
+                            // SizedBox(height: screenHeight * 0.02),
                             const Padding(
-                              padding: EdgeInsets.only(left: 18),
+                              padding: EdgeInsets.only(left: 32),
                               child: Align(
                                 alignment: Alignment.centerLeft,
                                 child: Text(
@@ -622,8 +710,7 @@ class _EventsScreenState extends State<EventsScreen> {
           height: 8.0,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
-            color: _getEventColor(
-                event),
+            color: _getEventColor(event),
           ),
         );
       }).toList(),
@@ -631,10 +718,12 @@ class _EventsScreenState extends State<EventsScreen> {
   }
 
   Color _getEventColor(dynamic event) {
-    if (event['titre'] == 'repro') {
+    if (event['titre'] == 'vaccination') {
       return Colors.blue;
-    } else if (event['titre'] == 'reproduction') {
+    } else if (event['titre'] == 'visite medicale') {
       return Colors.red;
+    } else if (event['titre'] == 'traitement') {
+      return Colors.yellow;
     } else {
       return Colors.green;
     }
@@ -642,11 +731,18 @@ class _EventsScreenState extends State<EventsScreen> {
 
   void _showEventDetails(DateTime selectedDay) {
     double screenWidth = MediaQuery.of(context).size.width;
-    double screenHeight = MediaQuery.of(context).size.height;
-    
+
     DateTime dayKey =
         DateTime(selectedDay.year, selectedDay.month, selectedDay.day);
     List<dynamic> events = _events[dayKey] ?? [];
+
+    events.sort((a, b) {
+      DateTime heureDebutA = DateTime.parse(
+          '${selectedDay.year}-${selectedDay.month}-${selectedDay.day} ${a['heureDebut']}');
+      DateTime heureDebutB = DateTime.parse(
+          '${selectedDay.year}-${selectedDay.month}-${selectedDay.day} ${b['heureDebut']}');
+      return heureDebutA.compareTo(heureDebutB);
+    });
 
     showModalBottomSheet(
       context: context,
@@ -672,13 +768,17 @@ class _EventsScreenState extends State<EventsScreen> {
               if (events.isNotEmpty)
                 ...events.map((event) {
                   return Center(
-                    child: Container(
+                    child: GestureDetector(
+                      onTap: () {
+                        showEventDetails(context, event);
+                      },
+                      child: Container(
                       width: screenWidth * 0.8,
                       margin: const EdgeInsets.only(bottom: 6),
                       decoration: BoxDecoration(
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(18),
-                        boxShadow: [
+                        boxShadow: const [
                           BoxShadow(
                             color: Colors.black26,
                             blurRadius: 6,
@@ -697,7 +797,7 @@ class _EventsScreenState extends State<EventsScreen> {
                                 Text(
                                   '${event['heureDebut']} - ${event['heureFin']}',
                                 ),
-                                SizedBox(height: 4),
+                                const SizedBox(height: 4),
                                 Row(
                                   children: [
                                     if (event['titre'] == 'vaccination')
@@ -724,12 +824,10 @@ class _EventsScreenState extends State<EventsScreen> {
                                       )
                                     else
                                       const Icon(
-                                        Icons
-                                            .event,
+                                        Icons.event,
                                         color: Colors.green,
                                         size: 20,
                                       ),
-
                                     const SizedBox(width: 8),
                                     Text(
                                       event['titre'],
@@ -739,20 +837,24 @@ class _EventsScreenState extends State<EventsScreen> {
                                       ),
                                     ),
                                   ],
-                                )
+                                ),
                               ],
                             ),
                           ),
-                          IconButton(
-                            icon: Icon(Icons.delete, color: Colors.green),
-                            onPressed: () {
-                              _deleteEvent(event['id']);
+                          GestureDetector(
+                            onTap: () {
+                              showConfirmationDialog(context, event['id']);
                             },
+                            child: const FaIcon(
+                              FontAwesomeIcons.trash,
+                              color: AppColors.vert,
+                              size: 16,
+                            ),
                           ),
                         ],
                       ),
                     ),
-                  );
+                  ));
                 }).toList()
               else
                 const Text('Aucun événement trouvé.'),
@@ -763,8 +865,657 @@ class _EventsScreenState extends State<EventsScreen> {
     );
   }
 
-  void _deleteEvent(int eventId) {
-    print('Suppression de l\'événement avec l\'ID: $eventId');
+  void closeAllDialogs(BuildContext context) {
+    Navigator.popUntil(context, (route) => route.isFirst);
   }
 
+  void showEventDetails(BuildContext context, Map<String, dynamic> event) {
+    double screenWidth = MediaQuery.of(context).size.width;
+    double screenHeight = MediaQuery.of(context).size.height;
+
+    closeAllDialogs(context);
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) {
+        return DraggableScrollableSheet(
+          initialChildSize: 0.8,
+          minChildSize: 0.3,
+          maxChildSize: 0.8,
+          builder: (_, controller) {
+            return Container(
+              decoration: const BoxDecoration(
+                color: AppColors.blanc,
+                borderRadius: BorderRadius.only(
+                  topRight: Radius.circular(23),
+                  topLeft: Radius.circular(23),
+                ),
+              ),
+              padding: const EdgeInsets.all(14),
+              child: Column(
+                children: [
+                  Container(
+                    width: 80,
+                    height: 5,
+                    margin: const EdgeInsets.only(top: 10, bottom: 10),
+                    decoration: BoxDecoration(
+                      color: Colors.grey[400],
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                  SizedBox(height: screenHeight * 0.02),
+                  Center(
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Text(
+                          "Détails de l’évènement",
+                          style: TextStyle(
+                            fontSize: 20,
+                            color: AppColors.vert,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        const SizedBox(width: 36),
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.pop(context);
+                            showEventEditModal(context, event);
+                          },
+                          child: const FaIcon(
+                            FontAwesomeIcons.penToSquare,
+                            color: AppColors.vert,
+                            size: 18,
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
+                  SizedBox(height: screenHeight * 0.04),
+
+                  Container(
+                    padding: const EdgeInsets.all(10),
+                    width: screenWidth * 0.85,
+                    height: screenHeight * 0.28,
+                    decoration: BoxDecoration(
+                      border: Border.all(color: AppColors.gris),
+                      borderRadius: BorderRadius.circular(8.0),
+                      color: AppColors.blanc,
+                      boxShadow: const [
+                        BoxShadow(
+                          color: AppColors.gris,
+                          spreadRadius: 2,
+                          blurRadius: 5,
+                          offset: Offset(0, 3),
+                        ),
+                      ],
+                    ),
+                    child: Column(
+                      children: [
+                        event['animal'] != null &&
+                                event['animal']['name'] != null
+                            ? _buildDetailRow(
+                                screenWidth, 'Animal', event['animal']['name'])
+                            : SizedBox.shrink(),
+                        _buildDetailRow(screenWidth, 'Titre', event['titre']),
+                        _buildDetailRow(screenWidth, 'Date', event['dateEvent']),
+                        _buildDetailRow(screenWidth, 'Heure de debut', event['heureDebut']),
+                        _buildDetailRow(screenWidth, 'Heure de fin', event['heureFin']),
+                      ],
+                    ),
+                  ),
+                  
+                  SizedBox(height: screenHeight * 0.02),
+                  
+                  Column(
+                    children: [
+                      Container(
+                        width: screenWidth * 0.85,
+                        height: screenHeight * 0.06,
+                        padding: const EdgeInsets.all(10),
+                        decoration: BoxDecoration(
+                          border: Border.all(color: AppColors.gris),
+                          borderRadius: BorderRadius.circular(8.0),
+                          color: AppColors.blanc,
+                          boxShadow: const [
+                            BoxShadow(
+                              color: AppColors.gris,
+                              spreadRadius: 2,
+                              blurRadius: 5,
+                              offset: Offset(0, 3),
+                            ),
+                          ],
+                        ),
+                        child: const Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Text(
+                              'Description',
+                              style: TextStyle(
+                                color: AppColors.noir,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            Expanded(
+                              child: Align(
+                                alignment: Alignment.centerRight,
+                                child: Text(
+                                  '',
+                                  style: TextStyle(
+                                    color: AppColors.noir,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Container(
+                        padding: const EdgeInsets.all(10),
+                        width: screenWidth * 0.85,
+                        decoration: BoxDecoration(
+                          border: Border.all(color: AppColors.gris),
+                          borderRadius: BorderRadius.circular(8.0),
+                          color: AppColors.blanc,
+                          boxShadow: const [
+                            BoxShadow(
+                              color: AppColors.gris,
+                              spreadRadius: 2,
+                              blurRadius: 5,
+                              offset: Offset(0, 3),
+                            ),
+                          ],
+                        ),
+                        child: TextField(
+                          maxLines: 5,
+                          decoration: InputDecoration(
+                            hintText: event['description'] ??
+                                'Pas de description disponible',
+                            border: InputBorder.none,
+                            contentPadding:
+                                const EdgeInsets.symmetric(horizontal: 12.0),
+                          ),
+                          style: const TextStyle(color: Colors.black),
+                        ),
+                      ),
+                    ],
+                  )
+                ],
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  Widget _buildDetailRow(double screenWidth, String label, String value) {
+    return Column(
+      children: [
+        Row(
+          children: [
+            Container(
+              width: screenWidth * 0.35,
+              padding: const EdgeInsets.symmetric(horizontal: 12.0),
+              child: Text(
+                label,
+                style: const TextStyle(
+                    color: AppColors.noir, fontWeight: FontWeight.w600),
+              ),
+            ),
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.only(left: 10),
+                child: TextField(
+                  textAlign: TextAlign.right,
+                  enabled: false,
+                  decoration: const InputDecoration(
+                    border: InputBorder.none,
+                    contentPadding: EdgeInsets.only(right: 12.0),
+                    isDense: true,
+                  ),
+                  style: const TextStyle(color: Colors.black),
+                  controller:
+                      TextEditingController(text: value),
+                ),
+              ),
+            ),
+          ],
+        ),
+        const Divider(color: AppColors.gris),
+      ],
+    );
+  }
+
+  void showEventEditModal(BuildContext context, Map<String, dynamic> event) {
+    double screenWidth = MediaQuery.of(context).size.width;
+    double screenHeight = MediaQuery.of(context).size.height;
+
+    closeAllDialogs(context);
+
+    TextEditingController animalController = TextEditingController(
+      text: event['animal'] != null && event['animal']['name'] != null
+          ? event['animal']['name']
+          : '',
+    );
+    TextEditingController titreController =
+      TextEditingController(text: event['titre']);
+    TextEditingController dateController =
+      TextEditingController(text: event['dateEvent']);
+    TextEditingController debutController =
+        TextEditingController(text: event['heureDebut']);
+    TextEditingController finController =
+        TextEditingController(text: event['heureFin']);
+    TextEditingController descriptionController =
+        TextEditingController(text: event['description'] ?? '');
+
+    DateTime? selectedDate = DateTime.tryParse(event['dateEvent']);
+    TimeOfDay? selectedHeureDebut = TimeOfDay(
+        hour: int.parse(event['heureDebut'].split(':')[0]),
+        minute: int.parse(event['heureDebut'].split(':')[1]));
+    TimeOfDay? selectedHeureFin = TimeOfDay(
+        hour: int.parse(event['heureFin'].split(':')[0]),
+        minute: int.parse(event['heureFin'].split(':')[1]));
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) {
+        return DraggableScrollableSheet(
+          initialChildSize: 0.9,
+          minChildSize: 0.4,
+          maxChildSize: 0.9,
+          builder: (_, controller) {
+            return Container(
+              decoration: const BoxDecoration(
+                color: AppColors.blanc,
+                borderRadius: BorderRadius.only(
+                  topRight: Radius.circular(23),
+                  topLeft: Radius.circular(23),
+                ),
+              ),
+              padding: const EdgeInsets.all(14),
+              child: Column(
+                children: [
+                  Container(
+                    width: 80,
+                    height: 5,
+                    margin: const EdgeInsets.only(top: 10, bottom: 10),
+                    decoration: BoxDecoration(
+                      color: Colors.grey[400],
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                  SizedBox(height: screenHeight * 0.02),
+                  const Center(
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          "Modifier l’évènement",
+                          style: TextStyle(
+                            fontSize: 20,
+                            color: AppColors.vert,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
+                  SizedBox(height: screenHeight * 0.04),
+                  Container(
+                    padding: const EdgeInsets.all(10),
+                    width: screenWidth * 0.85,
+                    height: screenHeight * 0.33,
+                    decoration: BoxDecoration(
+                      border: Border.all(color: AppColors.gris),
+                      borderRadius: BorderRadius.circular(8.0),
+                      color: AppColors.blanc,
+                      boxShadow: const [
+                        BoxShadow(
+                          color: AppColors.gris,
+                          spreadRadius: 2,
+                          blurRadius: 5,
+                          offset: Offset(0, 3),
+                        ),
+                      ],
+                    ),
+                    child: Column(
+                      children: [
+                        event['animal'] != null &&
+                                event['animal']['name'] != null
+                            ? _buildEditableDetailRow(
+                                screenWidth, 'Animal', animalController)
+                            : SizedBox
+                                .shrink(),
+                        _buildEditableDetailRow(
+                            screenWidth, 'Titre', titreController),
+                        _buildEditableDetailRow1(
+                            screenWidth, 'Date événement', dateController),
+                        _buildEditableDetailRow2(
+                            screenWidth, 'Heure de debut', debutController),
+                        _buildEditableDetailRow2(
+                            screenWidth, 'Heure de fin', finController),
+                      ],
+                    ),
+                  ),
+                  SizedBox(height: screenHeight * 0.02),
+                  Column(
+                    children: [
+                      Container(
+                        width: screenWidth * 0.85,
+                        height: screenHeight * 0.06,
+                        padding: const EdgeInsets.all(10),
+                        decoration: BoxDecoration(
+                          border: Border.all(color: AppColors.gris),
+                          borderRadius: BorderRadius.circular(8.0),
+                          color: AppColors.blanc,
+                          boxShadow: const [
+                            BoxShadow(
+                              color: AppColors.gris,
+                              spreadRadius: 2,
+                              blurRadius: 5,
+                              offset: Offset(0, 3),
+                            ),
+                          ],
+                        ),
+                        child: const Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Text(
+                              'Description',
+                              style: TextStyle(
+                                color: AppColors.noir,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Container(
+                        padding: const EdgeInsets.all(10),
+                        width: screenWidth * 0.85,
+                        decoration: BoxDecoration(
+                          border: Border.all(color: AppColors.gris),
+                          borderRadius: BorderRadius.circular(8.0),
+                          color: AppColors.blanc,
+                          boxShadow: const [
+                            BoxShadow(
+                              color: AppColors.gris,
+                              spreadRadius: 2,
+                              blurRadius: 5,
+                              offset: Offset(0, 3),
+                            ),
+                          ],
+                        ),
+                        child: TextField(
+                          maxLines: 5,
+                          controller: descriptionController,
+                          decoration: const InputDecoration(
+                            border: InputBorder.none,
+                            contentPadding:
+                                EdgeInsets.symmetric(horizontal: 12.0),
+                          ),
+                          style: const TextStyle(color: Colors.black),
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: screenHeight * 0.04),
+                  
+                  Expanded(
+                    child: Center(
+                      child: Container(
+                        width: screenWidth * 0.4,
+                        height: 50,
+                        decoration: BoxDecoration(
+                          color: AppColors.vert,
+                          borderRadius: BorderRadius.circular(8.0),
+                          boxShadow: const [
+                            BoxShadow(
+                              color: AppColors.gris,
+                              spreadRadius: 2,
+                              blurRadius: 5,
+                              offset: Offset(0, 3),
+                            ),
+                          ],
+                        ),
+                        child: TextButton(
+                          onPressed: () async {
+                            try {
+                              String newTitre = titreController.text;
+                              String newDate = dateController.text;
+                              String newDebut = debutController.text;
+                              String newFin = finController.text;
+                              String newDescription =
+                                  descriptionController.text;
+                              String newAnimal = animalController.text;
+
+                              Map<String, dynamic> newEventData = {
+                                'animal_id': newAnimal,
+                                'user_id': id,
+                                'titre': newTitre,
+                                'dateEvent': newDate,
+                                'heureDebut': newDebut,
+                                'heureFin': newFin,
+                                'description': newDescription,
+                              };
+
+                              dynamic response = await Api2Service()
+                                  .updateEvent(event['id'], newEventData);
+                              // print('Événement mis à jour : $response');
+                              showInfoDialoga(
+                                  context,
+                                  'Événement mis à jour avec succès.',
+                                  'Succès', () {
+                                _loadUserInfo();
+                              });
+
+                            } catch (e) {
+                              print('Erreur lors de la mise à jour : $e');
+                              showInfoDialoga(
+                                  context,
+                                  'Erreur lors de la mise à jour : ${e.toString()}',
+                                  'Erreur', () {
+                                _loadUserInfo();
+                              });
+                            }
+                          },
+
+                          child: const Text(
+                            'Modifier',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  )],
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  Widget _buildEditableDetailRow(
+    double screenWidth, String label, TextEditingController controller) {
+
+    return Column(
+      children: [
+        Row(
+          children: [
+            Container(
+              width: screenWidth * 0.35,
+              padding: const EdgeInsets.symmetric(horizontal: 12.0),
+              child: Text(
+                '$label :',
+                style: const TextStyle(
+                    color: AppColors.noir, fontWeight: FontWeight.w600),
+              ),
+            ),
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.only(left: 10),
+                child: TextField(
+                  textAlign: TextAlign.right,
+                  decoration: const InputDecoration(
+                    border: InputBorder.none,
+                    contentPadding: EdgeInsets.only(right: 12.0),
+                    isDense: true,
+                  ),
+                  style: const TextStyle(color: Colors.black),
+                  controller: controller,
+                ),
+              ),
+            ),
+          ],
+        ),
+        const Divider(color: AppColors.gris),
+      ],
+    );
+  }
+
+  Widget _buildEditableDetailRow1(
+      double screenWidth, String label, TextEditingController controller) {
+    DateTime? _selectedDate;
+
+    Future<void> _selectDate(BuildContext context) async {
+      final DateTime? picked = await showDatePicker(
+        context: context,
+        initialDate: _selectedDate ?? DateTime.now(),
+        firstDate: DateTime(2000),
+        lastDate: DateTime(2101),
+      );
+      if (picked != null && picked != _selectedDate) {
+        setState(() {
+          _selectedDate = picked;
+          controller.text = '${picked.toLocal()}'.split(' ')[0];
+        });
+      }
+    }
+
+    return Column(
+      children: [
+        Row(
+          children: [
+            Container(
+              width: screenWidth * 0.4,
+              padding: const EdgeInsets.symmetric(horizontal: 8.0),
+              child: Text(
+                '$label :',
+                style: const TextStyle(
+                    color: AppColors.noir, fontWeight: FontWeight.w600),
+              ),
+            ),
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.only(left: 5.0),
+                child: TextField(
+                  controller: controller,
+                  readOnly: true,
+                  textAlign: TextAlign.right,
+                  onTap: () => _selectDate(context),
+                  decoration: InputDecoration(
+                    border: InputBorder.none,
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 8.0,
+                      vertical: 14,
+                    ),
+                    isDense: true,
+                    suffixIcon: IconButton(
+                      icon: const Icon(Icons.calendar_today),
+                      onPressed: () => _selectDate(context),
+                      iconSize: 18,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+        const Divider(
+            color: AppColors.gris, height: 1.0), // Réduit la hauteur du Divider
+      ],
+    );
+  }
+
+  Widget _buildEditableDetailRow2(
+      double screenWidth, String label, TextEditingController controller) {
+    TimeOfDay? _selectedTime;
+
+    Future<void> _selectTime(BuildContext context) async {
+      final TimeOfDay? picked = await showTimePicker(
+        context: context,
+        initialTime: _selectedTime ?? TimeOfDay.now(),
+      );
+      if (picked != null && picked != _selectedTime) {
+        _selectedTime = picked;
+        final now = DateTime.now();
+        final selectedDateTime = DateTime(
+          now.year,
+          now.month,
+          now.day,
+          _selectedTime!.hour,
+          _selectedTime!.minute,
+        );
+        controller.text =
+            "${selectedDateTime.hour.toString().padLeft(2, '0')}:${selectedDateTime.minute.toString().padLeft(2, '0')}";
+      }
+    }
+
+    return Column(
+      children: [
+        Row(
+          children: [
+            Container(
+              width: screenWidth * 0.4,
+              padding: const EdgeInsets.symmetric(horizontal: 8.0),
+              child: Text(
+                '$label :',
+                style: const TextStyle(
+                    color: AppColors.noir, fontWeight: FontWeight.w600),
+              ),
+            ),
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.only(left: 5.0),
+                child: TextField(
+                  controller: controller,
+                  readOnly: true,
+                  textAlign: TextAlign.right,
+                  onTap: () => _selectTime(context),
+                  decoration: InputDecoration(
+                    border: InputBorder.none,
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 14
+                    ),
+                    isDense: true,
+                    suffixIcon: IconButton(
+                      icon: const Icon(Icons.access_time),
+                      onPressed: () => _selectTime(context),
+                      iconSize: 18,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+        const Divider(
+            color: AppColors.gris, height: 1.0),
+      ],
+    );
+  }
+
+  
 }

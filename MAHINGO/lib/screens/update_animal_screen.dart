@@ -795,6 +795,7 @@ class _UpdateAnimalScreenState extends State<UpdateAnimalScreen> {
                           ),
                         ),
                       ),
+                    
                     ],
                   ),
                 ),

@@ -1415,53 +1415,6 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
         _overlayEntry = null;
       }
     }
-    // OverlayEntry _createOverlayEntry() {
-    //   RenderBox? renderBox =
-    //       _nameAnimalKey.currentContext?.findRenderObject() as RenderBox?;
-    //   if (renderBox == null) {
-    //     return OverlayEntry(builder: (_) => Container());
-    //   }
-    //   var size = renderBox.size;
-    //   var offset = renderBox.localToGlobal(Offset.zero);
-
-    //   return OverlayEntry(
-    //     builder: (context) {
-    //       return Positioned(
-    //         width: size.width,
-    //         left: offset.dx,
-    //         top: offset.dy + size.height,
-    //         child: Material(
-    //           elevation: 4.0,
-    //           borderRadius: BorderRadius.circular(12),
-    //           child: Container(
-    //             decoration: BoxDecoration(
-    //               border: Border.all(color: AppColors.gris),
-    //               borderRadius: BorderRadius.circular(12),
-    //               color: AppColors.blanc,
-    //             ),
-    //             child: ListView.builder(
-    //               shrinkWrap: true,
-    //               itemCount: foundAnimals.length,
-    //               itemBuilder: (context, index) {
-    //                 return ListTile(
-    //                   title: Text(foundAnimals[index]['nom']),
-    //                   onTap: () {
-    //                     setState(() {
-    //                       _nameAnimal.text = foundAnimals[index]['nom'];
-    //                       _removeOverlay();
-    //                       print(foundAnimals);
-    //                       _showAnimalDetails(context, foundAnimals[index + 1]);
-    //                     });
-    //                   },
-    //                 );
-    //               },
-    //             ),
-    //           ),
-    //         ),
-    //       );
-    //     },
-    //   );
-    // }
 
     OverlayEntry createOverlayEntry() {
       RenderBox? renderBox =

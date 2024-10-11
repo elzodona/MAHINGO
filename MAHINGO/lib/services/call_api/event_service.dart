@@ -36,10 +36,11 @@ class Api2Service {
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode(data),
     );
+
     if (response.statusCode == 200) {
       return jsonDecode(response.body);
     } else {
-      throw Exception('Failed to update event');
+      throw Exception('Failed to update event: ${response.body}');
     }
   }
 

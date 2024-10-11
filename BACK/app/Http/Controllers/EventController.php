@@ -6,6 +6,7 @@ use App\Models\Event;
 use App\Http\Requests\StoreEventRequest;
 use App\Http\Requests\UpdateEventRequest;
 use App\Http\Resources\Resources\EventResource;
+use App\Models\Animal;
 use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Exception;
@@ -96,9 +97,19 @@ class EventController extends Controller
         try {
             $event = Event::findOrFail($id);
 
+            $name = null;
+            if ($request->has('animal_id') && !empty($request->animal_id)) {
+                $animal = Animal::where('name', $request->animal_id)->first();
+                if ($animal) {
+                    $name = $animal->id;
+                } else {
+                    return response()->json(['error' => 'Animal non trouvé'], 404);
+                }
+            }
+
             $event->update([
                 'user_id' => $request->user_id,
-                'animal_id' => $request->animal_id ? $request->animal_id : null,
+                'animal_id' => $name,
                 'titre' => $request->titre,
                 'description' => $request->description,
                 'dateEvent' => $request->dateEvent,
@@ -111,9 +122,9 @@ class EventController extends Controller
                 'event' => $event
             ]);
         } catch (ModelNotFoundException $e) {
-            return response()->json(['error' => $e->getMessage()], 404);
+            return response()->json(['error' => 'Événement non trouvé'], 404);
         } catch (Exception $e) {
-            return response()->json(['error' => $e->getMessage()], 500);
+            return response()->json(['error' => 'Erreur lors de la mise à jour de l\'événement : ' . $e->getMessage()], 500);
         }
     }
 
@@ -135,4 +146,5 @@ class EventController extends Controller
             return response()->json(['error' => 'Erreur lors de la suppression de l\'événement'], 500);
         }
     }
+
 }
