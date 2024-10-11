@@ -97,6 +97,17 @@ class _EventsScreenState extends State<EventsScreen> {
     }
   }
 
+  void _onNewAnimal() async {
+    final result = await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const NewEventsScreen()),
+    );
+
+    if (result == true) {
+      _loadEvents(id);
+    }
+  }
+
   void showInfoDialog(BuildContext context, String message, String title) {
     showDialog(
       context: context,
@@ -237,9 +248,9 @@ class _EventsScreenState extends State<EventsScreen> {
                   // padding: const EdgeInsets.all(8),
                   child: Column(
                     children: [
-                      // SizedBox(height: screenHeight * 0.01),
+                      SizedBox(height: screenHeight * 0.02),
                       Container(
-                        width: screenWidth * 0.87,
+                        width: screenWidth * 0.82,
                         child: Row(
                           children: [
                             Expanded(
@@ -313,12 +324,7 @@ class _EventsScreenState extends State<EventsScreen> {
                             SizedBox(width: screenWidth * 0.03),
                             GestureDetector(
                               onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) =>
-                                          const NewEventsScreen()),
-                                );
+                                _onNewAnimal();
                               },
                               child: Container(
                                 height: screenHeight * 0.043,
@@ -768,11 +774,11 @@ class _EventsScreenState extends State<EventsScreen> {
               if (events.isNotEmpty)
                 ...events.map((event) {
                   return Center(
-                    child: GestureDetector(
-                      onTap: () {
-                        showEventDetails(context, event);
-                      },
-                      child: Container(
+                      child: GestureDetector(
+                    onTap: () {
+                      showEventDetails(context, event);
+                    },
+                    child: Container(
                       width: screenWidth * 0.8,
                       margin: const EdgeInsets.only(bottom: 6),
                       decoration: BoxDecoration(
@@ -934,7 +940,6 @@ class _EventsScreenState extends State<EventsScreen> {
                     ),
                   ),
                   SizedBox(height: screenHeight * 0.04),
-
                   Container(
                     padding: const EdgeInsets.all(10),
                     width: screenWidth * 0.85,
@@ -960,15 +965,16 @@ class _EventsScreenState extends State<EventsScreen> {
                                 screenWidth, 'Animal', event['animal']['name'])
                             : SizedBox.shrink(),
                         _buildDetailRow(screenWidth, 'Titre', event['titre']),
-                        _buildDetailRow(screenWidth, 'Date', event['dateEvent']),
-                        _buildDetailRow(screenWidth, 'Heure de debut', event['heureDebut']),
-                        _buildDetailRow(screenWidth, 'Heure de fin', event['heureFin']),
+                        _buildDetailRow(
+                            screenWidth, 'Date', event['dateEvent']),
+                        _buildDetailRow(
+                            screenWidth, 'Heure de debut', event['heureDebut']),
+                        _buildDetailRow(
+                            screenWidth, 'Heure de fin', event['heureFin']),
                       ],
                     ),
                   ),
-                  
                   SizedBox(height: screenHeight * 0.02),
-                  
                   Column(
                     children: [
                       Container(
@@ -1078,8 +1084,7 @@ class _EventsScreenState extends State<EventsScreen> {
                     isDense: true,
                   ),
                   style: const TextStyle(color: Colors.black),
-                  controller:
-                      TextEditingController(text: value),
+                  controller: TextEditingController(text: value),
                 ),
               ),
             ),
@@ -1102,9 +1107,9 @@ class _EventsScreenState extends State<EventsScreen> {
           : '',
     );
     TextEditingController titreController =
-      TextEditingController(text: event['titre']);
+        TextEditingController(text: event['titre']);
     TextEditingController dateController =
-      TextEditingController(text: event['dateEvent']);
+        TextEditingController(text: event['dateEvent']);
     TextEditingController debutController =
         TextEditingController(text: event['heureDebut']);
     TextEditingController finController =
@@ -1190,8 +1195,7 @@ class _EventsScreenState extends State<EventsScreen> {
                                 event['animal']['name'] != null
                             ? _buildEditableDetailRow(
                                 screenWidth, 'Animal', animalController)
-                            : SizedBox
-                                .shrink(),
+                            : SizedBox.shrink(),
                         _buildEditableDetailRow(
                             screenWidth, 'Titre', titreController),
                         _buildEditableDetailRow1(
@@ -1266,7 +1270,6 @@ class _EventsScreenState extends State<EventsScreen> {
                     ],
                   ),
                   SizedBox(height: screenHeight * 0.04),
-                  
                   Expanded(
                     child: Center(
                       child: Container(
@@ -1314,7 +1317,6 @@ class _EventsScreenState extends State<EventsScreen> {
                                   'Succès', () {
                                 _loadUserInfo();
                               });
-
                             } catch (e) {
                               print('Erreur lors de la mise à jour : $e');
                               showInfoDialoga(
@@ -1325,7 +1327,6 @@ class _EventsScreenState extends State<EventsScreen> {
                               });
                             }
                           },
-
                           child: const Text(
                             'Modifier',
                             style: TextStyle(
@@ -1337,7 +1338,8 @@ class _EventsScreenState extends State<EventsScreen> {
                         ),
                       ),
                     ),
-                  )],
+                  )
+                ],
               ),
             );
           },
@@ -1347,8 +1349,7 @@ class _EventsScreenState extends State<EventsScreen> {
   }
 
   Widget _buildEditableDetailRow(
-    double screenWidth, String label, TextEditingController controller) {
-
+      double screenWidth, String label, TextEditingController controller) {
     return Column(
       children: [
         Row(
@@ -1495,10 +1496,8 @@ class _EventsScreenState extends State<EventsScreen> {
                   onTap: () => _selectTime(context),
                   decoration: InputDecoration(
                     border: InputBorder.none,
-                    contentPadding: const EdgeInsets.symmetric(
-                      horizontal: 8,
-                      vertical: 14
-                    ),
+                    contentPadding:
+                        const EdgeInsets.symmetric(horizontal: 8, vertical: 14),
                     isDense: true,
                     suffixIcon: IconButton(
                       icon: const Icon(Icons.access_time),
@@ -1511,11 +1510,8 @@ class _EventsScreenState extends State<EventsScreen> {
             ),
           ],
         ),
-        const Divider(
-            color: AppColors.gris, height: 1.0),
+        const Divider(color: AppColors.gris, height: 1.0),
       ],
     );
   }
-
-  
 }

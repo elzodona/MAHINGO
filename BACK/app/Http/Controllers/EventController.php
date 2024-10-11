@@ -42,19 +42,17 @@ class EventController extends Controller
     public function store(Request $request)
     {
         try {
-            $request->validate([
-                'user_id' => 'required|exists:users,id',
-                'animal_id' => 'nullable|exists:animals,id',
-                'titre' => 'required|string',
-                'description' => 'required|string|max:255',
-                'dateEvent' => 'required|date',
-                'heureDebut' => 'required|date_format:H:i',
-                'heureFin' => 'required|date_format:H:i',
-            ]);
+            $id = null;
+            if ($request->animal_id) {
+                $animal = Animal::where('name', $request->animal_id)->first();
+                if ($animal) {
+                    $id = $animal->id;
+                }
+            }
 
             $event = Event::create([
                 'user_id' => $request->user_id,
-                'animal_id' => $request->animal_id ? $request->animal_id : null,
+                'animal_id' => $id,
                 'titre' => $request->titre,
                 'description' => $request->description,
                 'dateEvent' => $request->dateEvent,
@@ -63,9 +61,9 @@ class EventController extends Controller
             ]);
 
             return response()->json([
-                'message' => 'Evénement ajouté avec succès !',
+                'message' => 'Événement ajouté avec succès !',
                 'event' => $event,
-            ]);
+            ], 201);
 
         } catch (Exception $e) {
             return response()->json([
@@ -73,6 +71,7 @@ class EventController extends Controller
             ], 500);
         }
     }
+
 
     /**
      * Affiche un événement spécifique.
