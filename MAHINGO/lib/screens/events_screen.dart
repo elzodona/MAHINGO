@@ -29,6 +29,8 @@ class _EventsScreenState extends State<EventsScreen> {
   Map<DateTime, List<dynamic>> _events = {};
   List<dynamic> events = [];
   int id = 2;
+  List<dynamic> _nextThreeEvents = [];
+
 
   DateTime _focusedDay = DateTime.now();
   DateTime? _selectedDay;
@@ -78,7 +80,6 @@ class _EventsScreenState extends State<EventsScreen> {
       Map<DateTime, List<dynamic>> eventsMap = {};
       for (var event in events) {
         DateTime eventDate = DateTime.parse(event['dateEvent']);
-
         DateTime eventKey =
             DateTime(eventDate.year, eventDate.month, eventDate.day);
 
@@ -91,11 +92,82 @@ class _EventsScreenState extends State<EventsScreen> {
       setState(() {
         _events = eventsMap;
       });
-      print(_events);
+
+      _getUpcomingEvents();
     } catch (e) {
       print('Erreur : $e');
     }
   }
+
+  void _getUpcomingEvents() {
+    List<dynamic> upcomingEvents = [];
+    DateTime now = DateTime.now();
+
+    for (var key in _events.keys) {
+      List<dynamic> dayEvents = _events[key]!;
+
+      if (key.year == now.year &&
+          key.month == now.month &&
+          key.day == now.day) {
+        for (var event in dayEvents) {
+          TimeOfDay eventTime = TimeOfDay(
+            hour: int.parse(event['heureDebut'].split(':')[0]),
+            minute: int.parse(event['heureDebut'].split(':')[1]),
+          );
+
+          DateTime fullEventDateTime = DateTime(
+            key.year,
+            key.month,
+            key.day,
+            eventTime.hour,
+            eventTime.minute,
+          );
+
+          if (fullEventDateTime.isAfter(now)) {
+            upcomingEvents.add(event);
+          }
+        }
+      }
+      else if (key.isAfter(now)) {
+        upcomingEvents.addAll(dayEvents);
+      }
+    }
+
+    upcomingEvents.sort((a, b) {
+      DateTime dateA = DateTime.parse(a['dateEvent']);
+      TimeOfDay timeA = TimeOfDay(
+        hour: int.parse(a['heureDebut'].split(':')[0]),
+        minute: int.parse(a['heureDebut'].split(':')[1]),
+      );
+      DateTime fullDateTimeA = DateTime(
+        dateA.year,
+        dateA.month,
+        dateA.day,
+        timeA.hour,
+        timeA.minute,
+      );
+
+      DateTime dateB = DateTime.parse(b['dateEvent']);
+      TimeOfDay timeB = TimeOfDay(
+        hour: int.parse(b['heureDebut'].split(':')[0]),
+        minute: int.parse(b['heureDebut'].split(':')[1]),
+      );
+      DateTime fullDateTimeB = DateTime(
+        dateB.year,
+        dateB.month,
+        dateB.day,
+        timeB.hour,
+        timeB.minute,
+      );
+
+      return fullDateTimeA.compareTo(fullDateTimeB);
+    });
+
+    setState(() {
+      _nextThreeEvents = upcomingEvents.take(3).toList();
+    });
+  }
+
 
   void _onNewAnimal() async {
     final result = await Navigator.push(
@@ -494,7 +566,7 @@ class _EventsScreenState extends State<EventsScreen> {
                                 child: Text(
                                   'Evènements à venir',
                                   style: TextStyle(
-                                    fontSize: 18,
+                                    fontSize: 20,
                                     color: AppColors.noir,
                                     fontWeight: FontWeight.w500,
                                     fontFamily: 'Poppins',
@@ -503,195 +575,107 @@ class _EventsScreenState extends State<EventsScreen> {
                               ),
                             ),
                             SizedBox(height: screenHeight * 0.007),
-                            Container(
-                              // padding: const EdgeInsets.all(8.0),
-                              height: screenHeight * 0.085,
-                              width: screenWidth * 0.8,
-                              decoration: BoxDecoration(
-                                // color: const Color(0xFFEBF4EB),
-                                color: AppColors.blanc,
-                                borderRadius: BorderRadius.circular(14),
-                                boxShadow: const [
-                                  BoxShadow(
-                                    color: AppColors.gris,
-                                    spreadRadius: 3,
-                                    blurRadius: 6,
-                                    offset: Offset(0, 3),
-                                  ),
-                                ],
-                              ),
-                              child: Row(
-                                children: [
-                                  Container(
-                                    // padding: const EdgeInsets.all(8.0),
-                                    height: 70,
-                                    width: 70,
+                            Column(
+                              children: _nextThreeEvents.map((event) {
+                                DateTime eventDate =
+                                    DateTime.parse(event['dateEvent']);
+                                String formattedDate =
+                                    '${eventDate.day}.${eventDate.month}.${eventDate.year}';
+                                String time = event['heureDebut'];
+
+                                return Padding(
+                                  padding: const EdgeInsets.only(
+                                      bottom: 4),
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      showEventDetails(context, event);
+                                    },
+                                    child: Container(
+                                    height: screenHeight * 0.085,
+                                    width: screenWidth * 0.8,
                                     decoration: BoxDecoration(
                                       color: AppColors.blanc,
-                                      borderRadius: BorderRadius.circular(8.0),
-                                    ),
-                                    child: Image.asset(
-                                      'assets/images/vaccination.png',
-                                      color: AppColors.vert,
-                                      height: 16,
-                                      width: 16,
-                                    ),
-                                  ),
-                                  const SizedBox(width: 16),
-                                  const Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Text(
-                                        'Vaccination',
-                                        style: TextStyle(
-                                          color: AppColors.noir,
-                                          fontSize: 14,
-                                          fontFamily: 'Poppins',
-                                          fontWeight: FontWeight.w600,
+                                      borderRadius: BorderRadius.circular(14),
+                                      boxShadow: const [
+                                        BoxShadow(
+                                          color: AppColors.gris,
+                                          spreadRadius: 3,
+                                          blurRadius: 6,
+                                          offset: Offset(0, 3),
                                         ),
-                                      ),
-                                      Text(
-                                        '11.06.2023 | 13:30',
-                                        style: TextStyle(
-                                          color: Color(0xFF808B9A),
-                                          fontSize: 12,
-                                          fontFamily: 'Poppins',
-                                          fontWeight: FontWeight.w600,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            ),
-                            SizedBox(height: screenHeight * 0.008),
-                            Container(
-                              // padding: const EdgeInsets.all(8.0),
-                              height: screenHeight * 0.085,
-                              width: screenWidth * 0.8,
-                              decoration: BoxDecoration(
-                                color: AppColors.blanc,
-                                borderRadius: BorderRadius.circular(14),
-                                boxShadow: const [
-                                  BoxShadow(
-                                    color: AppColors.gris,
-                                    spreadRadius: 3,
-                                    blurRadius: 6,
-                                    offset: Offset(0, 3),
-                                  ),
-                                ],
-                              ),
-                              child: Row(
-                                children: [
-                                  Container(
-                                    // padding: const EdgeInsets.all(8.0),
-                                    height: 70,
-                                    width: 70,
-                                    decoration: BoxDecoration(
-                                      color: AppColors.blanc,
-                                      borderRadius: BorderRadius.circular(8.0),
+                                      ],
                                     ),
-                                    child: Image.asset(
-                                      'assets/images/visite_medicale.png',
-                                      color: AppColors.vert,
-                                      height: 16,
-                                      width: 16,
-                                    ),
-                                  ),
-                                  const SizedBox(width: 16),
-                                  const Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Text(
-                                        'Visite médicale',
-                                        style: TextStyle(
-                                          color: AppColors.noir,
-                                          fontSize: 14,
-                                          fontFamily: 'Poppins',
-                                          fontWeight: FontWeight.w600,
+                                    child: Row(
+                                      children: [
+                                        Container(
+                                          height: 70,
+                                          width: 70,
+                                          decoration: BoxDecoration(
+                                            color: AppColors.blanc,
+                                            borderRadius: BorderRadius.circular(8.0),
+                                          ),
+                                          child: (event['titre'] == 'vaccination')
+                                              ? Image.asset(
+                                                  'assets/images/vaccination.png',
+                                                  color: AppColors.vert,
+                                                  width: 10,
+                                                  height: 10,
+                                                )
+                                              : (event['titre'] == 'visite medicale')
+                                                  ? Image.asset(
+                                                      'assets/images/visite_medicale.png',
+                                                      color: AppColors.vert,
+                                                      width: 10,
+                                                      height: 10,
+                                                    )
+                                                  : (event['titre'] == 'traitement')
+                                                      ? Image.asset(
+                                                          'assets/images/traitement.png',
+                                                          color: AppColors.vert,
+                                                          width: 10,
+                                                          height: 10,
+                                                        )
+                                                      : const Icon(
+                                                          Icons.event,
+                                                          color: Colors.green,
+                                                          size: 26,
+                                                        ),
                                         ),
-                                      ),
-                                      Text(
-                                        '11.06.2023 | 13:30',
-                                        style: TextStyle(
-                                          color: Color(0xFF808B9A),
-                                          fontSize: 12,
-                                          fontFamily: 'Poppins',
-                                          fontWeight: FontWeight.w600,
+                                        const SizedBox(width: 16),
+                                        Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            Text(
+                                              event['titre'],
+                                              style: const TextStyle(
+                                                color: AppColors.noir,
+                                                fontSize: 16,
+                                                fontFamily: 'Poppins',
+                                                fontWeight: FontWeight.w600,
+                                              ),
+                                            ),
+                                            Text(
+                                              '$formattedDate | $time',
+                                              style: const TextStyle(
+                                                color: Color(0xFF808B9A),
+                                                fontSize: 12,
+                                                fontFamily: 'Poppins',
+                                                fontWeight: FontWeight.w600,
+                                              ),
+                                            ),
+                                          ],
                                         ),
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            ),
-                            SizedBox(height: screenHeight * 0.008),
-                            Container(
-                              // padding: const EdgeInsets.all(8.0),
-                              height: screenHeight * 0.085,
-                              width: screenWidth * 0.8,
-                              decoration: BoxDecoration(
-                                color: AppColors.blanc,
-                                borderRadius: BorderRadius.circular(14),
-                                boxShadow: const [
-                                  BoxShadow(
-                                    color: AppColors.gris,
-                                    spreadRadius: 3,
-                                    blurRadius: 6,
-                                    offset: Offset(0, 3),
-                                  ),
-                                ],
-                              ),
-                              child: Row(
-                                children: [
-                                  Container(
-                                    // padding: const EdgeInsets.all(8.0),
-                                    height: 70,
-                                    width: 70,
-                                    decoration: BoxDecoration(
-                                      color: AppColors.blanc,
-                                      borderRadius: BorderRadius.circular(8.0),
-                                    ),
-                                    child: Image.asset(
-                                      'assets/images/traitement.png',
-                                      color: AppColors.vert,
-                                      height: 16,
-                                      width: 16,
+                                      ],
                                     ),
                                   ),
-                                  const SizedBox(width: 16),
-                                  const Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Text(
-                                        'Traitement médical',
-                                        style: TextStyle(
-                                          color: AppColors.noir,
-                                          fontSize: 14,
-                                          fontFamily: 'Poppins',
-                                          fontWeight: FontWeight.w600,
-                                        ),
-                                      ),
-                                      Text(
-                                        '11.06.2023 | 13:30',
-                                        style: TextStyle(
-                                          color: Color(0xFF808B9A),
-                                          fontSize: 12,
-                                          fontFamily: 'Poppins',
-                                          fontWeight: FontWeight.w600,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
+                                  )
+                                );
+                              }).toList(),
                             )
+
                           ],
                         ),
                       )
@@ -775,10 +759,10 @@ class _EventsScreenState extends State<EventsScreen> {
                 ...events.map((event) {
                   return Center(
                       child: GestureDetector(
-                    onTap: () {
-                      showEventDetails(context, event);
-                    },
-                    child: Container(
+                        onTap: () {
+                          showEventDetails(context, event);
+                        },
+                        child: Container(
                       width: screenWidth * 0.8,
                       margin: const EdgeInsets.only(bottom: 6),
                       decoration: BoxDecoration(
@@ -1514,4 +1498,5 @@ class _EventsScreenState extends State<EventsScreen> {
       ],
     );
   }
+
 }
