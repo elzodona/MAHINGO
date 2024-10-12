@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mahingo/screens/login_screen.dart';
+import 'package:mahingo/screens/notifications_screen.dart';
 import 'package:mahingo/utils/colors.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
@@ -84,7 +85,12 @@ class _CustomAppBarState extends State<CustomAppBar> {
 
           // Icône à droite
           GestureDetector(
-            onTap: () {},
+            onTap: () {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => const NotificationsScreen()),
+              );
+            },
             child: const Icon(
               Icons.notifications,
               color: AppColors.vert,

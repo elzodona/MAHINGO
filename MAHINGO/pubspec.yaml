@@ -102,6 +102,8 @@ flutter:
     - assets/images/icon_good_health.png
     - assets/images/vaccination.png
     - assets/images/visite_medicale.png
+    - assets/images/loca.png
+    - assets/images/calendar.png
     - assets/images/traitement.png
     - assets/images/location.png
     - assets/images/event.png
