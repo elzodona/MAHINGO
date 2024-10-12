@@ -1597,9 +1597,7 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
                                         onChanged: (value) {
                                           setState(() {
                                             _searchQuery = value;
-                                            foundAnimals =
-                                                getAnimalSearchResult(
-                                                    _searchQuery);
+                                            foundAnimals = getAnimalSearchResult(_searchQuery);
                                             if (foundAnimals.isNotEmpty) {
                                               showOverlay(); // Affiche l'overlay si le dropdown n'est pas déjà affiché
                                             } else {

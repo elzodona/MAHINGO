@@ -30,14 +30,18 @@ class _EventsScreenState extends State<EventsScreen> {
   List<dynamic> events = [];
   int id = 2;
   List<dynamic> _nextThreeEvents = [];
+  String _searchQuery = '';
+  List<dynamic> foundEvents = [];
 
 
   DateTime _focusedDay = DateTime.now();
   DateTime? _selectedDay;
 
   final LayerLink layerLink = LayerLink();
-  final GlobalKey _nameAnimalKey = GlobalKey();
+  final GlobalKey _nameEventKey = GlobalKey();
   FocusNode _focusNode = FocusNode();
+  OverlayEntry? _overlayEntry;
+
   final TextEditingController _nameEvent = TextEditingController();
 
   @override
@@ -168,6 +172,102 @@ class _EventsScreenState extends State<EventsScreen> {
     });
   }
 
+  Future<List<dynamic>> getEventSearchResult(String query) async {
+    if (query.isEmpty) {
+      return [];
+    }
+
+    Api2Service apiService = Api2Service();
+    List<dynamic> events = await apiService.fetchEvents(id);
+    // print(events);
+
+    List<dynamic> found = [];
+    for (var event in events) {
+      if (event['titre'].toLowerCase().startsWith(query.toLowerCase())) {
+        found.add(event);
+      }
+    }
+    return found;
+  }
+
+  void removeOverlay() {
+    if (_overlayEntry != null) {
+      _overlayEntry!.remove();
+      _overlayEntry = null;
+    }
+  }
+
+  OverlayEntry createOverlayEntry() {
+    RenderBox? renderBox =
+        _nameEventKey.currentContext?.findRenderObject() as RenderBox?;
+    if (renderBox == null) {
+      return OverlayEntry(builder: (_) => Container());
+    }
+    var size = renderBox.size;
+    var offset = renderBox.localToGlobal(Offset.zero);
+
+    return OverlayEntry(
+      builder: (context) {
+        return Stack(
+          children: [
+            Positioned.fill(
+              child: GestureDetector(
+                onTap: () {
+                  removeOverlay();
+                },
+                child: Container(
+                  color: Colors.transparent,
+                ),
+              ),
+            ),
+            Positioned(
+              width: size.width,
+              left: offset.dx,
+              top: offset.dy + size.height,
+              child: GestureDetector(
+                onTap: () {},
+                child: Material(
+                  elevation: 4.0,
+                  borderRadius: BorderRadius.circular(12),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      border: Border.all(color: AppColors.gris),
+                      borderRadius: BorderRadius.circular(12),
+                      color: AppColors.blanc,
+                    ),
+                    child: ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: foundEvents.length,
+                      itemBuilder: (context, index) {
+                        return ListTile(
+                          title: Text(foundEvents[index]['titre']),
+                          onTap: () {
+                            setState(() {
+                              removeOverlay();
+                              showEventDetails(context, foundEvents[index]);
+                              _nameEvent.text = '';
+                            });
+                          },
+                        );
+                      },
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void showOverlay() {
+    if (_overlayEntry == null) {
+      _focusNode.requestFocus();
+      _overlayEntry = createOverlayEntry();
+      Overlay.of(context).insert(_overlayEntry!);
+    }
+  }
 
   void _onNewAnimal() async {
     final result = await Navigator.push(
@@ -342,53 +442,63 @@ class _EventsScreenState extends State<EventsScreen> {
                                 child: Column(
                                   children: [
                                     CompositedTransformTarget(
-                                        link: layerLink,
-                                        child: TextField(
-                                          key: _nameAnimalKey,
-                                          focusNode: _focusNode,
-                                          style: const TextStyle(
-                                              color:
-                                                  Color.fromARGB(255, 0, 0, 0)),
-                                          controller: _nameEvent,
-                                          decoration: InputDecoration(
-                                            hintText: 'Search...',
-                                            hintStyle: const TextStyle(
-                                                color: Color.fromARGB(
-                                                    255, 200, 199, 197)),
-                                            prefixIcon: const Icon(Icons.search,
-                                                color: AppColors.gris),
-                                            contentPadding:
-                                                const EdgeInsets.symmetric(
-                                                    vertical: 10,
-                                                    horizontal: 15),
-                                            border: OutlineInputBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(12),
-                                              borderSide: const BorderSide(
-                                                  color: AppColors.gris,
-                                                  width: 1),
-                                            ),
-                                            enabledBorder: OutlineInputBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(12),
-                                              borderSide: const BorderSide(
-                                                  color: AppColors.gris,
-                                                  width: 1),
-                                            ),
-                                            focusedBorder: OutlineInputBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(12),
-                                              borderSide: const BorderSide(
-                                                  color: AppColors.vert,
-                                                  width: 2),
-                                            ),
-                                            fillColor: AppColors.blanc,
-                                            filled: true,
+                                      link: layerLink,
+                                      child: TextField(
+                                        key: _nameEventKey,
+                                        focusNode: _focusNode,
+                                        style: const TextStyle(
+                                            color:
+                                                Color.fromARGB(255, 0, 0, 0)),
+                                        controller: _nameEvent,
+                                        decoration: InputDecoration(
+                                          hintText: 'Search...',
+                                          hintStyle: const TextStyle(
+                                              color: Color.fromARGB(
+                                                  255, 200, 199, 197)),
+                                          prefixIcon: const Icon(Icons.search,
+                                              color: AppColors.gris),
+                                          contentPadding:
+                                              const EdgeInsets.symmetric(
+                                                  vertical: 10, horizontal: 15),
+                                          border: OutlineInputBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(12),
+                                            borderSide: const BorderSide(
+                                                color: AppColors.gris,
+                                                width: 1),
                                           ),
-                                          onChanged: (value) {
-                                            setState(() {});
-                                          },
-                                        )),
+                                          enabledBorder: OutlineInputBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(12),
+                                            borderSide: const BorderSide(
+                                                color: AppColors.gris,
+                                                width: 1),
+                                          ),
+                                          focusedBorder: OutlineInputBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(12),
+                                            borderSide: const BorderSide(
+                                                color: AppColors.vert,
+                                                width: 2),
+                                          ),
+                                          fillColor: AppColors.blanc,
+                                          filled: true,
+                                        ),
+                                        onChanged: (value) async {
+                                          setState(() {
+                                            _searchQuery = value;
+                                          });
+                                          foundEvents = await getEventSearchResult(_searchQuery);
+                                          print(foundEvents);
+
+                                          if (foundEvents.isNotEmpty) {
+                                            showOverlay();
+                                          } else {
+                                            removeOverlay();
+                                          }
+                                        },
+                                      ),
+                                    ),
                                   ],
                                 ),
                               ),
@@ -552,6 +662,9 @@ class _EventsScreenState extends State<EventsScreen> {
                                           ),
                                         );
                                       },
+                                      markerBuilder: (context, date, events) {
+                                        return _buildEventMarker(events);
+                                      },
                                     ),
                                   ),
                                 ],
@@ -691,19 +804,28 @@ class _EventsScreenState extends State<EventsScreen> {
   }
 
   Widget _buildEventMarker(List<dynamic> events) {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: events.take(3).map((event) {
-        return Container(
-          margin: const EdgeInsets.symmetric(horizontal: 0.5),
-          width: 8.0,
-          height: 8.0,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            color: _getEventColor(event),
+    return Stack(
+      alignment: Alignment.bottomCenter,
+      children: [
+        Container(
+          height: 23,
+          alignment: Alignment.center,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: events.take(4).map((event) {
+              return Container(
+                margin: const EdgeInsets.symmetric(horizontal: 0.5),
+                width: 7,
+                height: 7,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: _getEventColor(event),
+                ),
+              );
+            }).toList(),
           ),
-        );
-      }).toList(),
+        ),
+      ],
     );
   }
 
@@ -711,11 +833,11 @@ class _EventsScreenState extends State<EventsScreen> {
     if (event['titre'] == 'vaccination') {
       return Colors.blue;
     } else if (event['titre'] == 'visite medicale') {
-      return Colors.red;
+      return Colors.purple;
     } else if (event['titre'] == 'traitement') {
       return Colors.yellow;
     } else {
-      return Colors.green;
+      return Colors.grey;
     }
   }
 
