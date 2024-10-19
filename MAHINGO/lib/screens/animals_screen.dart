@@ -724,9 +724,9 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
         backgroundColor: Colors.transparent,
         builder: (context) {
           return DraggableScrollableSheet(
-            initialChildSize: 0.887,
+            initialChildSize: 0.95,
             minChildSize: 0.6,
-            maxChildSize: 0.887,
+            maxChildSize: 0.95,
             builder: (_, controller) {
               return Container(
                 // height: screenHeight * 0.95,
@@ -876,10 +876,10 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
                     // SizedBox(height: screenHeight * 0.025),
 
                     Container(
-                      height: screenHeight * 0.38,
+                      height: screenHeight * 0.4,
                       decoration: const BoxDecoration(
                           // color: AppColors.noir
-                          ),
+                      ),
                       child: Column(
                         children: [
                           Center(
@@ -894,7 +894,7 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
                           SizedBox(height: screenHeight * 0.02),
                           Container(
                             padding: const EdgeInsets.all(5),
-                            height: screenHeight * 0.3,
+                            height: screenHeight * 0.32,
                             width: screenWidth * 0.85,
                             decoration: BoxDecoration(
                               border: Border.all(color: AppColors.gris),
@@ -1216,7 +1216,8 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
                         ],
                       ),
                     ),
-                    SizedBox(height: screenHeight * 0.003),
+                    
+                    // SizedBox(height: screenHeight * 0.003),
 
                     Container(
                       width: screenWidth * 0.85,
@@ -1398,6 +1399,7 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
                         ),
                       ),
                     )
+                  
                   ],
                 ),
               );
@@ -1607,92 +1609,6 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
                                         },
                                       )),
                                 ],
-                                // TextField(
-                                //   style: const TextStyle(
-                                //     color: Color.fromARGB(255, 0, 0, 0),
-                                //   ),
-                                //   controller: _nameAnimal,
-                                //   decoration: InputDecoration(
-                                //     hintText: 'Search...',
-                                //     hintStyle: const TextStyle(
-                                //       color:
-                                //           Color.fromARGB(255, 200, 199, 197),
-                                //     ),
-                                //     prefixIcon: const Icon(
-                                //       Icons.search,
-                                //       color: AppColors.gris,
-                                //     ),
-                                //     contentPadding:
-                                //         const EdgeInsets.symmetric(
-                                //             vertical: 10, horizontal: 15),
-                                //     border: OutlineInputBorder(
-                                //       borderRadius: BorderRadius.circular(12),
-                                //       borderSide: const BorderSide(
-                                //         color: AppColors.gris,
-                                //         width: 1,
-                                //       ),
-                                //     ),
-                                //     enabledBorder: OutlineInputBorder(
-                                //       borderRadius: BorderRadius.circular(12),
-                                //       borderSide: const BorderSide(
-                                //         color: AppColors.gris,
-                                //         width: 1,
-                                //       ),
-                                //     ),
-                                //     focusedBorder: OutlineInputBorder(
-                                //       borderRadius: BorderRadius.circular(12),
-                                //       borderSide: const BorderSide(
-                                //         color: AppColors.vert,
-                                //         width: 2,
-                                //       ),
-                                //     ),
-                                //     fillColor: AppColors.blanc,
-                                //     filled: true,
-                                //   ),
-                                //   onChanged: (value) {
-                                //     setState(() {
-                                //       _searchQuery = value;
-                                //       foundAnimals = getAnimalSearchResult(_searchQuery);
-                                //       displayDropdown = foundAnimals.isNotEmpty;
-                                //       print("Display Dropdown: $displayDropdown");
-                                //       print("Found Animals: $foundAnimals");
-                                //     });
-                                //   },
-                                // ),
-
-                                // if (displayDropdown)
-                                //   Expanded(
-                                //     child: Container(
-                                //       decoration: BoxDecoration(
-                                //         border:
-                                //             Border.all(color: AppColors.gris),
-                                //         borderRadius:
-                                //             BorderRadius.circular(12),
-                                //         color: AppColors.blanc,
-                                //       ),
-                                //       child: ListView.builder(
-                                //         shrinkWrap:
-                                //             true,
-                                //         itemCount: foundAnimals.length,
-                                //         itemBuilder: (context, index) {
-                                //           return ListTile(
-                                //             title: Text(
-                                //                 foundAnimals[index]['nom']),
-                                //             onTap: () {
-                                //               setState(() {
-                                //                 _nameAnimal.text =
-                                //                     foundAnimals[index]
-                                //                         ['nom'];
-                                //                 displayDropdown = false;
-                                //               });
-                                //             },
-                                //           );
-                                //         },
-                                //       ),
-                                //     ),
-                                //   ),
-
-                                // ],
                               ),
                             ),
                           ),
@@ -2031,7 +1947,7 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
                                       padding:
                                           const EdgeInsets.only(bottom: 8.0),
                                       child: Container(
-                                        height: screenHeight * 0.08,
+                                        height: screenHeight * 0.1,
                                         width: screenWidth * 0.94,
                                         decoration: BoxDecoration(
                                           color: _selectedCountIndex == 0

@@ -265,7 +265,7 @@ class _UpdateAnimalScreenState extends State<UpdateAnimalScreen> {
                           children: [
                             Container(
                               padding: const EdgeInsets.all(5),
-                              height: screenHeight * 0.05,
+                              height: screenHeight * 0.055,
                               width: screenWidth * 0.85,
                               decoration: BoxDecoration(
                                 border: Border.all(color: AppColors.gris),
@@ -341,7 +341,7 @@ class _UpdateAnimalScreenState extends State<UpdateAnimalScreen> {
                             SizedBox(height: screenHeight * 0.03),
                             Container(
                               padding: const EdgeInsets.all(5),
-                              height: screenHeight * 0.25,
+                              height: screenHeight * 0.26,
                               width: screenWidth * 0.85,
                               decoration: BoxDecoration(
                                 border: Border.all(color: AppColors.gris),
@@ -627,7 +627,7 @@ class _UpdateAnimalScreenState extends State<UpdateAnimalScreen> {
                           ],
                         ),
                       ),
-                      // SizedBox(height: screenHeight * 0.005),
+                      SizedBox(height: screenHeight * 0.007),
                       Container(
                         height: screenHeight * 0.12,
                         width: screenWidth * 0.85,

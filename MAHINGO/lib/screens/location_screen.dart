@@ -689,7 +689,7 @@ class _LocationScreenState extends State<LocationScreen> {
                                                 padding: const EdgeInsets.only(
                                                     bottom: 8.0),
                                                 child: Container(
-                                                  height: screenHeight * 0.08,
+                                                  height: screenHeight * 0.1,
                                                   width: screenWidth * 0.94,
                                                   decoration: BoxDecoration(
                                                     color: getCollarColor(

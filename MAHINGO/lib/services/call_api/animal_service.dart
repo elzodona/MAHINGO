@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class ApiService {
-  // static const String baseUrl = 'http://192.168.1.63:8000/api';
+  // static const String baseUrl = 'http://192.168.1.42:8000/api';
   static const String baseUrl = 'http://10.0.2.2:8000/api';
 
   Future<List<dynamic>> fetchAnimals(int id) async {

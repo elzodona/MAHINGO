@@ -46,7 +46,10 @@ dependencies:
   flutter_svg: ^2.0.10+1
   table_calendar: ^3.0.0
   intl: ^0.17.0
+  flutter_local_notifications: ^17.2.3
+  flutter_background_service: ^5.0.10
 
+  
   
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
@@ -106,6 +109,8 @@ flutter:
     - assets/images/calendar.png
     - assets/images/traitement.png
     - assets/images/location.png
+    - assets/images/lue.png
+    - assets/images/non_lue.png
     - assets/images/event.png
     - assets/images/orange.png
     - assets/images/orangeb.png

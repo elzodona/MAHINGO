@@ -243,7 +243,7 @@ class _NewAnimalsScreenState extends State<NewAnimalsScreen> {
                       SizedBox(height: screenHeight * 0.025),
 
                       Container(
-                        height: screenHeight * 0.4,
+                        height: screenHeight * 0.41,
                         decoration: const BoxDecoration(
                             // color: AppColors.vert
                             ),
@@ -251,7 +251,7 @@ class _NewAnimalsScreenState extends State<NewAnimalsScreen> {
                           children: [
                             Container(
                               padding: const EdgeInsets.all(5),
-                              height: screenHeight * 0.05,
+                              height: screenHeight * 0.06,
                               width: screenWidth * 0.85,
                               decoration: BoxDecoration(
                                 border: Border.all(color: AppColors.gris),
@@ -327,7 +327,7 @@ class _NewAnimalsScreenState extends State<NewAnimalsScreen> {
                             SizedBox(height: screenHeight * 0.015),
                             Container(
                               padding: const EdgeInsets.all(5),
-                              height: screenHeight * 0.3,
+                              height: screenHeight * 0.32,
                               width: screenWidth * 0.85,
                               decoration: BoxDecoration(
                                 border: Border.all(color: AppColors.gris),

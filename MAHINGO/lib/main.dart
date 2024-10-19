@@ -2,12 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:mahingo/routes/routes.dart';
 import 'package:mahingo/routes/paths.dart';
 import 'package:mahingo/services/toggle/bloc/toggle_bloc.dart';
+import 'package:mahingo/services/background_service.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/date_symbol_data_local.dart';
 
 
 void main() {
   initializeDateFormatting('fr_FR', null);
+  // WidgetsFlutterBinding.ensureInitialized();
+  // initializeService();
   runApp(const MyApp());
 }
 

@@ -100,7 +100,7 @@ class _NewEventsScreenState extends State<NewEventsScreen> {
   }
 
   TextEditingController animalController = 
-    TextEditingController(text: 'Saisir l\'animal');
+    TextEditingController(text: 'Saisir l\'évènement');
   TextEditingController titreController =
       TextEditingController(text: 'Saisir le titre');
   TextEditingController dateController =
@@ -195,7 +195,7 @@ class _NewEventsScreenState extends State<NewEventsScreen> {
                       Container(
                         padding: const EdgeInsets.all(10),
                         width: screenWidth * 0.85,
-                        height: screenHeight * 0.33,
+                        height: screenHeight * 0.35,
                         decoration: BoxDecoration(
                           border: Border.all(color: AppColors.gris),
                           borderRadius: BorderRadius.circular(8.0),

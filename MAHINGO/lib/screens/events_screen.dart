@@ -409,7 +409,7 @@ class _EventsScreenState extends State<EventsScreen> {
             Expanded(
               child: SingleChildScrollView(
                 child: Container(
-                  height: screenHeight * 0.9,
+                  height: screenHeight * 0.92,
                   decoration: const BoxDecoration(
                     color: AppColors.blanc,
                     borderRadius: BorderRadius.only(
@@ -1049,7 +1049,7 @@ class _EventsScreenState extends State<EventsScreen> {
                   Container(
                     padding: const EdgeInsets.all(10),
                     width: screenWidth * 0.85,
-                    height: screenHeight * 0.28,
+                    height: screenHeight * 0.3,
                     decoration: BoxDecoration(
                       border: Border.all(color: AppColors.gris),
                       borderRadius: BorderRadius.circular(8.0),
@@ -1281,7 +1281,7 @@ class _EventsScreenState extends State<EventsScreen> {
                   Container(
                     padding: const EdgeInsets.all(10),
                     width: screenWidth * 0.85,
-                    height: screenHeight * 0.33,
+                    height: screenHeight * 0.35,
                     decoration: BoxDecoration(
                       border: Border.all(color: AppColors.gris),
                       borderRadius: BorderRadius.circular(8.0),

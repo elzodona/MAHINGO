@@ -1086,7 +1086,7 @@ class _AccueilScreenState extends State<AccueilScreen> {
                   Container(
                     padding: const EdgeInsets.all(10),
                     width: screenWidth * 0.85,
-                    height: screenHeight * 0.28,
+                    height: screenHeight * 0.3,
                     decoration: BoxDecoration(
                       border: Border.all(color: AppColors.gris),
                       borderRadius: BorderRadius.circular(8.0),
@@ -1318,7 +1318,7 @@ class _AccueilScreenState extends State<AccueilScreen> {
                   Container(
                     padding: const EdgeInsets.all(10),
                     width: screenWidth * 0.85,
-                    height: screenHeight * 0.33,
+                    height: screenHeight * 0.35,
                     decoration: BoxDecoration(
                       border: Border.all(color: AppColors.gris),
                       borderRadius: BorderRadius.circular(8.0),

@@ -1,0 +1,54 @@
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+
+class Api3Service {
+  // static const String baseUrl = 'http://192.168.1.42:8000/api';
+  static const String baseUrl = 'http://10.0.2.2:8000/api';
+
+  Future<List<dynamic>> fetchNotifs(int id) async {
+    final response = await http.get(Uri.parse('$baseUrl/notif/user/$id'));
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      return data['data'];
+    } else {
+      throw Exception('Failed to load notifs');
+    }
+  }
+
+  Future<dynamic> createNotif(Map<String, dynamic> data) async {
+    final response = await http.post(
+      Uri.parse('$baseUrl/notif/add'),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode(data),
+    );
+
+    if (response.statusCode == 201) {
+      return jsonDecode(response.body);
+    } else {
+      final errorData = jsonDecode(response.body);
+      throw Exception('Failed to create notif: ${errorData['error']}');
+    }
+  }
+
+  Future<dynamic> updateNotif(int id) async {
+    final response = await http.post(
+      Uri.parse('$baseUrl/notif/update/$id'),
+      headers: {'Content-Type': 'application/json'},
+    );
+
+    if (response.statusCode == 200) {
+      return jsonDecode(response.body);
+    } else {
+      throw Exception('Failed to update notif: ${response.body}');
+    }
+  }
+
+  Future<void> deleteNotif(int id) async {
+    final response = await http.delete(Uri.parse('$baseUrl/notif/delete/$id'));
+
+    if (response.statusCode != 200 && response.statusCode != 204) {
+      throw Exception('Failed to delete notif');
+    }
+  }
+
+}
