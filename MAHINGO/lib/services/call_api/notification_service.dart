@@ -43,12 +43,24 @@ class Api3Service {
     }
   }
 
-  Future<void> deleteNotif(int id) async {
+  Future<dynamic> deleteNotif(int id) async {
     final response = await http.delete(Uri.parse('$baseUrl/notif/delete/$id'));
 
     if (response.statusCode != 200 && response.statusCode != 204) {
-      throw Exception('Failed to delete notif');
+      final responseBody = json.decode(response.body);
+      String errorMessage = 'Échec de la suppression de la notification';
+
+      if (response.statusCode == 404) {
+        errorMessage = 'Notification non trouvée';
+      } else if (response.statusCode == 500) {
+        errorMessage = responseBody['error'] ?? 'Erreur interne du serveur';
+      }
+
+      throw Exception(errorMessage);
     }
+
+    return response.body;
   }
+
 
 }

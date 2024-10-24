@@ -1,130 +1,221 @@
-// import 'dart:convert';
 // import 'package:flutter/material.dart';
-// import 'dart:async';
-// import 'package:flutter_background_service/flutter_background_service.dart';
-// import 'package:flutter_background_service_android/flutter_background_service_android.dart';
-// import 'package:mahingo/services/call_api/notification_service.dart';
-// import 'package:mahingo/services/call_api/event_service.dart';
+// import 'package:workmanager/workmanager.dart';
 // import 'package:shared_preferences/shared_preferences.dart';
+// import 'dart:convert';
+// import 'package:mahingo/services/call_api/event_service.dart';
+// import 'package:mahingo/services/call_api/notification_service.dart';
+// import 'package:mahingo/models/event_mod.dart';
+// import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
+// final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+//     FlutterLocalNotificationsPlugin();
 
-// Future<void> initializeService() async {
-//   final service = FlutterBackgroundService();
+// Map<DateTime, List<dynamic>> _events = {};
+// List<dynamic> _nextThreeEvents = [];
 
-//   await service.configure(
-//     androidConfiguration: AndroidConfiguration(
-//       onStart: onStart,
-//       isForegroundMode: true,
-//     ),
-//     iosConfiguration: IosConfiguration(
-//       onForeground: onStart,
-//       onBackground: null,
-//     ),
-//   );
+// void callbackDispatcher() {
+//   Workmanager().executeTask((task, inputData) async {
+//     print('Exécution de la tâche de fond : $task');
 
-//   service.startService();
-// }
+//     await _loadUserInfo();
 
-// void onStart(ServiceInstance service) async {
-//   Timer.periodic(const Duration(minutes: 15), (timer) async {
-//     await checkAndSaveUpcomingEvents();
+//     await _showNotification(
+//         'Test Notification', 'Cette notification vient de la tâche de fond.');
+
+//     print('Notification envoyée depuis la tâche de fond');
+//     return Future.value(true);
 //   });
 // }
 
-// Future<void> checkAndSaveUpcomingEvents() async {
-//   try {
-//     // Charger les événements à partir de l'API
-//     int? userId = await _getUserIdFromPrefs();
-//     if (userId == null) {
-//       print("Utilisateur non trouvé");
-//       return;
-//     }
-
-//     List<dynamic> events = await Api2Service().fetchEvents(userId);
-//     if (events.isEmpty) {
-//       print("Aucun événement trouvé");
-//       return;
-//     }
-
-//     print("Événements récupérés : $events");
-
-//     DateTime now = DateTime.now();
-//     Map<String, dynamic>? nextEvent;
-//     Duration?
-//         shortestDuration; // Pour stocker la plus petite différence de temps
-
-//     for (var event in events) {
-//       DateTime eventDate = DateTime.parse(event['dateEvent']);
-//       TimeOfDay eventTime = TimeOfDay(
-//         hour: int.parse(event['heureDebut'].split(':')[0]),
-//         minute: int.parse(event['heureDebut'].split(':')[1]),
-//       );
-
-//       DateTime fullEventDateTime = DateTime(
-//         eventDate.year,
-//         eventDate.month,
-//         eventDate.day,
-//         eventTime.hour,
-//         eventTime.minute,
-//       );
-
-//       Duration difference = fullEventDateTime.difference(now);
-
-//       print("Événement : $event, Différence de temps : $difference");
-
-//       // Sélectionner le premier événement qui est dans le futur et qui est le plus proche
-//       if (difference > Duration.zero &&
-//           (shortestDuration == null || difference < shortestDuration)) {
-//         shortestDuration = difference;
-//         nextEvent = event;
-//       }
-//     }
-
-//     if (nextEvent != null) {
-//       print("Prochain événement trouvé : $nextEvent");
-
-//       // Sauvegarder l'événement le plus proche sous forme de notification
-//       await _saveNotification(nextEvent);
-//       print("Notification enregistrée pour l'événement : $nextEvent");
-//     } else {
-//       print("Aucun événement à venir trouvé");
-//     }
-//   } catch (e) {
-//     print("Erreur lors du chargement des événements : $e");
-//   }
+// Future<void> _showNotification(String title, String body) async {
+//   const AndroidNotificationDetails androidPlatformChannelSpecifics =
+//       AndroidNotificationDetails(
+//     'mahingo_channel',
+//     'Notifications des événements de Mahingo',
+//     channelDescription:
+//         'Ce canal envoie des notifications pour les événements et rappels concernant les animaux.',
+//     importance: Importance.max,
+//     priority: Priority.high,
+//   );
+//   const NotificationDetails platformChannelSpecifics =
+//       NotificationDetails(android: androidPlatformChannelSpecifics);
+//   await flutterLocalNotificationsPlugin.show(
+//     0,
+//     title,
+//     body,
+//     platformChannelSpecifics,
+//     payload: 'item x',
+//   );
 // }
 
-// Future<int?> _getUserIdFromPrefs() async {
+// Future<void> _loadUserInfo() async {
 //   SharedPreferences prefs = await SharedPreferences.getInstance();
 //   if (prefs.containsKey('user')) {
 //     String userString = prefs.getString('user')!;
 //     Map<String, dynamic> userData = json.decode(userString);
-//     return userData["id"];
+//     int id = userData["id"];
+
+//     await _loadEvents(id);
+//     await _getUpcomingEvents(id);
+//   } else {
+//     print('Aucun utilisateur trouvé dans les préférences partagées');
 //   }
-//   return null;
 // }
 
-// Future<void> _saveNotification(Map<String, dynamic> event) async {
+// Future<void> _loadEvents(int id) async {
 //   try {
-//     Map<String, dynamic> newNotif = {
-//       'animal_id': (event["animal"] != null && event["animal"]["id"] != null)
-//           ? event["animal"]["id"]
-//           : null,
-//       'user_id': (event["user"] != null && event["user"]["id"] != null)
-//           ? event["user"]["id"]
-//           : null,
-//       'titre': event["titre"] ?? '',
-//       'dateEvent': event["dateEvent"] ?? '',
-//       'heureDebut': event["heureDebut"] ?? '',
-//       'heureFin': event["heureFin"] ?? '',
-//       'description': event["description"] ?? '',
-//     };
+//     Api2Service apiService = Api2Service();
+//     List<dynamic> events = await apiService.fetchEvents(id);
 
-//     await Api3Service().createNotif(newNotif);
-//     print('Notification créée avec succès');
+//     print('Événements récupérés : $events');
 
+//     Map<DateTime, List<dynamic>> eventsMap = {};
+//     for (var event in events) {
+//       DateTime eventDate = DateTime.parse(event['dateEvent']);
+//       DateTime eventKey =
+//           DateTime(eventDate.year, eventDate.month, eventDate.day);
+
+//       if (eventsMap[eventKey] == null) {
+//         eventsMap[eventKey] = [];
+//       }
+//       eventsMap[eventKey]!.add(event);
+//     }
+
+//     _events = eventsMap;
+
+//     print('Événements dans _events : $_events');
 //   } catch (e) {
-//     print('Erreur lors de la création de la notification : $e');
+//     print('Erreur lors de la récupération des événements : $e');
 //   }
-  
 // }
+
+// Future<void> _getUpcomingEvents(int id) async {
+//   DateTime now = DateTime.now();
+//   List<Map<String, dynamic>> upcomingEvents = [];
+
+//   if (_events.isEmpty) {
+//     print('Aucun événement trouvé.');
+//   } else {
+//     print('Événements disponibles : ${_events.length}');
+//   }
+
+//   for (var key in _events.keys) {
+//     List<dynamic> dayEvents = _events[key]!;
+
+//     if (key.year == now.year && key.month == now.month && key.day == now.day) {
+//       for (var event in dayEvents) {
+//         TimeOfDay eventTime = TimeOfDay(
+//           hour: int.parse(event['heureDebut'].split(':')[0]),
+//           minute: int.parse(event['heureDebut'].split(':')[1]),
+//         );
+
+//         DateTime fullEventDateTime = DateTime(
+//           key.year,
+//           key.month,
+//           key.day,
+//           eventTime.hour,
+//           eventTime.minute,
+//         );
+
+//         Duration difference = fullEventDateTime.difference(now);
+
+//         print('Différence en secondes : ${difference.inSeconds}');
+
+//         if (difference.inSeconds <= 1800 && difference.inSeconds > 0) {
+//           upcomingEvents.add(event);
+//         }
+//       }
+//     }
+//   }
+
+//   if (upcomingEvents.isNotEmpty) {
+//     print('Événements imminents trouvés : ${upcomingEvents.length}');
+//     await _showNotification('Événements à venir',
+//         'Vous avez des événements dans les 30 prochaines minutes.');
+//   } else {
+//     print("Aucun événement à venir.");
+//     await _showNotification('Événements à venir',
+//         'Vous n\'avez pas d\'événements dans les 30 prochaines minutes.');
+//   }
+// }
+
+
+// // Future<void> _getUpcomingEvents(int id) async {
+// //   DateTime now = DateTime.now();
+// //   List<Map<String, dynamic>> upcomingEvents = [];
+
+// //   for (var key in _events.keys) {
+// //     List<dynamic> dayEvents = _events[key]!;
+
+// //     if (key.year == now.year && key.month == now.month && key.day == now.day) {
+// //       for (var event in dayEvents) {
+// //         TimeOfDay eventTime = TimeOfDay(
+// //           hour: int.parse(event['heureDebut'].split(':')[0]),
+// //           minute: int.parse(event['heureDebut'].split(':')[1]),
+// //         );
+
+// //         DateTime fullEventDateTime = DateTime(
+// //           key.year,
+// //           key.month,
+// //           key.day,
+// //           eventTime.hour,
+// //           eventTime.minute,
+// //         );
+
+// //         Duration difference = fullEventDateTime.difference(now);
+
+// //         if (difference.inSeconds <= 1800 && difference.inSeconds > 0) {
+// //           upcomingEvents.add(event);
+// //         }
+// //       }
+// //     }
+// //   }
+
+// //   if (upcomingEvents.isNotEmpty) {
+// //     await _showNotification('Événements à venir',
+// //         'Vous avez des événements dans les 30 prochaines minutes.');
+// //     try {
+// //       Api3Service apiService = Api3Service();
+// //       List<dynamic> notifs = await apiService.fetchNotifs(id);
+
+// //       for (var event in upcomingEvents) {
+// //         Map<String, dynamic> newNotif = {
+// //           'animal_id':
+// //               (event["animal"] != null && event["animal"]["id"] != null)
+// //                   ? event["animal"]["id"]
+// //                   : null,
+// //           'user_id': (event["user"] != null && event["user"]["id"] != null)
+// //               ? event["user"]["id"]
+// //               : null,
+// //           'titre': event["titre"] ?? '',
+// //           'dateEvent': event["dateEvent"] ?? '',
+// //           'heureDebut': event["heureDebut"] ?? '',
+// //           'heureFin': event["heureFin"] ?? '',
+// //           'description': event["description"] ?? '',
+// //         };
+
+// //         bool exists = notifs.any((notif) =>
+// //             notif["titre"] == newNotif["titre"] &&
+// //             notif["dateEvent"] == newNotif["dateEvent"] &&
+// //             notif["heureDebut"] == newNotif["heureDebut"]);
+
+// //         if (!exists) {
+// //           dynamic response = await apiService.createNotif(newNotif);
+// //           print("Notification créée : $response");
+// //         } else {
+// //           print("Notification déjà existante : ${newNotif['titre']}");
+// //         }
+// //       }
+// //     } catch (e) {
+// //       print('Erreur lors de la création des notifications : $e');
+// //     }
+
+// //     _nextThreeEvents = upcomingEvents;
+// //   } else {
+// //     _nextThreeEvents = [];
+// //     print("hey");
+
+// //     await _showNotification('Événements à venir',
+// //         'Vous \'avez pas d\'événements dans les 30 prochaines minutes.');
+// //   }
+// // }

@@ -258,6 +258,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
     try {
       Api3Service apiService = Api3Service();
       _notifs = await apiService.fetchNotifs(id);
+      // print(_notifs);
 
       List<dynamic> _notifsNLues = [];
 
@@ -279,22 +280,18 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
     DateTime now = DateTime.now();
     List<Map<String, dynamic>> upcomingEvents = [];
 
-    // Parcourir les événements de la journée actuelle
     for (var key in _events.keys) {
       List<dynamic> dayEvents = _events[key]!;
 
-      // Vérifier si la date de l'événement correspond à aujourd'hui
       if (key.year == now.year &&
           key.month == now.month &&
           key.day == now.day) {
         for (var event in dayEvents) {
-          // Récupérer l'heure de début de l'événement
           TimeOfDay eventTime = TimeOfDay(
             hour: int.parse(event['heureDebut'].split(':')[0]),
             minute: int.parse(event['heureDebut'].split(':')[1]),
           );
 
-          // Créer un DateTime complet avec la date et l'heure de l'événement
           DateTime fullEventDateTime = DateTime(
             key.year,
             key.month,
@@ -303,23 +300,21 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
             eventTime.minute,
           );
 
-          // Calculer la différence entre maintenant et l'heure de l'événement
           Duration difference = fullEventDateTime.difference(now);
 
-          // Si l'événement commence dans les 30 prochaines minutes
           if (difference.inSeconds <= 1800 && difference.inSeconds > 0) {
-            // Ajouter l'événement à la liste des événements à venir
             upcomingEvents.add(event);
           }
         }
       }
     }
 
-    // Parcourir chaque événement trouvé et insérer une notification
     if (upcomingEvents.isNotEmpty) {
       try {
+        Api3Service apiService = Api3Service();
+        List<dynamic> notifs = await apiService.fetchNotifs(id);
+
         for (var event in upcomingEvents) {
-          // Créer une notification pour chaque événement trouvé
           Map<String, dynamic> newNotif = {
             'animal_id':
                 (event["animal"] != null && event["animal"]["id"] != null)
@@ -335,8 +330,17 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
             'description': event["description"] ?? '',
           };
 
-          // Appel à l'API pour sauvegarder la notification
-          dynamic response = await Api3Service().createNotif(newNotif);
+          bool exists = notifs.any((notif) =>
+              notif["titre"] == newNotif["titre"] &&
+              notif["dateEvent"] == newNotif["dateEvent"] &&
+              notif["heureDebut"] == newNotif["heureDebut"]);
+
+          if (!exists) {
+            dynamic response = await Api3Service().createNotif(newNotif);
+            print("Notification créée : $response");
+          } else {
+            print("Notification déjà existante : ${newNotif['titre']}");
+          }
         }
 
         _loadNotifs(id);
@@ -349,12 +353,12 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
         _nextThreeEvents = upcomingEvents;
       });
     } else {
-      // S'il n'y a pas d'événements à venir, vider la liste
       setState(() {
         _nextThreeEvents = [];
       });
     }
   }
+
 
 
   @override
@@ -636,25 +640,50 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
 
                                         return Dismissible(
                                           key: Key(event['id'].toString()),
-                                          onDismissed: (direction) {
-                                            setState(() {
-                                              _notifs.remove(event);
-                                            });
-                                            ScaffoldMessenger.of(context)
-                                                .showSnackBar(
-                                              SnackBar(
-                                                  content: Text(
-                                                      '${event['titre']} supprimé')),
-                                            );
+                                          onDismissed: (direction) async {
+                                            _notifs.remove(event);
+
+                                            Api3Service apiService = Api3Service();
+                                            
+                                            try {
+                                              dynamic response = await apiService.deleteNotif(event['id']);
+                                              print("Notification deleted: $response");
+                                              
+                                              ScaffoldMessenger.of(context).showSnackBar(
+                                                SnackBar(content: Text('${event['titre']} supprimé')),
+                                              );
+                                            } catch (e) {
+                                              print("Erreur lors de la suppression de la notification: $e");
+                                              
+                                              ScaffoldMessenger.of(context).showSnackBar(
+                                                SnackBar(content: Text("Erreur lors de la suppression de la notification")),
+                                              );
+
+                                              _notifs.add(event);
+                                            }
                                           },
                                           // background: Container(color: Colors.red),
                                           child: Padding(
                                             padding: const EdgeInsets.only(
                                                 bottom: 8),
                                             child: GestureDetector(
-                                              onTap: () {
+                                              onTap: () async {
                                                 _showEventDetails(
                                                     context, event);
+                                                Api3Service apiService =
+                                                    Api3Service();
+                                                try {
+                                                  dynamic response =
+                                                      await apiService
+                                                          .updateNotif(
+                                                              event['id']);
+                                                  print(
+                                                      "Notification mise à jour : $response");
+                                                  _loadNotifs(id);
+                                                } catch (e) {
+                                                  print(
+                                                      "Erreur lors de la mise à jour de la notification : $e");
+                                                }
                                               },
                                               child: Container(
                                                 height: screenHeight * 0.082,
@@ -847,52 +876,89 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                             '${eventDate.day}.${eventDate.month}.${eventDate.year}';
                                         String time = event['heureDebut'];
 
-                                        return Padding(
-                                            padding: const EdgeInsets.only(
-                                                bottom: 8),
-                                            child: GestureDetector(
-                                              onTap: () {},
-                                              child: Container(
-                                                height: screenHeight * 0.082,
-                                                width: screenWidth * 0.88,
-                                                decoration: BoxDecoration(
-                                                  color: AppColors.vertClair,
-                                                  borderRadius:
-                                                      BorderRadius.circular(14),
-                                                  boxShadow: const [
-                                                    BoxShadow(
-                                                      color: AppColors.gris,
-                                                      spreadRadius: 3,
-                                                      blurRadius: 6,
-                                                      offset: Offset(0, 3),
+                                        return Dismissible(
+                                          key: Key(event['id'].toString()),
+                                          onDismissed: (direction) async {
+                                            _notifs.remove(event);
+
+                                            Api3Service apiService = Api3Service();
+                                            
+                                            try {
+                                              dynamic response = await apiService.deleteNotif(event['id']);
+                                              print("Notification deleted: $response");
+                                              
+                                              ScaffoldMessenger.of(context).showSnackBar(
+                                                SnackBar(content: Text('${event['titre']} supprimé')),
+                                              );
+                                            } catch (e) {
+                                              print("Erreur lors de la suppression de la notification: $e");
+                                              
+                                              ScaffoldMessenger.of(context).showSnackBar(
+                                                SnackBar(content: Text("Erreur lors de la suppression de la notification")),
+                                              );
+                                              _notifs.add(event);
+                                            }
+                                          },
+                                            child: Padding(
+                                                padding: const EdgeInsets.only(
+                                                    bottom: 8),
+                                                child: GestureDetector(
+                                                  onTap: () async {
+                                                    _showEventDetails(
+                                                        context, event);
+                                                    Api3Service apiService =
+                                                        Api3Service();
+                                                    try {
+                                                      dynamic response =
+                                                          await apiService
+                                                              .updateNotif(
+                                                                  event['id']);
+                                                      print(
+                                                          "Notification mise à jour : $response");
+                                                      _loadNotifs(id);
+                                                    } catch (e) {
+                                                      print(
+                                                          "Erreur lors de la mise à jour de la notification : $e");
+                                                    }
+                                                  },
+                                                  child: Container(
+                                                    height:
+                                                        screenHeight * 0.082,
+                                                    width: screenWidth * 0.88,
+                                                    decoration: BoxDecoration(
+                                                      color:
+                                                          AppColors.vertClair,
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              14),
+                                                      boxShadow: const [
+                                                        BoxShadow(
+                                                          color: AppColors.gris,
+                                                          spreadRadius: 3,
+                                                          blurRadius: 6,
+                                                          offset: Offset(0, 3),
+                                                        ),
+                                                      ],
                                                     ),
-                                                  ],
-                                                ),
-                                                child: Row(
-                                                  children: [
-                                                    Container(
-                                                      height: 70,
-                                                      width: 70,
-                                                      decoration: BoxDecoration(
-                                                        color:
-                                                            AppColors.vertClair,
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(8.0),
-                                                      ),
-                                                      child: (event['titre'] ==
-                                                              'vaccination')
-                                                          ? Image.asset(
-                                                              'assets/images/vaccination.png',
-                                                              color: AppColors
-                                                                  .vert,
-                                                              width: 8,
-                                                              height: 8,
-                                                            )
-                                                          : (event['titre'] ==
-                                                                  'visite medicale')
+                                                    child: Row(
+                                                      children: [
+                                                        Container(
+                                                          height: 70,
+                                                          width: 70,
+                                                          decoration:
+                                                              BoxDecoration(
+                                                            color: AppColors
+                                                                .vertClair,
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        8.0),
+                                                          ),
+                                                          child: (event[
+                                                                      'titre'] ==
+                                                                  'vaccination')
                                                               ? Image.asset(
-                                                                  'assets/images/visite_medicale.png',
+                                                                  'assets/images/vaccination.png',
                                                                   color:
                                                                       AppColors
                                                                           .vert,
@@ -900,103 +966,119 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                                                   height: 8,
                                                                 )
                                                               : (event['titre'] ==
-                                                                      'traitement')
+                                                                      'visite medicale')
                                                                   ? Image.asset(
-                                                                      'assets/images/traitement.png',
+                                                                      'assets/images/visite_medicale.png',
                                                                       color: AppColors
                                                                           .vert,
                                                                       width: 8,
                                                                       height: 8,
                                                                     )
-                                                                  : const Icon(
-                                                                      Icons
-                                                                          .event,
-                                                                      color: AppColors
+                                                                  : (event['titre'] ==
+                                                                          'traitement')
+                                                                      ? Image
+                                                                          .asset(
+                                                                          'assets/images/traitement.png',
+                                                                          color:
+                                                                              AppColors.vert,
+                                                                          width:
+                                                                              8,
+                                                                          height:
+                                                                              8,
+                                                                        )
+                                                                      : const Icon(
+                                                                          Icons
+                                                                              .event,
+                                                                          color:
+                                                                              AppColors.vert,
+                                                                          size:
+                                                                              24,
+                                                                        ),
+                                                        ),
+                                                        const SizedBox(
+                                                            width: 16),
+                                                        Column(
+                                                          crossAxisAlignment:
+                                                              CrossAxisAlignment
+                                                                  .start,
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .center,
+                                                          children: [
+                                                            Text(
+                                                              event['titre'],
+                                                              style:
+                                                                  const TextStyle(
+                                                                color: AppColors
+                                                                    .noir,
+                                                                fontSize: 16,
+                                                                fontFamily:
+                                                                    'Poppins',
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w600,
+                                                              ),
+                                                            ),
+                                                            Text(
+                                                              '$formattedDate | $time',
+                                                              style: const TextStyle(
+                                                                  color: Color(
+                                                                      0xFF808B9A),
+                                                                  fontSize: 12,
+                                                                  fontFamily:
+                                                                      'Poppins',
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w600),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                        Spacer(),
+                                                        Container(
+                                                          width: 50,
+                                                          child: Column(
+                                                            crossAxisAlignment:
+                                                                CrossAxisAlignment
+                                                                    .start,
+                                                            mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .center,
+                                                            children: [
+                                                              const Text(
+                                                                '13:30',
+                                                                style:
+                                                                    TextStyle(
+                                                                  color:
+                                                                      AppColors
+                                                                          .noir,
+                                                                  fontSize: 12,
+                                                                  fontFamily:
+                                                                      'Poppins',
+                                                                ),
+                                                              ),
+                                                              Padding(
+                                                                padding:
+                                                                    const EdgeInsets
+                                                                        .only(
+                                                                        left:
+                                                                            10),
+                                                                child:
+                                                                    Image.asset(
+                                                                  'assets/images/non_lue.png',
+                                                                  color:
+                                                                      AppColors
                                                                           .vert,
-                                                                      size: 24,
-                                                                    ),
-                                                    ),
-                                                    const SizedBox(width: 16),
-                                                    Column(
-                                                      crossAxisAlignment:
-                                                          CrossAxisAlignment
-                                                              .start,
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .center,
-                                                      children: [
-                                                        Text(
-                                                          event['titre'],
-                                                          style:
-                                                              const TextStyle(
-                                                            color:
-                                                                AppColors.noir,
-                                                            fontSize: 16,
-                                                            fontFamily:
-                                                                'Poppins',
-                                                            fontWeight:
-                                                                FontWeight.w600,
+                                                                  height: 12,
+                                                                  width: 12,
+                                                                ),
+                                                              ),
+                                                            ],
                                                           ),
-                                                        ),
-                                                        Text(
-                                                          '$formattedDate | $time',
-                                                          style:
-                                                              const TextStyle(
-                                                            color:
-                                                                AppColors.noir,
-                                                            fontSize: 12,
-                                                            fontFamily:
-                                                                'Poppins',
-                                                            fontWeight:
-                                                                FontWeight.w600,
-                                                          ),
-                                                        ),
+                                                        )
                                                       ],
                                                     ),
-                                                    Spacer(),
-                                                    Container(
-                                                      width: 50,
-                                                      child: Column(
-                                                        crossAxisAlignment:
-                                                            CrossAxisAlignment
-                                                                .start,
-                                                        mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .center,
-                                                        children: [
-                                                          const Text(
-                                                            '13:30',
-                                                            style: TextStyle(
-                                                              color: AppColors
-                                                                  .noir,
-                                                              fontSize: 12,
-                                                              fontFamily:
-                                                                  'Poppins',
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w600,
-                                                            ),
-                                                          ),
-                                                          Padding(
-                                                            padding:
-                                                                const EdgeInsets
-                                                                    .only(
-                                                                    left: 10),
-                                                            child: Image.asset(
-                                                              'assets/images/non_lue.png',
-                                                              color: AppColors
-                                                                  .vert,
-                                                              height: 12,
-                                                              width: 12,
-                                                            ),
-                                                          ),
-                                                        ],
-                                                      ),
-                                                    )
-                                                  ],
-                                                ),
-                                              ),
-                                            ));
+                                                  ),
+                                                )));
                                       }).toList(),
                                     )
                               : Container()))
@@ -1130,5 +1212,4 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
       },
     );
   }
-
 }
