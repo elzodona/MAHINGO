@@ -37,6 +37,19 @@ class LocationNotifController extends Controller
     public function store(Request $request)
     {
         try {
+            $existingNotif = LocationNotif::where('user_id', $request->user_id)
+                ->where('animal_id', $request->animal_id)
+                ->where('dateSave', $request->dateSave)
+                ->where('altitude', $request->altitude)
+                ->where('longitude', $request->longitude)
+                ->first();
+
+            if ($existingNotif) {
+                return response()->json([
+                    'message' => 'Notification déjà existante !',
+                ], 200);
+            }
+
             $event = LocationNotif::create([
                 'user_id' => $request->user_id,
                 'animal_id' => $request->animal_id,
@@ -47,7 +60,7 @@ class LocationNotifController extends Controller
             ]);
 
             return response()->json([
-                'message' => 'Notification ajouté avec succès !',
+                'message' => 'Notification ajoutée avec succès !',
                 'event' => $event,
             ], 201);
         } catch (Exception $e) {
@@ -56,6 +69,7 @@ class LocationNotifController extends Controller
             ], 500);
         }
     }
+
 
     /**
      * Update the specified resource in storage.

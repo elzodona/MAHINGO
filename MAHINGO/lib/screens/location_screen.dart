@@ -175,6 +175,7 @@ class _LocationScreenState extends State<LocationScreen> {
       'etat': 'normal'
     },
   ];
+  
   // final List<Map<String, dynamic>> _animals = [
   //   {
   //     "id": 1,

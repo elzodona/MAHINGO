@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:mahingo/screens/home_screen.dart';
 import 'package:mahingo/services/call_api/locationNotif_service.dart';
+import 'package:mahingo/services/call_api/animal_service.dart';
 import 'package:mahingo/utils/colors.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:mahingo/services/call_api/event_service.dart';
 import 'package:mahingo/services/call_api/notification_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'dart:convert';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'dart:convert';
 
 class NotificationsScreen extends StatefulWidget {
   const NotificationsScreen({super.key});
@@ -19,6 +21,160 @@ class NotificationsScreen extends StatefulWidget {
 class _NotificationsScreenState extends State<NotificationsScreen> {
   String selectedOption1 = 'un';
   String selectedOption2 = 'one';
+
+  List<dynamic> _animals = [];
+
+  final List<Map<String, dynamic>> colliers = [
+    {
+      'id': 1,
+      'identifier': 'M002',
+      'timestamp': '2024-10-30',
+      'batterie': "70%",
+      'position': "debout",
+      'température': {'value': "15°C", 'etat': "sensible"},
+      'frequence': {'value': "15bpm", 'etat': "normale"},
+      'localisation': {
+        'altitude': "14.6960", // Coordonnées dans la zone
+        'longitude': "-17.4450",
+      },
+      'etat': 'normal'
+    },
+    {
+      'id': 2,
+      'identifier': 'V002',
+      'timestamp': '2024-10-30',
+      'batterie': "70%",
+      'position': "debout",
+      'température': {'value': "15°C", 'etat': "sensible"},
+      'frequence': {'value': "15bpm", 'etat': "normale"},
+      'localisation': {
+        'altitude': "14.6950", // Coordonnées dans la zone
+        'longitude': "-17.4435",
+      },
+      'etat': 'sensible'
+    },
+    {
+      'id': 3,
+      'identifier': 'V003',
+      'timestamp': '2024-10-30',
+      'batterie': "70%",
+      'position': "debout",
+      'température': {'value': "15°C", 'etat': "sensible"},
+      'frequence': {'value': "15bpm", 'etat': "normale"},
+      'localisation': {
+        'altitude': "14.6970", // Coordonnées dans la zone
+        'longitude': "-17.4430",
+      },
+      'etat': 'sensible'
+    },
+    {
+      'id': 4,
+      'identifier': 'M003',
+      'timestamp': '2024-10-30',
+      'batterie': "70%",
+      'position': "debout",
+      'température': {'value': "15°C", 'etat': "sensible"},
+      'frequence': {'value': "15bpm", 'etat': "normale"},
+      'localisation': {
+        'altitude': "14.6980", // Coordonnées dans la zone
+        'longitude': "-17.4460",
+      },
+      'etat': 'normal'
+    },
+    {
+      'id': 5,
+      'identifier': 'V001',
+      'timestamp': '2024-10-30',
+      'batterie': "70%",
+      'position': "debout",
+      'température': {'value': "15°C", 'etat': "sensible"},
+      'frequence': {'value': "15bpm", 'etat': "normale"},
+      'localisation': {
+        'altitude': "14.6995", // Coordonnées hors zone
+        'longitude': "-17.4480",
+      },
+      'etat': 'normal'
+    },
+    {
+      'id': 6,
+      'identifier': 'M006',
+      'timestamp': '2024-10-30',
+      'batterie': "70%",
+      'position': "debout",
+      'température': {'value': "15°C", 'etat': "sensible"},
+      'frequence': {'value': "15bpm", 'etat': "normale"},
+      'localisation': {
+        'altitude': "14.7000",
+        'longitude': "-17.4490",
+      },
+      'etat': 'anormal'
+    },
+    {
+      'id': 6,
+      'identifier': 'M001',
+      'timestamp': '2024-10-30',
+      'batterie': "70%",
+      'position': "debout",
+      'température': {'value': "15°C", 'etat': "sensible"},
+      'frequence': {'value': "15bpm", 'etat': "normale"},
+      'localisation': {
+        'altitude': "14.7005",
+        'longitude': "-17.4495",
+      },
+      'etat': 'anormal'
+    },
+    {
+      'id': 7,
+      'identifier': 'M007',
+      'timestamp': '2024-10-30',
+      'batterie': "70%",
+      'position': "debout",
+      'température': {'value': "15°C", 'etat': "sensible"},
+      'frequence': {'value': "15bpm", 'etat': "normale"},
+      'localisation': {
+        'altitude': "14.7010",
+        'longitude': "-17.4500",
+      },
+      'etat': 'normal'
+    },
+    {
+      'id': 8,
+      'identifier': 'M008',
+      'timestamp': '2024-10-30',
+      'batterie': "70%",
+      'position': "debout",
+      'température': {'value': "15°C", 'etat': "sensible"},
+      'frequence': {'value': "15bpm", 'etat': "normale"},
+      'localisation': {
+        'altitude': "14.7015",
+        'longitude': "-17.4505",
+      },
+      'etat': 'normal'
+    },
+    {
+      'id': 9,
+      'identifier': 'V006',
+      'timestamp': '2024-10-30',
+      'batterie': "70%",
+      'position': "debout",
+      'température': {'value': "15°C", 'etat': "sensible"},
+      'frequence': {'value': "15bpm", 'etat': "normale"},
+      'localisation': {
+        'altitude': "14.7020",
+        'longitude': "-17.4510",
+      },
+      'etat': 'normal'
+    },
+  ];
+
+  final List<LatLng> _pastureZone = [
+    LatLng(14.6940, -17.4470),
+    LatLng(14.6940, -17.4420),
+    LatLng(14.6980, -17.4420),
+    LatLng(14.6980, -17.4470),
+  ];
+
+  List<Map<String, dynamic>> animalsOutsideZone = [];
 
   FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
@@ -220,6 +376,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
       await _loadEvents(id);
       await _loadNotifs(id);
       await _getUpcomingEvents();
+      await _loadAnimals(id);
     } else {
       print('Aucun utilisateur trouvé dans les préférences partagées');
     }
@@ -357,6 +514,41 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
     }
   }
 
+  Future<void> _loadAnimals(int id) async {
+    try {
+      ApiService apiService = ApiService();
+      _animals = await apiService.fetchAnimalsb(id);
+      // print(_animals);
+
+      setState(() {
+        animalsOutsideZone = _animals
+            .where((animal) {
+              var collar = colliers.firstWhere(
+                (c) => c['identifier'] == animal['necklace_id']['identifier'],
+                orElse: () => {},
+              );
+
+              if (collar != null) {
+                LatLng position = LatLng(
+                  double.parse(collar['localisation']['altitude']),
+                  double.parse(collar['localisation']['longitude']),
+                );
+
+                return !_isPointInPolygon(position, _pastureZone);
+              }
+
+              return false;
+            })
+            .cast<Map<String, dynamic>>()
+            .toList();
+      });
+      // print(animalsOutsideZone);
+      await _saveLocation(animalsOutsideZone);
+    } catch (e) {
+      print('Erreur : $e');
+    }
+  }
+
   Future<void> _loadLocationNotifs(int id) async {
     try {
       Api4Service apiService = Api4Service();
@@ -377,6 +569,59 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
       // print(_locationNotifsNonLues);
     } catch (e) {
       print('Erreur : $e');
+    }
+  }
+
+  bool _isPointInPolygon(LatLng point, List<LatLng> polygon) {
+    int intersectCount = 0;
+    for (int j = 0; j < polygon.length - 1; j++) {
+      if ((polygon[j].longitude <= point.longitude &&
+              polygon[j + 1].longitude > point.longitude) ||
+          (polygon[j].longitude > point.longitude &&
+              polygon[j + 1].longitude <= point.longitude)) {
+        double atX = (point.longitude - polygon[j].longitude) /
+                (polygon[j + 1].longitude - polygon[j].longitude) *
+                (polygon[j + 1].latitude - polygon[j].latitude) +
+            polygon[j].latitude;
+        if (point.latitude < atX) {
+          intersectCount++;
+        }
+      }
+    }
+    return intersectCount % 2 != 0;
+  }
+
+  Future<void> _saveLocation(
+      List<Map<String, dynamic>> animalsOutsideZone) async {
+    try {
+      Api4Service apiService = Api4Service();
+
+      for (var animal in animalsOutsideZone) {
+        var collar = colliers.firstWhere(
+          (c) => c['identifier'] == animal['necklace_id']['identifier'],
+          orElse: () => {},
+        );
+
+        if (collar != null) {
+          // print(collar);
+
+          Map<String, dynamic> newNotif = {
+            'animal_id': animal["id"],
+            'user_id': animal["user_id"]["id"],
+            'dateSave': collar["timestamp"],
+            'altitude': collar["localisation"]["altitude"],
+            'longitude': collar["localisation"]["longitude"],
+          };
+
+            dynamic response = await Api4Service().createNotif(newNotif);
+            print("Notification créée : $response");
+
+        }
+      }
+
+      _loadLocationNotifs(id);
+    } catch (e) {
+      print('Erreur lors de la création des notifications : $e');
     }
   }
 
@@ -1126,8 +1371,8 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                               : selectedOption1 == 'dos'
                                   ? selectedOption2 == 'one'
                                       ? Column(
-                                          children: _locationNotifs.map((event) {
-
+                                          children:
+                                              _locationNotifs.map((event) {
                                             return Dismissible(
                                               key: Key(event['id'].toString()),
                                               onDismissed: (direction) async {
@@ -1211,24 +1456,23 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                                     child: Row(
                                                       children: [
                                                         Container(
-                                                          height: 70,
-                                                          width: 70,
-                                                          decoration:
-                                                              BoxDecoration(
-                                                            color: event[
-                                                                        "etat"] ==
-                                                                    "lu"
-                                                                ? AppColors
-                                                                    .blanc
-                                                                : AppColors
-                                                                    .vertClair,
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        8.0),
-                                                          ),
-                                                          child: (
-                                                            Image.asset(
+                                                            height: 70,
+                                                            width: 70,
+                                                            decoration:
+                                                                BoxDecoration(
+                                                              color: event[
+                                                                          "etat"] ==
+                                                                      "lu"
+                                                                  ? AppColors
+                                                                      .blanc
+                                                                  : AppColors
+                                                                      .vertClair,
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          8.0),
+                                                            ),
+                                                            child: (Image.asset(
                                                               'assets/images/loc.png',
                                                               color: event[
                                                                           "etat"] ==
@@ -1239,9 +1483,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                                                       .vert,
                                                               width: 8,
                                                               height: 8,
-                                                            )
-                                                          )
-                                                        ),
+                                                            ))),
                                                         const SizedBox(
                                                             width: 16),
                                                         Column(
@@ -1252,27 +1494,24 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                                               MainAxisAlignment
                                                                   .center,
                                                           children: [
-                                                              Text(
-                                                                event['animal']
-                                                                    ['name'],
-                                                                style:
-                                                                    const TextStyle(
-                                                                  color:
-                                                                      AppColors
-                                                                          .noir,
-                                                                  fontSize:
-                                                                      16,
-                                                                  fontFamily:
-                                                                      'Poppins',
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w600,
-                                                                ),
+                                                            Text(
+                                                              event['animal']
+                                                                  ['name'],
+                                                              style:
+                                                                  const TextStyle(
+                                                                color: AppColors
+                                                                    .noir,
+                                                                fontSize: 16,
+                                                                fontFamily:
+                                                                    'Poppins',
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w600,
                                                               ),
+                                                            ),
                                                             const Text(
                                                               'Localisé hors de la zone',
-                                                              style:
-                                                                  TextStyle(
+                                                              style: TextStyle(
                                                                 color: Color(
                                                                     0xFF808B9A),
                                                                 fontSize: 12,
@@ -1350,7 +1589,6 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                       : Column(
                                           children: _locationNotifsNonLues
                                               .map((event) {
-
                                             return Dismissible(
                                                 key:
                                                     Key(event['id'].toString()),
@@ -1386,8 +1624,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                                           content: Text(
                                                               "Erreur lors de la suppression de la notification")),
                                                     );
-                                                    _locationNotifs
-                                                        .add(event);
+                                                    _locationNotifs.add(event);
                                                   }
                                                 },
                                                 child: Padding(
@@ -1408,7 +1645,8 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                                                           'id']);
                                                           print(
                                                               "Notification mise à jour : $response");
-                                                          _loadLocationNotifs(id);
+                                                          _loadLocationNotifs(
+                                                              id);
                                                         } catch (e) {
                                                           print(
                                                               "Erreur lors de la mise à jour de la notification : $e");
@@ -1451,14 +1689,14 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                                                         .circular(
                                                                             8.0),
                                                               ),
-                                                              child: (
-                                                                Image.asset(
-                                                                  'assets/images/loc.png',
-                                                                  color: AppColors.vert,
-                                                                  width: 8,
-                                                                  height: 8,
-                                                                )
-                                                              ),
+                                                              child:
+                                                                  (Image.asset(
+                                                                'assets/images/loc.png',
+                                                                color: AppColors
+                                                                    .vert,
+                                                                width: 8,
+                                                                height: 8,
+                                                              )),
                                                             ),
                                                             const SizedBox(
                                                                 width: 16),
@@ -1472,18 +1710,19 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                                               children: [
                                                                 Text(
                                                                   event['animal']
-                                                                      [
-                                                                      'name'],
+                                                                      ['name'],
                                                                   style:
                                                                       const TextStyle(
-                                                                    color: AppColors
-                                                                        .noir,
+                                                                    color:
+                                                                        AppColors
+                                                                            .noir,
                                                                     fontSize:
                                                                         16,
                                                                     fontFamily:
                                                                         'Poppins',
                                                                     fontWeight:
-                                                                        FontWeight.w600,
+                                                                        FontWeight
+                                                                            .w600,
                                                                   ),
                                                                 ),
                                                                 const Text(
@@ -1680,7 +1919,8 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
     );
   }
 
-  void _showLocationNotifDetails(BuildContext context, Map<String, dynamic> event) {
+  void _showLocationNotifDetails(
+      BuildContext context, Map<String, dynamic> event) {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
 
@@ -1774,5 +2014,4 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
       },
     );
   }
-
 }
