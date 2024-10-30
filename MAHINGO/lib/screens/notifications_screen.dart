@@ -625,6 +625,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
     }
   }
 
+
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
@@ -1495,8 +1496,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                                                   .center,
                                                           children: [
                                                             Text(
-                                                              event['animal']
-                                                                  ['name'],
+                                                              event['animal']['name']                                                            .toString(),
                                                               style:
                                                                   const TextStyle(
                                                                 color: AppColors
@@ -1709,8 +1709,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                                                       .center,
                                                               children: [
                                                                 Text(
-                                                                  event['animal']
-                                                                      ['name'],
+                                                                  event['animal']['name'],
                                                                   style:
                                                                       const TextStyle(
                                                                     color:

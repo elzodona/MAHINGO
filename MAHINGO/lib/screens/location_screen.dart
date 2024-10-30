@@ -782,7 +782,7 @@ class _LocationScreenState extends State<LocationScreen> {
                                                             const SizedBox(
                                                                 width: 20),
                                                             Text(
-                                                              animal['name'],
+                                                              animal['necklace_id']["identifier"],
                                                               style:
                                                                   const TextStyle(
                                                                 fontSize: 16,
