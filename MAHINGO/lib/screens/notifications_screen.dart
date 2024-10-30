@@ -1,17 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:mahingo/screens/accueil_screen.dart';
 import 'package:mahingo/screens/home_screen.dart';
+import 'package:mahingo/services/call_api/locationNotif_service.dart';
 import 'package:mahingo/utils/colors.dart';
-import 'dart:io';
-import 'package:mahingo/services/call_api/animal_service.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
-import 'package:mahingo/routes/paths.dart';
-import 'package:intl/date_symbol_data_local.dart';
 import 'package:mahingo/services/call_api/event_service.dart';
 import 'package:mahingo/services/call_api/notification_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
-import 'package:intl/intl.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 class NotificationsScreen extends StatefulWidget {
@@ -33,6 +28,8 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
   List<dynamic> _nextThreeEvents = [];
   List<dynamic> _notifs = [];
   List<dynamic> _notifsNonLues = [];
+  List<dynamic> _locationNotifs = [];
+  List<dynamic> _locationNotifsNonLues = [];
 
   // List<dynamic> notifsEvents = [
   //   {
@@ -219,6 +216,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
       });
       // print("User ID: ${id}");
 
+      await _loadLocationNotifs(id);
       await _loadEvents(id);
       await _loadNotifs(id);
       await _getUpcomingEvents();
@@ -359,7 +357,28 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
     }
   }
 
+  Future<void> _loadLocationNotifs(int id) async {
+    try {
+      Api4Service apiService = Api4Service();
+      _locationNotifs = await apiService.fetchNotifs(id);
+      // print(_locationNotifs);
 
+      List<dynamic> _notifsNLues = [];
+
+      for (var notif in _locationNotifs) {
+        if (notif['etat'] == 'non_lu') {
+          _notifsNLues.add(notif);
+        }
+      }
+
+      setState(() {
+        _locationNotifsNonLues = _notifsNLues;
+      });
+      // print(_locationNotifsNonLues);
+    } catch (e) {
+      print('Erreur : $e');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -643,20 +662,31 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                           onDismissed: (direction) async {
                                             _notifs.remove(event);
 
-                                            Api3Service apiService = Api3Service();
-                                            
+                                            Api3Service apiService =
+                                                Api3Service();
+
                                             try {
-                                              dynamic response = await apiService.deleteNotif(event['id']);
-                                              print("Notification deleted: $response");
-                                              
-                                              ScaffoldMessenger.of(context).showSnackBar(
-                                                SnackBar(content: Text('${event['titre']} supprimé')),
+                                              dynamic response =
+                                                  await apiService
+                                                      .deleteNotif(event['id']);
+                                              print(
+                                                  "Notification deleted: $response");
+
+                                              ScaffoldMessenger.of(context)
+                                                  .showSnackBar(
+                                                SnackBar(
+                                                    content: Text(
+                                                        '${event['titre']} supprimé')),
                                               );
                                             } catch (e) {
-                                              print("Erreur lors de la suppression de la notification: $e");
-                                              
-                                              ScaffoldMessenger.of(context).showSnackBar(
-                                                SnackBar(content: Text("Erreur lors de la suppression de la notification")),
+                                              print(
+                                                  "Erreur lors de la suppression de la notification: $e");
+
+                                              ScaffoldMessenger.of(context)
+                                                  .showSnackBar(
+                                                SnackBar(
+                                                    content: Text(
+                                                        "Erreur lors de la suppression de la notification")),
                                               );
 
                                               _notifs.add(event);
@@ -877,28 +907,40 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                         String time = event['heureDebut'];
 
                                         return Dismissible(
-                                          key: Key(event['id'].toString()),
-                                          onDismissed: (direction) async {
-                                            _notifs.remove(event);
+                                            key: Key(event['id'].toString()),
+                                            onDismissed: (direction) async {
+                                              _notifs.remove(event);
 
-                                            Api3Service apiService = Api3Service();
-                                            
-                                            try {
-                                              dynamic response = await apiService.deleteNotif(event['id']);
-                                              print("Notification deleted: $response");
-                                              
-                                              ScaffoldMessenger.of(context).showSnackBar(
-                                                SnackBar(content: Text('${event['titre']} supprimé')),
-                                              );
-                                            } catch (e) {
-                                              print("Erreur lors de la suppression de la notification: $e");
-                                              
-                                              ScaffoldMessenger.of(context).showSnackBar(
-                                                SnackBar(content: Text("Erreur lors de la suppression de la notification")),
-                                              );
-                                              _notifs.add(event);
-                                            }
-                                          },
+                                              Api3Service apiService =
+                                                  Api3Service();
+
+                                              try {
+                                                dynamic response =
+                                                    await apiService
+                                                        .deleteNotif(
+                                                            event['id']);
+                                                print(
+                                                    "Notification deleted: $response");
+
+                                                ScaffoldMessenger.of(context)
+                                                    .showSnackBar(
+                                                  SnackBar(
+                                                      content: Text(
+                                                          '${event['titre']} supprimé')),
+                                                );
+                                              } catch (e) {
+                                                print(
+                                                    "Erreur lors de la suppression de la notification: $e");
+
+                                                ScaffoldMessenger.of(context)
+                                                    .showSnackBar(
+                                                  SnackBar(
+                                                      content: Text(
+                                                          "Erreur lors de la suppression de la notification")),
+                                                );
+                                                _notifs.add(event);
+                                              }
+                                            },
                                             child: Padding(
                                                 padding: const EdgeInsets.only(
                                                     bottom: 8),
@@ -1081,7 +1123,432 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                                 )));
                                       }).toList(),
                                     )
-                              : Container()))
+                              : selectedOption1 == 'dos'
+                                  ? selectedOption2 == 'one'
+                                      ? Column(
+                                          children: _locationNotifs.map((event) {
+
+                                            return Dismissible(
+                                              key: Key(event['id'].toString()),
+                                              onDismissed: (direction) async {
+                                                _locationNotifs.remove(event);
+
+                                                Api4Service apiService =
+                                                    Api4Service();
+
+                                                try {
+                                                  dynamic response =
+                                                      await apiService
+                                                          .deleteNotif(
+                                                              event['id']);
+                                                  print(
+                                                      "Notification deleted: $response");
+
+                                                  ScaffoldMessenger.of(context)
+                                                      .showSnackBar(
+                                                    const SnackBar(
+                                                        content: Text(
+                                                            'Notification supprimé')),
+                                                  );
+                                                } catch (e) {
+                                                  print(
+                                                      "Erreur lors de la suppression de la notification: $e");
+
+                                                  ScaffoldMessenger.of(context)
+                                                      .showSnackBar(
+                                                    SnackBar(
+                                                        content: Text(
+                                                            "Erreur lors de la suppression de la notification")),
+                                                  );
+
+                                                  _locationNotifs.add(event);
+                                                }
+                                              },
+                                              // background: Container(color: Colors.red),
+                                              child: Padding(
+                                                padding: const EdgeInsets.only(
+                                                    bottom: 8),
+                                                child: GestureDetector(
+                                                  onTap: () async {
+                                                    _showLocationNotifDetails(
+                                                        context, event);
+                                                    Api4Service apiService =
+                                                        Api4Service();
+                                                    try {
+                                                      dynamic response =
+                                                          await apiService
+                                                              .updateNotif(
+                                                                  event['id']);
+                                                      print(
+                                                          "Notification mise à jour : $response");
+                                                      _loadLocationNotifs(id);
+                                                    } catch (e) {
+                                                      print(
+                                                          "Erreur lors de la mise à jour de la notification : $e");
+                                                    }
+                                                  },
+                                                  child: Container(
+                                                    height:
+                                                        screenHeight * 0.082,
+                                                    width: screenWidth * 0.88,
+                                                    decoration: BoxDecoration(
+                                                      color: event["etat"] ==
+                                                              "lu"
+                                                          ? AppColors.blanc
+                                                          : AppColors.vertClair,
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              14),
+                                                      boxShadow: const [
+                                                        BoxShadow(
+                                                          color: AppColors.gris,
+                                                          spreadRadius: 3,
+                                                          blurRadius: 6,
+                                                          offset: Offset(0, 3),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                    child: Row(
+                                                      children: [
+                                                        Container(
+                                                          height: 70,
+                                                          width: 70,
+                                                          decoration:
+                                                              BoxDecoration(
+                                                            color: event[
+                                                                        "etat"] ==
+                                                                    "lu"
+                                                                ? AppColors
+                                                                    .blanc
+                                                                : AppColors
+                                                                    .vertClair,
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        8.0),
+                                                          ),
+                                                          child: (
+                                                            Image.asset(
+                                                              'assets/images/loc.png',
+                                                              color: event[
+                                                                          "etat"] ==
+                                                                      "lu"
+                                                                  ? Color(
+                                                                      0xFF808B9A)
+                                                                  : AppColors
+                                                                      .vert,
+                                                              width: 8,
+                                                              height: 8,
+                                                            )
+                                                          )
+                                                        ),
+                                                        const SizedBox(
+                                                            width: 16),
+                                                        Column(
+                                                          crossAxisAlignment:
+                                                              CrossAxisAlignment
+                                                                  .start,
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .center,
+                                                          children: [
+                                                              Text(
+                                                                event['animal']
+                                                                    ['name'],
+                                                                style:
+                                                                    const TextStyle(
+                                                                  color:
+                                                                      AppColors
+                                                                          .noir,
+                                                                  fontSize:
+                                                                      16,
+                                                                  fontFamily:
+                                                                      'Poppins',
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w600,
+                                                                ),
+                                                              ),
+                                                            const Text(
+                                                              'Localisé hors de la zone',
+                                                              style:
+                                                                  TextStyle(
+                                                                color: Color(
+                                                                    0xFF808B9A),
+                                                                fontSize: 12,
+                                                                fontFamily:
+                                                                    'Poppins',
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w600,
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                        Spacer(),
+                                                        Container(
+                                                          width: 50,
+                                                          child: Column(
+                                                            crossAxisAlignment:
+                                                                CrossAxisAlignment
+                                                                    .start,
+                                                            mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .center,
+                                                            children: [
+                                                              const Text(
+                                                                '13:30',
+                                                                style:
+                                                                    TextStyle(
+                                                                  color: Color(
+                                                                      0xFF808B9A),
+                                                                  fontSize: 12,
+                                                                  fontFamily:
+                                                                      'Poppins',
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w600,
+                                                                ),
+                                                              ),
+                                                              Padding(
+                                                                padding:
+                                                                    const EdgeInsets
+                                                                        .only(
+                                                                        left:
+                                                                            7),
+                                                                child: event[
+                                                                            "etat"] ==
+                                                                        "lu"
+                                                                    ? Image
+                                                                        .asset(
+                                                                        'assets/images/lue.png',
+                                                                        height:
+                                                                            18,
+                                                                        width:
+                                                                            18,
+                                                                      )
+                                                                    : Image
+                                                                        .asset(
+                                                                        'assets/images/non_lue.png',
+                                                                        height:
+                                                                            18,
+                                                                        width:
+                                                                            18,
+                                                                      ),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                            );
+                                          }).toList(),
+                                        )
+                                      : Column(
+                                          children: _locationNotifsNonLues
+                                              .map((event) {
+
+                                            return Dismissible(
+                                                key:
+                                                    Key(event['id'].toString()),
+                                                onDismissed: (direction) async {
+                                                  _locationNotifs.remove(event);
+
+                                                  Api4Service apiService =
+                                                      Api4Service();
+
+                                                  try {
+                                                    dynamic response =
+                                                        await apiService
+                                                            .deleteNotif(
+                                                                event['id']);
+                                                    print(
+                                                        "Notification deleted: $response");
+
+                                                    ScaffoldMessenger.of(
+                                                            context)
+                                                        .showSnackBar(
+                                                      const SnackBar(
+                                                          content: Text(
+                                                              'Notification supprimé')),
+                                                    );
+                                                  } catch (e) {
+                                                    print(
+                                                        "Erreur lors de la suppression de la notification: $e");
+
+                                                    ScaffoldMessenger.of(
+                                                            context)
+                                                        .showSnackBar(
+                                                      SnackBar(
+                                                          content: Text(
+                                                              "Erreur lors de la suppression de la notification")),
+                                                    );
+                                                    _locationNotifs
+                                                        .add(event);
+                                                  }
+                                                },
+                                                child: Padding(
+                                                    padding:
+                                                        const EdgeInsets.only(
+                                                            bottom: 8),
+                                                    child: GestureDetector(
+                                                      onTap: () async {
+                                                        _showLocationNotifDetails(
+                                                            context, event);
+                                                        Api4Service apiService =
+                                                            Api4Service();
+                                                        try {
+                                                          dynamic response =
+                                                              await apiService
+                                                                  .updateNotif(
+                                                                      event[
+                                                                          'id']);
+                                                          print(
+                                                              "Notification mise à jour : $response");
+                                                          _loadLocationNotifs(id);
+                                                        } catch (e) {
+                                                          print(
+                                                              "Erreur lors de la mise à jour de la notification : $e");
+                                                        }
+                                                      },
+                                                      child: Container(
+                                                        height: screenHeight *
+                                                            0.082,
+                                                        width:
+                                                            screenWidth * 0.88,
+                                                        decoration:
+                                                            BoxDecoration(
+                                                          color: AppColors
+                                                              .vertClair,
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(14),
+                                                          boxShadow: const [
+                                                            BoxShadow(
+                                                              color: AppColors
+                                                                  .gris,
+                                                              spreadRadius: 3,
+                                                              blurRadius: 6,
+                                                              offset:
+                                                                  Offset(0, 3),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                        child: Row(
+                                                          children: [
+                                                            Container(
+                                                              height: 70,
+                                                              width: 70,
+                                                              decoration:
+                                                                  BoxDecoration(
+                                                                color: AppColors
+                                                                    .vertClair,
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            8.0),
+                                                              ),
+                                                              child: (
+                                                                Image.asset(
+                                                                  'assets/images/loc.png',
+                                                                  color: AppColors.vert,
+                                                                  width: 8,
+                                                                  height: 8,
+                                                                )
+                                                              ),
+                                                            ),
+                                                            const SizedBox(
+                                                                width: 16),
+                                                            Column(
+                                                              crossAxisAlignment:
+                                                                  CrossAxisAlignment
+                                                                      .start,
+                                                              mainAxisAlignment:
+                                                                  MainAxisAlignment
+                                                                      .center,
+                                                              children: [
+                                                                Text(
+                                                                  event['animal']
+                                                                      [
+                                                                      'name'],
+                                                                  style:
+                                                                      const TextStyle(
+                                                                    color: AppColors
+                                                                        .noir,
+                                                                    fontSize:
+                                                                        16,
+                                                                    fontFamily:
+                                                                        'Poppins',
+                                                                    fontWeight:
+                                                                        FontWeight.w600,
+                                                                  ),
+                                                                ),
+                                                                const Text(
+                                                                  'Localisé hors de la zone',
+                                                                  style: TextStyle(
+                                                                      color: Color(
+                                                                          0xFF808B9A),
+                                                                      fontSize:
+                                                                          12,
+                                                                      fontFamily:
+                                                                          'Poppins',
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .w600),
+                                                                ),
+                                                              ],
+                                                            ),
+                                                            Spacer(),
+                                                            Container(
+                                                              width: 50,
+                                                              child: Column(
+                                                                crossAxisAlignment:
+                                                                    CrossAxisAlignment
+                                                                        .start,
+                                                                mainAxisAlignment:
+                                                                    MainAxisAlignment
+                                                                        .center,
+                                                                children: [
+                                                                  const Text(
+                                                                    '13:30',
+                                                                    style:
+                                                                        TextStyle(
+                                                                      color: AppColors
+                                                                          .noir,
+                                                                      fontSize:
+                                                                          12,
+                                                                      fontFamily:
+                                                                          'Poppins',
+                                                                    ),
+                                                                  ),
+                                                                  Padding(
+                                                                    padding: const EdgeInsets
+                                                                        .only(
+                                                                        left:
+                                                                            10),
+                                                                    child: Image
+                                                                        .asset(
+                                                                      'assets/images/non_lue.png',
+                                                                      color: AppColors
+                                                                          .vert,
+                                                                      height:
+                                                                          12,
+                                                                      width: 12,
+                                                                    ),
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                            )
+                                                          ],
+                                                        ),
+                                                      ),
+                                                    )));
+                                          }).toList(),
+                                        )
+                                  : Container()))
                 ],
               ),
             ),
@@ -1212,4 +1679,100 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
       },
     );
   }
+
+  void _showLocationNotifDetails(BuildContext context, Map<String, dynamic> event) {
+    double screenWidth = MediaQuery.of(context).size.width;
+    double screenHeight = MediaQuery.of(context).size.height;
+
+    setState(() {
+      event['etat'] = "non_lu";
+
+      int index = _locationNotifs.indexWhere((e) => e['id'] == event['id']);
+      if (index != -1) {
+        _locationNotifs[index]['etat'] = "non_lu";
+      }
+    });
+
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return Container(
+          height: screenHeight * 0.4,
+          padding: const EdgeInsets.all(12),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Center(
+                child: Container(
+                  width: 80,
+                  height: 5,
+                  margin: const EdgeInsets.only(top: 10, bottom: 10),
+                  decoration: BoxDecoration(
+                    color: Colors.grey[500],
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 14),
+              Center(
+                child: Container(
+                  height: screenHeight * 0.27,
+                  width: screenWidth * 0.8,
+                  margin: const EdgeInsets.only(bottom: 6),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(18),
+                    boxShadow: const [
+                      BoxShadow(
+                        color: Colors.black26,
+                        blurRadius: 6,
+                        offset: Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Image.asset(
+                            'assets/images/loc.png',
+                            color: AppColors.vert,
+                            width: 22,
+                            height: 22,
+                          ),
+                          const SizedBox(width: 8),
+                          const Text(
+                            'Alerte sécurité',
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 18),
+                      Text(
+                        '${event['animal']['name']} a été localisé hors de la zone',
+                        style: const TextStyle(fontSize: 16),
+                      ),
+                      const SizedBox(height: 14),
+                      Text(
+                        'Date: ${event['dateSave']}',
+                        style:
+                            const TextStyle(fontSize: 14, color: Colors.black),
+                      )
+                    ],
+                  ),
+                ),
+              )
+            ],
+          ),
+        );
+      },
+    );
+  }
+
 }

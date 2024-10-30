@@ -23,7 +23,6 @@ return new class extends Migration
             $table->date('dateEvent');
             $table->time('heureDebut');
             $table->time('heureFin');
-            $table->softDeletes();
             $table->timestamps();
         });
     }

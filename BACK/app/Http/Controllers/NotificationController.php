@@ -38,14 +38,6 @@ class NotificationController extends Controller
     public function store(Request $request)
     {
         try {
-            // $id = null;
-            // if ($request->animal_id) {
-            //     $animal = Animal::where('name', $request->animal_id)->first();
-            //     if ($animal) {
-            //         $id = $animal->id;
-            //     }
-            // }
-
             $event = Notification::create([
                 'user_id' => $request->user_id,
                 'animal_id' => $request->animal_id,

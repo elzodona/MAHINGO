@@ -8,6 +8,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\NecklaceController;
 use App\Http\Controllers\CategorieController;
 use App\Http\Controllers\EventController;
+use App\Http\Controllers\LocationNotifController;
 use App\Http\Controllers\NotificationController;
 
 // Route::get('/user', function (Request $request) {
@@ -68,5 +69,12 @@ Route::prefix('notif')->group(function () {
     Route::post('/add', [NotificationController::class, 'store']);
     Route::post('/update/{id}', [NotificationController::class, 'update']);
     Route::delete('/delete/{id}', [NotificationController::class, 'destroy']);
+});
+
+Route::prefix('notifLocation')->group(function () {
+    Route::get('/user/{id}', [LocationNotifController::class, 'notifLocationByUser']);
+    Route::post('/add', [LocationNotifController::class, 'store']);
+    Route::post('/update/{id}', [LocationNotifController::class, 'update']);
+    Route::delete('/delete/{id}', [LocationNotifController::class, 'destroy']);
 });
 
