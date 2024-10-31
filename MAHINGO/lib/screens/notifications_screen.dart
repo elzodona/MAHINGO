@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mahingo/screens/home_screen.dart';
 import 'package:mahingo/services/call_api/locationNotif_service.dart';
+import 'package:mahingo/services/call_api/healthNotif_service.dart';
 import 'package:mahingo/services/call_api/animal_service.dart';
 import 'package:mahingo/utils/colors.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
@@ -186,6 +187,8 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
   List<dynamic> _notifsNonLues = [];
   List<dynamic> _locationNotifs = [];
   List<dynamic> _locationNotifsNonLues = [];
+  List<dynamic> _healthNotifs = [];
+  List<dynamic> _healthNotifsNonLues = [];
 
   // List<dynamic> notifsEvents = [
   //   {
@@ -372,6 +375,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
       });
       // print("User ID: ${id}");
 
+      await _loadHealthNotifs(id);
       await _loadLocationNotifs(id);
       await _loadEvents(id);
       await _loadNotifs(id);
@@ -591,8 +595,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
     return intersectCount % 2 != 0;
   }
 
-  Future<void> _saveLocation(
-      List<Map<String, dynamic>> animalsOutsideZone) async {
+  Future<void> _saveLocation(List<Map<String, dynamic>> animalsOutsideZone) async {
     try {
       Api4Service apiService = Api4Service();
 
@@ -622,6 +625,29 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
       _loadLocationNotifs(id);
     } catch (e) {
       print('Erreur lors de la création des notifications : $e');
+    }
+  }
+
+  Future<void> _loadHealthNotifs(int id) async {
+    try {
+      Api5Service apiService = Api5Service();
+      _healthNotifs = await apiService.fetchNotifs(id);
+      // print(_healthNotifs);
+
+      List<dynamic> _notifsNLues = [];
+
+      for (var notif in _healthNotifs) {
+        if (notif['etat'] == 'non_lu') {
+          _notifsNLues.add(notif);
+        }
+      }
+
+      setState(() {
+        _healthNotifsNonLues = _notifsNLues;
+      });
+      // print(_healthNotifsNonLues);
+    } catch (e) {
+      print('Erreur : $e');
     }
   }
 
@@ -1790,8 +1816,446 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                                     )));
                                           }).toList(),
                                         )
-                                  : Container()
-                                )
+                              : selectedOption1 == 'un'
+                                  ? selectedOption2 == 'one'
+                                      ? Column(
+                                          children:
+                                              _healthNotifs.map((event) {
+                                            return Dismissible(
+                                              key: Key(event['id'].toString()),
+                                              onDismissed: (direction) async {
+                                                _healthNotifs.remove(event);
+
+                                                Api5Service apiService =
+                                                    Api5Service();
+
+                                                try {
+                                                  dynamic response =
+                                                      await apiService
+                                                          .deleteNotif(
+                                                              event['id']);
+                                                  print(
+                                                      "Notification deleted: $response");
+
+                                                  ScaffoldMessenger.of(context)
+                                                      .showSnackBar(
+                                                    const SnackBar(
+                                                        content: Text(
+                                                            'Notification supprimé')),
+                                                  );
+                                                } catch (e) {
+                                                  print(
+                                                      "Erreur lors de la suppression de la notification: $e");
+
+                                                  ScaffoldMessenger.of(context)
+                                                      .showSnackBar(
+                                                    SnackBar(
+                                                        content: Text(
+                                                            "Erreur lors de la suppression de la notification")),
+                                                  );
+
+                                                  _healthNotifs.add(event);
+                                                }
+                                              },
+                                              // background: Container(color: Colors.red),
+                                              child: Padding(
+                                                padding: const EdgeInsets.only(
+                                                    bottom: 8),
+                                                child: GestureDetector(
+                                                  onTap: () async {
+                                                    _showHealthNotifDetails(
+                                                        context, event);
+                                                    Api5Service apiService =
+                                                        Api5Service();
+                                                    try {
+                                                      dynamic response =
+                                                          await apiService
+                                                              .updateNotif(
+                                                                  event['id']);
+                                                      print(
+                                                          "Notification mise à jour : $response");
+                                                      _loadHealthNotifs(id);
+                                                    } catch (e) {
+                                                      print(
+                                                          "Erreur lors de la mise à jour de la notification : $e");
+                                                    }
+                                                  },
+                                                  child: Container(
+                                                    height: screenHeight * 0.082,
+                                                    width: screenWidth * 0.88,
+                                                    decoration: BoxDecoration(
+                                                      color: event["etat"] ==
+                                                              "lu"
+                                                          ? AppColors.blanc
+                                                          : AppColors.vertClair,
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              14),
+                                                      boxShadow: const [
+                                                        BoxShadow(
+                                                          color: AppColors.gris,
+                                                          spreadRadius: 3,
+                                                          blurRadius: 6,
+                                                          offset: Offset(0, 3),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                    child: Row(
+                                                      children: [
+                                                        Container(
+                                                            height: 70,
+                                                            width: 70,
+                                                            decoration:
+                                                                BoxDecoration(
+                                                              color: event[
+                                                                          "etat"] ==
+                                                                      "lu"
+                                                                  ? AppColors
+                                                                      .blanc
+                                                                  : AppColors
+                                                                      .vertClair,
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          8.0),
+                                                            ),
+                                                            child: (
+                                                              event["type"] == 'temperature' ?
+                                                                Image.asset(
+                                                                  'assets/images/tp.png',
+                                                                  color: event["etat"] =="lu" ? Color(0xFF808B9A) : AppColors.vert,
+                                                                  width: 8,
+                                                                  height: 8,
+                                                                )
+                                                              : Image.asset('assets/images/fr.png',
+                                                                  color: event["etat"] == "lu"
+                                                                      ? Color(0xFF808B9A)
+                                                                      : AppColors.vert,
+                                                                  width: 8,
+                                                                  height: 8,
+                                                                )
+                                                            )
+                                                          ),
+                                                        const SizedBox(
+                                                            width: 16),
+                                                        Column(
+                                                          crossAxisAlignment:
+                                                              CrossAxisAlignment
+                                                                  .start,
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .center,
+                                                          children: [
+                                                            Text(
+                                                              event['animal']['name']                                                            .toString(),
+                                                              style:
+                                                                  const TextStyle(
+                                                                color: AppColors
+                                                                    .noir,
+                                                                fontSize: 16,
+                                                                fontFamily:
+                                                                    'Poppins',
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w600,
+                                                              ),
+                                                            ),
+                                                            Text(
+                                                              event['type'] == 'temperature' ?
+                                                                'Température anormale de ${event['valeur']} détectée'
+                                                                : 'Fréquence anormale de ${event['valeur']} détectée',
+                                                              style: const TextStyle(
+                                                                color: Color(
+                                                                    0xFF808B9A),
+                                                                fontSize: 12,
+                                                                fontFamily:
+                                                                    'Poppins',
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w600,
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                        Spacer(),
+                                                        Container(
+                                                          width: 50,
+                                                          child: Column(
+                                                            crossAxisAlignment:
+                                                                CrossAxisAlignment
+                                                                    .start,
+                                                            mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .center,
+                                                            children: [
+                                                              const Text(
+                                                                '13:30',
+                                                                style:
+                                                                    TextStyle(
+                                                                  color: Color(
+                                                                      0xFF808B9A),
+                                                                  fontSize: 12,
+                                                                  fontFamily:
+                                                                      'Poppins',
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w600,
+                                                                ),
+                                                              ),
+                                                              Padding(
+                                                                padding:
+                                                                    const EdgeInsets
+                                                                        .only(
+                                                                        left:
+                                                                            7),
+                                                                child: event[
+                                                                            "etat"] ==
+                                                                        "lu"
+                                                                    ? Image
+                                                                        .asset(
+                                                                        'assets/images/lue.png',
+                                                                        height:
+                                                                            18,
+                                                                        width:
+                                                                            18,
+                                                                      )
+                                                                    : Image
+                                                                        .asset(
+                                                                        'assets/images/non_lue.png',
+                                                                        height:
+                                                                            18,
+                                                                        width:
+                                                                            18,
+                                                                      ),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                            );
+                                          }).toList(),
+                                        )
+                                      : Column(
+                                          children: _healthNotifsNonLues
+                                              .map((event) {
+                                            return Dismissible(
+                                                key:
+                                                    Key(event['id'].toString()),
+                                                onDismissed: (direction) async {
+                                                  _healthNotifs.remove(event);
+
+                                                  Api5Service apiService =
+                                                      Api5Service();
+
+                                                  try {
+                                                    dynamic response =
+                                                        await apiService
+                                                            .deleteNotif(
+                                                                event['id']);
+                                                    print(
+                                                        "Notification deleted: $response");
+
+                                                    ScaffoldMessenger.of(
+                                                            context)
+                                                        .showSnackBar(
+                                                      const SnackBar(
+                                                          content: Text(
+                                                              'Notification supprimé')),
+                                                    );
+                                                  } catch (e) {
+                                                    print(
+                                                        "Erreur lors de la suppression de la notification: $e");
+
+                                                    ScaffoldMessenger.of(
+                                                            context)
+                                                        .showSnackBar(
+                                                      SnackBar(
+                                                          content: Text(
+                                                              "Erreur lors de la suppression de la notification")),
+                                                    );
+                                                    _healthNotifs.add(event);
+                                                  }
+                                                },
+                                                child: Padding(
+                                                    padding:
+                                                        const EdgeInsets.only(
+                                                            bottom: 8),
+                                                    child: GestureDetector(
+                                                      onTap: () async {
+                                                        _showHealthNotifDetails(
+                                                            context, event);
+                                                        Api5Service apiService =
+                                                            Api5Service();
+                                                        try {
+                                                          dynamic response =
+                                                              await apiService
+                                                                  .updateNotif(
+                                                                      event[
+                                                                          'id']);
+                                                          print(
+                                                              "Notification mise à jour : $response");
+                                                          _loadHealthNotifs(
+                                                              id);
+                                                        } catch (e) {
+                                                          print(
+                                                              "Erreur lors de la mise à jour de la notification : $e");
+                                                        }
+                                                      },
+                                                      child: Container(
+                                                        height: screenHeight *
+                                                            0.082,
+                                                        width:
+                                                            screenWidth * 0.88,
+                                                        decoration:
+                                                            BoxDecoration(
+                                                          color: AppColors
+                                                              .vertClair,
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(14),
+                                                          boxShadow: const [
+                                                            BoxShadow(
+                                                              color: AppColors
+                                                                  .gris,
+                                                              spreadRadius: 3,
+                                                              blurRadius: 6,
+                                                              offset:
+                                                                  Offset(0, 3),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                        child: Row(
+                                                          children: [
+                                                            Container(
+                                                              height: 70,
+                                                              width: 70,
+                                                              decoration:
+                                                                  BoxDecoration(
+                                                                color: AppColors
+                                                                    .vertClair,
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            8.0),
+                                                              ),
+                                                              child:(
+                                                                event["type"] =='temperature'
+                                                                  ? Image.asset('assets/images/tp.png',
+                                                                      color: event["etat"] == "lu"
+                                                                          ? Color(0xFF808B9A)
+                                                                          : AppColors.vert,
+                                                                      width: 8,
+                                                                      height: 8,
+                                                                    )
+                                                                  : Image
+                                                                      .asset(
+                                                                      'assets/images/fr.png',
+                                                                      color: event["etat"] == "lu"
+                                                                          ? Color(0xFF808B9A)
+                                                                          : AppColors.vert,
+                                                                      width:
+                                                                          8,
+                                                                      height:
+                                                                          8,
+                                                                    )
+                                                              ),
+                                                            ),
+                                                            const SizedBox(
+                                                                width: 16),
+                                                            Column(
+                                                              crossAxisAlignment:
+                                                                  CrossAxisAlignment
+                                                                      .start,
+                                                              mainAxisAlignment:
+                                                                  MainAxisAlignment
+                                                                      .center,
+                                                              children: [
+                                                                Text(
+                                                                  event['animal']['name'],
+                                                                  style:
+                                                                      const TextStyle(
+                                                                    color:
+                                                                        AppColors
+                                                                            .noir,
+                                                                    fontSize:
+                                                                        16,
+                                                                    fontFamily:
+                                                                        'Poppins',
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w600,
+                                                                  ),
+                                                                ),
+                                                                Text(
+                                                                  event['type'] == 'temperature' ?
+                                                                    '${event['animal']['name']} a une température anormale de ${event['valeur']}'
+                                                                    : '${event['animal']['name']} a une fréquence anormale de ${event['valeur']}',
+                                                                  style: const TextStyle(
+                                                                      color: Color(
+                                                                          0xFF808B9A),
+                                                                      fontSize:
+                                                                          12,
+                                                                      fontFamily:
+                                                                          'Poppins',
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .w600),
+                                                                ),
+                                                              ],
+                                                            ),
+                                                            Spacer(),
+                                                            Container(
+                                                              width: 50,
+                                                              child: Column(
+                                                                crossAxisAlignment:
+                                                                    CrossAxisAlignment
+                                                                        .start,
+                                                                mainAxisAlignment:
+                                                                    MainAxisAlignment
+                                                                        .center,
+                                                                children: [
+                                                                  const Text(
+                                                                    '13:30',
+                                                                    style:
+                                                                        TextStyle(
+                                                                      color: AppColors
+                                                                          .noir,
+                                                                      fontSize:
+                                                                          12,
+                                                                      fontFamily:
+                                                                          'Poppins',
+                                                                    ),
+                                                                  ),
+                                                                  Padding(
+                                                                    padding: const EdgeInsets
+                                                                        .only(
+                                                                        left:
+                                                                            10),
+                                                                    child: Image
+                                                                        .asset(
+                                                                      'assets/images/non_lue.png',
+                                                                      color: AppColors
+                                                                          .vert,
+                                                                      height:
+                                                                          12,
+                                                                      width: 12,
+                                                                    ),
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                            )
+                                                          ],
+                                                        ),
+                                                      ),
+                                                    )));
+                                          }).toList(),
+                                        )
+                                      : Container()
+                            )
                         ]
                       )
                     )
@@ -2022,4 +2486,103 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
       },
     );
   }
+
+  void _showHealthNotifDetails(
+      BuildContext context, Map<String, dynamic> event) {
+    double screenWidth = MediaQuery.of(context).size.width;
+    double screenHeight = MediaQuery.of(context).size.height;
+
+    setState(() {
+      event['etat'] = "non_lu";
+
+      int index = _locationNotifs.indexWhere((e) => e['id'] == event['id']);
+      if (index != -1) {
+        _locationNotifs[index]['etat'] = "non_lu";
+      }
+    });
+
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return Container(
+          height: screenHeight * 0.4,
+          padding: const EdgeInsets.all(12),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Center(
+                child: Container(
+                  width: 80,
+                  height: 5,
+                  margin: const EdgeInsets.only(top: 10, bottom: 10),
+                  decoration: BoxDecoration(
+                    color: Colors.grey[500],
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 14),
+              Center(
+                child: Container(
+                  height: screenHeight * 0.27,
+                  width: screenWidth * 0.8,
+                  margin: const EdgeInsets.only(bottom: 6),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(18),
+                    boxShadow: const [
+                      BoxShadow(
+                        color: Colors.black26,
+                        blurRadius: 6,
+                        offset: Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Image.asset(
+                            'assets/images/loc.png',
+                            color: AppColors.vert,
+                            width: 22,
+                            height: 22,
+                          ),
+                          const SizedBox(width: 8),
+                          const Text(
+                            'Alerte santé',
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 18),
+                      Text(
+                        event['type'] == 'temperature' ?
+                          '${event['animal']['name']} a une température anormale de ${event['valeur']}'
+                          : '${event['animal']['name']} a une fréquence anormale de ${event['valeur']}',
+                        style: const TextStyle(fontSize: 16),
+                      ),
+                      const SizedBox(height: 14),
+                      Text(
+                        'Date: ${event['dateSave']}',
+                        style:
+                            const TextStyle(fontSize: 14, color: Colors.black),
+                      )
+                    ],
+                  ),
+                ),
+              )
+            ],
+          ),
+        );
+      },
+    );
+  }
+
 }

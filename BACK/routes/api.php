@@ -8,6 +8,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\NecklaceController;
 use App\Http\Controllers\CategorieController;
 use App\Http\Controllers\EventController;
+use App\Http\Controllers\HealthNotifController;
 use App\Http\Controllers\LocationNotifController;
 use App\Http\Controllers\NotificationController;
 
@@ -76,5 +77,12 @@ Route::prefix('notifLocation')->group(function () {
     Route::post('/add', [LocationNotifController::class, 'store']);
     Route::post('/update/{id}', [LocationNotifController::class, 'update']);
     Route::delete('/delete/{id}', [LocationNotifController::class, 'destroy']);
+});
+
+Route::prefix('notifHealth')->group(function () {
+    Route::get('/user/{id}', [HealthNotifController::class, 'notifHealthByUser']);
+    Route::post('/add', [HealthNotifController::class, 'store']);
+    Route::post('/update/{id}', [HealthNotifController::class, 'update']);
+    Route::delete('/delete/{id}', [HealthNotifController::class, 'destroy']);
 });
 
