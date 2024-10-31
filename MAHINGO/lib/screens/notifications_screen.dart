@@ -27,7 +27,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
   final List<Map<String, dynamic>> colliers = [
     {
       'id': 1,
-      'identifier': 'M002',
+      'identifier': 'M001',
       'timestamp': '2024-10-30',
       'batterie': "70%",
       'position': "debout",
@@ -41,7 +41,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
     },
     {
       'id': 2,
-      'identifier': 'V002',
+      'identifier': 'M002',
       'timestamp': '2024-10-30',
       'batterie': "70%",
       'position': "debout",
@@ -55,7 +55,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
     },
     {
       'id': 3,
-      'identifier': 'V003',
+      'identifier': 'M003',
       'timestamp': '2024-10-30',
       'batterie': "70%",
       'position': "debout",
@@ -68,8 +68,8 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
       'etat': 'sensible'
     },
     {
-      'id': 4,
-      'identifier': 'M003',
+      'id': 12,
+      'identifier': 'V002',
       'timestamp': '2024-10-30',
       'batterie': "70%",
       'position': "debout",
@@ -82,8 +82,8 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
       'etat': 'normal'
     },
     {
-      'id': 5,
-      'identifier': 'V001',
+      'id': 13,
+      'identifier': 'V003',
       'timestamp': '2024-10-30',
       'batterie': "70%",
       'position': "debout",
@@ -96,8 +96,8 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
       'etat': 'normal'
     },
     {
-      'id': 6,
-      'identifier': 'M006',
+      'id': 16,
+      'identifier': 'V001',
       'timestamp': '2024-10-30',
       'batterie': "70%",
       'position': "debout",
@@ -110,8 +110,8 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
       'etat': 'anormal'
     },
     {
-      'id': 6,
-      'identifier': 'M001',
+      'id': 17,
+      'identifier': 'V004',
       'timestamp': '2024-10-30',
       'batterie': "70%",
       'position': "debout",
@@ -124,8 +124,8 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
       'etat': 'anormal'
     },
     {
-      'id': 7,
-      'identifier': 'M007',
+      'id': 18,
+      'identifier': 'M004',
       'timestamp': '2024-10-30',
       'batterie': "70%",
       'position': "debout",
@@ -138,8 +138,8 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
       'etat': 'normal'
     },
     {
-      'id': 8,
-      'identifier': 'M008',
+      'id': 19,
+      'identifier': 'M005',
       'timestamp': '2024-10-30',
       'batterie': "70%",
       'position': "debout",
@@ -152,8 +152,8 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
       'etat': 'normal'
     },
     {
-      'id': 9,
-      'identifier': 'V006',
+      'id': 20,
+      'identifier': 'M006',
       'timestamp': '2024-10-30',
       'batterie': "70%",
       'position': "debout",
@@ -883,7 +883,11 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                   ),
                   SizedBox(height: screenHeight * 0.02),
                   Expanded(
-                      child: Container(
+                    child: SingleChildScrollView(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Container(
                           // height: screenHeight * 0.63,
                           width: screenWidth,
                           decoration: const BoxDecoration(
@@ -1786,7 +1790,12 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                                     )));
                                           }).toList(),
                                         )
-                                  : Container()))
+                                  : Container()
+                                )
+                        ]
+                      )
+                    )
+                  )
                 ],
               ),
             ),
