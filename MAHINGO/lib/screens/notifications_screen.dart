@@ -1185,9 +1185,9 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                                             MainAxisAlignment
                                                                 .center,
                                                         children: [
-                                                          const Text(
-                                                            '13:30',
-                                                            style: TextStyle(
+                                                          Text(
+                                                            '${event['heureNotif'].substring(0, 5)}',
+                                                            style: const TextStyle(
                                                               color: Color(
                                                                   0xFF808B9A),
                                                               fontSize: 12,
@@ -1422,10 +1422,10 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                                                 MainAxisAlignment
                                                                     .center,
                                                             children: [
-                                                              const Text(
-                                                                '13:30',
+                                                              Text(
+                                                                '${event['heureNotif'].substring(0, 5)}',
                                                                 style:
-                                                                    TextStyle(
+                                                                    const TextStyle(
                                                                   color:
                                                                       AppColors
                                                                           .noir,
@@ -1625,10 +1625,10 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                                                 MainAxisAlignment
                                                                     .center,
                                                             children: [
-                                                              const Text(
-                                                                '13:30',
+                                                              Text(
+                                                                '${event['heureNotif'].substring(0, 5)}',
                                                                 style:
-                                                                    TextStyle(
+                                                                    const TextStyle(
                                                                   color: Color(
                                                                       0xFF808B9A),
                                                                   fontSize: 12,
@@ -1840,10 +1840,10 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                                                     MainAxisAlignment
                                                                         .center,
                                                                 children: [
-                                                                  const Text(
-                                                                    '13:30',
+                                                                  Text(
+                                                                    '${event['heureNotif'].substring(0, 5)}',
                                                                     style:
-                                                                        TextStyle(
+                                                                        const TextStyle(
                                                                       color: AppColors
                                                                           .noir,
                                                                       fontSize:
@@ -2048,10 +2048,10 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                                                 MainAxisAlignment
                                                                     .center,
                                                             children: [
-                                                              const Text(
-                                                                '13:30',
+                                                              Text(
+                                                                '${event['heureNotif'].substring(0, 5)}',
                                                                 style:
-                                                                    TextStyle(
+                                                                    const TextStyle(
                                                                   color: Color(
                                                                       0xFF808B9A),
                                                                   fontSize: 12,
@@ -2278,10 +2278,10 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                                                     MainAxisAlignment
                                                                         .center,
                                                                 children: [
-                                                                  const Text(
-                                                                    '13:30',
+                                                                  Text(
+                                                                    '${event['heureNotif'].substring(0, 5)}',
                                                                     style:
-                                                                        TextStyle(
+                                                                        const TextStyle(
                                                                       color: AppColors
                                                                           .noir,
                                                                       fontSize:

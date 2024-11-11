@@ -22,6 +22,7 @@ class NotificationResource extends JsonResource
             'dateEvent' => $this->dateEvent,
             'heureDebut' => $this->heureDebut,
             'heureFin' => $this->heureFin,
+            'heureNotif' => $this->heureNotif,
             'user' => $this->user,
             'animal' => $this->animal,
         ];

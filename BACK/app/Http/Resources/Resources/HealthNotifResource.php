@@ -20,9 +20,10 @@ class HealthNotifResource extends JsonResource
             'dateSave' => $this->dateSave,
             'type' => $this->type,
             'valeur' => $this->valeur,
+            'heureNotif' => $this->heureNotif,
             'user' => $this->user,
             'animal' => $this->animal,
         ];
     }
-    
+
 }

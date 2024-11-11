@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : 127.0.0.1
--- Généré le : lun. 11 nov. 2024 à 13:39
+-- Généré le : lun. 11 nov. 2024 à 16:01
 -- Version du serveur : 10.4.27-MariaDB
 -- Version de PHP : 8.2.0
 
@@ -131,7 +131,7 @@ CREATE TABLE `events` (
 --
 
 INSERT INTO `events` (`id`, `user_id`, `animal_id`, `titre`, `description`, `dateEvent`, `heureDebut`, `heureFin`, `deleted_at`, `created_at`, `updated_at`) VALUES
-(1, 1, 4, 'vaccination', 'Saisir la description', '2024-11-11', '12:55:00', '13:31:00', NULL, '2024-11-11 12:31:52', '2024-11-11 12:34:23'),
+(1, 1, 4, 'vaccination', 'Saisir la description', '2024-11-11', '14:00:00', '15:00:00', NULL, '2024-11-11 12:31:52', '2024-11-11 13:42:51'),
 (2, 1, 5, 'reproduction', 'Saisir la description', '2024-11-11', '13:00:00', '12:32:00', NULL, '2024-11-11 12:32:18', '2024-11-11 12:34:38'),
 (3, 1, 12, 'visite medicale', 'Saisir la description', '2024-11-11', '13:05:00', '12:32:00', NULL, '2024-11-11 12:34:10', '2024-11-11 12:34:10');
 
@@ -166,8 +166,22 @@ CREATE TABLE `health_notifs` (
   `etat` enum('lu','non_lu') NOT NULL,
   `valeur` double NOT NULL,
   `type` varchar(255) NOT NULL,
+  `heureNotif` time DEFAULT NULL,
   `dateSave` date NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Déchargement des données de la table `health_notifs`
+--
+
+INSERT INTO `health_notifs` (`id`, `created_at`, `updated_at`, `user_id`, `animal_id`, `etat`, `valeur`, `type`, `heureNotif`, `dateSave`) VALUES
+(1, '2024-11-11 12:42:04', '2024-11-11 13:32:02', 1, 5, 'lu', 60, 'temperature', '14:43:01', '2024-10-31'),
+(2, '2024-11-11 12:42:20', '2024-11-11 12:42:20', 1, 5, 'non_lu', 100, 'frequence', '14:40:01', '2024-10-31'),
+(3, '2024-11-11 13:31:53', '2024-11-11 13:32:08', 1, 3, 'lu', 15, 'température', '14:43:01', '2024-10-30'),
+(4, '2024-11-11 13:31:54', '2024-11-11 13:31:54', 1, 4, 'non_lu', 15, 'température', '14:53:01', '2024-10-30'),
+(5, '2024-11-11 13:31:54', '2024-11-11 13:32:06', 1, 5, 'lu', 15, 'température', '14:43:01', '2024-10-30'),
+(6, '2024-11-11 13:31:54', '2024-11-11 13:31:54', 1, 5, 'non_lu', 15, 'fréquence', '11:43:01', '2024-10-30'),
+(7, '2024-11-11 13:31:55', '2024-11-11 13:32:10', 1, 6, 'lu', 15, 'fréquence', '08:43:01', '2024-10-30');
 
 -- --------------------------------------------------------
 
@@ -219,21 +233,22 @@ CREATE TABLE `location_notifs` (
   `altitude` double NOT NULL,
   `longitude` double NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `heureNotif` time DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Déchargement des données de la table `location_notifs`
 --
 
-INSERT INTO `location_notifs` (`id`, `user_id`, `animal_id`, `etat`, `dateSave`, `altitude`, `longitude`, `created_at`, `updated_at`) VALUES
-(1, 1, 6, 'lu', '2024-10-30', 14.698, -17.446, '2024-11-11 12:35:34', '2024-11-11 12:35:57'),
-(2, 1, 7, 'lu', '2024-10-30', 14.6995, -17.448, '2024-11-11 12:35:35', '2024-11-11 12:35:44'),
-(3, 1, 8, 'non_lu', '2024-10-30', 14.7, -17.449, '2024-11-11 12:35:35', '2024-11-11 12:35:35'),
-(4, 1, 9, 'lu', '2024-10-30', 14.7005, -17.4495, '2024-11-11 12:35:35', '2024-11-11 12:35:49'),
-(5, 1, 10, 'non_lu', '2024-10-30', 14.701, -17.45, '2024-11-11 12:35:36', '2024-11-11 12:35:36'),
-(6, 1, 11, 'lu', '2024-10-30', 14.7015, -17.4505, '2024-11-11 12:35:36', '2024-11-11 12:35:47'),
-(7, 1, 12, 'non_lu', '2024-10-30', 14.702, -17.451, '2024-11-11 12:35:36', '2024-11-11 12:35:36');
+INSERT INTO `location_notifs` (`id`, `user_id`, `animal_id`, `etat`, `dateSave`, `altitude`, `longitude`, `created_at`, `updated_at`, `heureNotif`) VALUES
+(1, 1, 6, 'lu', '2024-10-30', 14.698, -17.446, '2024-11-11 12:35:34', '2024-11-11 12:35:57', '13:40:01'),
+(2, 1, 7, 'lu', '2024-10-30', 14.6995, -17.448, '2024-11-11 12:35:35', '2024-11-11 12:35:44', '13:53:01'),
+(3, 1, 8, 'non_lu', '2024-10-30', 14.7, -17.449, '2024-11-11 12:35:35', '2024-11-11 12:35:35', '12:43:01'),
+(4, 1, 9, 'lu', '2024-10-30', 14.7005, -17.4495, '2024-11-11 12:35:35', '2024-11-11 12:35:49', '13:23:01'),
+(5, 1, 10, 'non_lu', '2024-10-30', 14.701, -17.45, '2024-11-11 12:35:36', '2024-11-11 12:35:36', '13:43:01'),
+(6, 1, 11, 'lu', '2024-10-30', 14.7015, -17.4505, '2024-11-11 12:35:36', '2024-11-11 12:35:47', '13:43:01'),
+(7, 1, 12, 'non_lu', '2024-10-30', 14.702, -17.451, '2024-11-11 12:35:36', '2024-11-11 12:35:36', '13:43:01');
 
 -- --------------------------------------------------------
 
@@ -268,7 +283,10 @@ INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
 (14, '2024_10_15_154510_make_id_animal_nullable_in_notifications_table', 1),
 (15, '2024_10_29_135506_create_location_notifs_table', 1),
 (16, '2024_10_31_152632_create_health_notifs_table', 1),
-(17, '2024_10_31_160431_add_date_save_to_health_notifs', 1);
+(17, '2024_10_31_160431_add_date_save_to_health_notifs', 1),
+(18, '2024_11_11_133709_add_heure_notif_to_health_notifs', 2),
+(19, '2024_11_11_133802_add_heure_notif_to_location_notifs', 3),
+(20, '2024_11_11_133834_add_heure_notif_to_notifications', 3);
 
 -- --------------------------------------------------------
 
@@ -326,17 +344,19 @@ CREATE TABLE `notifications` (
   `heureDebut` time NOT NULL,
   `heureFin` time NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `heureNotif` time DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Déchargement des données de la table `notifications`
 --
 
-INSERT INTO `notifications` (`id`, `user_id`, `animal_id`, `etat`, `titre`, `description`, `dateEvent`, `heureDebut`, `heureFin`, `created_at`, `updated_at`) VALUES
-(1, 1, 4, 'lu', 'vaccination', 'Saisir la description', '2024-11-11', '12:55:00', '13:31:00', '2024-11-11 12:35:32', '2024-11-11 12:36:08'),
-(2, 1, 5, 'lu', 'reproduction', 'Saisir la description', '2024-11-11', '13:00:00', '12:32:00', '2024-11-11 12:35:33', '2024-11-11 12:36:03'),
-(3, 1, 12, 'non_lu', 'visite medicale', 'Saisir la description', '2024-11-11', '13:05:00', '12:32:00', '2024-11-11 12:35:33', '2024-11-11 12:35:33');
+INSERT INTO `notifications` (`id`, `user_id`, `animal_id`, `etat`, `titre`, `description`, `dateEvent`, `heureDebut`, `heureFin`, `created_at`, `updated_at`, `heureNotif`) VALUES
+(1, 1, 4, 'lu', 'vaccination', 'Saisir la description', '2024-11-11', '12:55:00', '13:31:00', '2024-11-11 12:35:32', '2024-11-11 12:36:08', '13:40:01'),
+(2, 1, 5, 'lu', 'reproduction', 'Saisir la description', '2024-11-11', '13:00:00', '12:32:00', '2024-11-11 12:35:33', '2024-11-11 12:36:03', '13:43:01'),
+(3, 1, 12, 'non_lu', 'visite medicale', 'Saisir la description', '2024-11-11', '13:05:00', '12:32:00', '2024-11-11 12:35:33', '2024-11-11 12:35:33', '13:43:00'),
+(4, 1, 4, 'non_lu', 'vaccination', 'Saisir la description', '2024-11-11', '14:00:00', '15:00:00', '2024-11-11 13:43:01', '2024-11-11 13:43:01', '13:43:01');
 
 -- --------------------------------------------------------
 
@@ -375,7 +395,15 @@ CREATE TABLE `personal_access_tokens` (
 
 INSERT INTO `personal_access_tokens` (`id`, `tokenable_type`, `tokenable_id`, `name`, `token`, `abilities`, `last_used_at`, `expires_at`, `created_at`, `updated_at`) VALUES
 (1, 'App\\Models\\User', 1, 'auth_token', '9ad253c6bf46faf37adca9d7ceb394557840621aef6a651b1b64d101e6aad3db', '[\"*\"]', NULL, NULL, '2024-11-11 12:07:06', '2024-11-11 12:07:06'),
-(2, 'App\\Models\\User', 1, 'auth_token', '2e04f848bbf31daa10aa01970cae082cc09d437887d7a0899a49c73b0f497907', '[\"*\"]', NULL, NULL, '2024-11-11 12:25:49', '2024-11-11 12:25:49');
+(2, 'App\\Models\\User', 1, 'auth_token', '2e04f848bbf31daa10aa01970cae082cc09d437887d7a0899a49c73b0f497907', '[\"*\"]', NULL, NULL, '2024-11-11 12:25:49', '2024-11-11 12:25:49'),
+(3, 'App\\Models\\User', 1, 'auth_token', '1415fe2a739f630057bd24aefab04ba8819286af84acda021084545292766923', '[\"*\"]', NULL, NULL, '2024-11-11 13:00:08', '2024-11-11 13:00:08'),
+(4, 'App\\Models\\User', 1, 'auth_token', 'f43aec51afa71267d897b5f6176665410305900e19c63db7f3e21af68cfcf2ca', '[\"*\"]', NULL, NULL, '2024-11-11 13:08:31', '2024-11-11 13:08:31'),
+(5, 'App\\Models\\User', 1, 'auth_token', 'e6f9f7c5e1369d2b5362ce3622da99adb90e1f2f87425f61e7732d28839772bc', '[\"*\"]', NULL, NULL, '2024-11-11 13:12:27', '2024-11-11 13:12:27'),
+(6, 'App\\Models\\User', 1, 'auth_token', 'ca3494e947ea341278b625579ba5f5f096e3a506f83709ad02bc9eb0293c1951', '[\"*\"]', NULL, NULL, '2024-11-11 13:18:27', '2024-11-11 13:18:27'),
+(7, 'App\\Models\\User', 1, 'auth_token', 'aaecb7b26c8f3d9e7ea3d35652e03571e006920966ac1256c47221af890d9bc1', '[\"*\"]', NULL, NULL, '2024-11-11 13:57:28', '2024-11-11 13:57:28'),
+(8, 'App\\Models\\User', 1, 'auth_token', '2cae5e672a0487dea9109d7671f51c42631e33b2391382a07453d69d9a6b2662', '[\"*\"]', NULL, NULL, '2024-11-11 14:01:50', '2024-11-11 14:01:50'),
+(9, 'App\\Models\\User', 1, 'auth_token', 'cc98bc69856d48d5f29d6fd5dea95e1bbfb200ecabc6ddb37a73369a3989684f', '[\"*\"]', NULL, NULL, '2024-11-11 14:14:10', '2024-11-11 14:14:10'),
+(10, 'App\\Models\\User', 1, 'auth_token', '4a1407816aef497a5556e77c12746dfba6af6445b10c6c37d8c69efb0d301509', '[\"*\"]', NULL, NULL, '2024-11-11 14:42:09', '2024-11-11 14:42:09');
 
 -- --------------------------------------------------------
 
@@ -579,7 +607,7 @@ ALTER TABLE `failed_jobs`
 -- AUTO_INCREMENT pour la table `health_notifs`
 --
 ALTER TABLE `health_notifs`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT pour la table `jobs`
@@ -597,7 +625,7 @@ ALTER TABLE `location_notifs`
 -- AUTO_INCREMENT pour la table `migrations`
 --
 ALTER TABLE `migrations`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
 
 --
 -- AUTO_INCREMENT pour la table `necklaces`
@@ -609,13 +637,13 @@ ALTER TABLE `necklaces`
 -- AUTO_INCREMENT pour la table `notifications`
 --
 ALTER TABLE `notifications`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT pour la table `personal_access_tokens`
 --
 ALTER TABLE `personal_access_tokens`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT pour la table `users`

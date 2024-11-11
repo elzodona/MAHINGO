@@ -20,6 +20,7 @@ class LocationNotifResource extends JsonResource
             'dateSave' => $this->dateSave,
             'altitude' => $this->altitude,
             'longitude' => $this->longitude,
+            'heureNotif' => $this->heureNotif,
             'user' => $this->user,
             'animal' => $this->animal,
         ];

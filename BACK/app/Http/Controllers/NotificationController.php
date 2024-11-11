@@ -46,6 +46,7 @@ class NotificationController extends Controller
                 'dateEvent' => $request->dateEvent,
                 'heureDebut' => $request->heureDebut,
                 'heureFin' => $request->heureFin,
+                'heureNotif' => now()->format('H:i:s'),
                 'etat' => 'non_lu'
             ]);
 

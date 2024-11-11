@@ -56,6 +56,7 @@ class LocationNotifController extends Controller
                 'dateSave' => $request->dateSave,
                 'altitude' => $request->altitude,
                 'longitude' => $request->longitude,
+                'heureNotif' => now()->format('H:i:s'),
                 'etat' => 'non_lu'
             ]);
 

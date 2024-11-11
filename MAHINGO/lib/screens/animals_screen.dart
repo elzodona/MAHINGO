@@ -218,8 +218,8 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
       'timestamp': '2024-10-30',
       'batterie': "70%",
       'position': "debout",
-      'température': {'value': "15°C", 'etat': "sensible"},
-      'frequence': {'value': "15bpm", 'etat': "normale"},
+      'température': {'value': "50°C", 'etat': "sensible"},
+      'frequence': {'value': "150bpm", 'etat': "normale"},
       'localisation': {
         'altitude': "14.6960", // Coordonnées dans la zone
         'longitude': "-17.4450",
@@ -232,8 +232,8 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
       'timestamp': '2024-10-30',
       'batterie': "70%",
       'position': "debout",
-      'température': {'value': "15°C", 'etat': "anormale"},
-      'frequence': {'value': "15bpm", 'etat': "normale"},
+      'température': {'value': "75°C", 'etat': "anormale"},
+      'frequence': {'value': "100bpm", 'etat': "normale"},
       'localisation': {
         'altitude': "14.6950", // Coordonnées dans la zone
         'longitude': "-17.4435",
@@ -712,12 +712,35 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
       // DateTime dateNaiss = DateTime.parse(dateNaissString);
       // int age = _calculateAge(dateNaiss);
 
-      textController.text = animal['necklace_id']['identifier'].toString();
+      String necklaceIdentifier = animal['necklace_id']['identifier'].toString();
+      textController.text = necklaceIdentifier;
       tailleController.text = "${animal['taille']}m";
       poidsController.text = "${animal['poids']}kg";
       genreController.text = animal['sexe'];
       ageController.text = animal['date_birth'];
       raceController.text = animal['race'];
+
+        var collar = colliers.firstWhere(
+        (c) => c['identifier'] == necklaceIdentifier,
+        orElse: () => {},
+      );
+
+      String temperature = collar != null && collar['température'] != null
+          ? collar['température']['value']
+          : 'Inconnu';
+      String frequence = collar != null && collar['frequence'] != null
+          ? collar['frequence']['value']
+          : 'Inconnu';
+      String freqEtat = collar != null && collar['frequence'] != null
+          ? collar['frequence']['etat']
+          : 'Inconnu';
+      String tempEtat = collar != null && collar['température'] != null
+          ? collar['température']['etat']
+          : 'Inconnu';
+
+      // print('Température: $temperature');
+      // print('Fréquence: $frequence');
+
 
       showModalBottomSheet(
         context: context,
@@ -1299,7 +1322,11 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
                               decoration: BoxDecoration(
                                 border: Border.all(color: AppColors.gris),
                                 borderRadius: BorderRadius.circular(8.0),
-                                color: AppColors.vertClair,
+                                color: freqEtat == 'normale'
+                                    ? AppColors.vertClair
+                                    : freqEtat == 'sensible'
+                                        ? const Color(0xFFFFEFD9)
+                                        : const Color(0xFFFFE2E0),
                                 boxShadow: const [
                                   BoxShadow(
                                     color: AppColors.gris,
@@ -1333,10 +1360,10 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
                                     ),
                                   ),
                                   const Spacer(),
-                                  const Expanded(
+                                  Expanded(
                                     child: Text(
-                                      '80 bpm',
-                                      style: TextStyle(
+                                      frequence,
+                                      style: const TextStyle(
                                         fontSize: 16,
                                       ),
                                     ),
@@ -1351,7 +1378,11 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
                               decoration: BoxDecoration(
                                 border: Border.all(color: AppColors.gris),
                                 borderRadius: BorderRadius.circular(8.0),
-                                color: AppColors.vertClair,
+                                color: tempEtat == 'normale'
+                                    ? AppColors.vertClair
+                                    : tempEtat == 'sensible'
+                                        ? const Color(0xFFFFEFD9)
+                                        : const Color(0xFFFFE2E0),
                                 boxShadow: const [
                                   BoxShadow(
                                     color: AppColors.gris,
@@ -1385,10 +1416,10 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
                                     ),
                                   ),
                                   const Spacer(),
-                                  const Expanded(
+                                  Expanded(
                                     child: Text(
-                                      '38 °C',
-                                      style: TextStyle(
+                                      temperature,
+                                      style: const TextStyle(
                                         fontSize: 16,
                                       ),
                                     ),
@@ -1412,6 +1443,7 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
       });
     }
 
+    
     void removeOverlay() {
       if (_overlayEntry != null) {
         _overlayEntry!.remove();
@@ -1446,34 +1478,33 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
                 width: size.width,
                 left: offset.dx,
                 top: offset.dy + size.height,
-                child: GestureDetector(
-                  onTap: () {},
-                  child: Material(
-                    elevation: 4.0,
-                    borderRadius: BorderRadius.circular(12),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        border: Border.all(color: AppColors.gris),
-                        borderRadius: BorderRadius.circular(12),
-                        color: AppColors.blanc,
-                      ),
-                      child: ListView.builder(
-                        shrinkWrap: true,
-                        itemCount: foundAnimals.length,
-                        itemBuilder: (context, index) {
-                          return ListTile(
-                            title: Text(foundAnimals[index]['name']),
-                            onTap: () {
-                              setState(() {
-                                removeOverlay();
-                                showAnimalDetails(
-                                    context, foundAnimals[index]);
-                                _nameAnimal.text = '';
-                              });
-                            },
-                          );
-                        },
-                      ),
+                child: Material(
+                  elevation: 4.0,
+                  borderRadius: BorderRadius.circular(12),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.grey),
+                      borderRadius: BorderRadius.circular(12),
+                      color: Colors.white,
+                    ),
+                    child: ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: foundAnimals.length,
+                      itemBuilder: (context, index) {
+                        return ListTile(
+                          title: Text(foundAnimals[index]['name']),
+                          onTap: () {
+                            removeOverlay(); // Supprimer l'overlay en premier
+                            _focusNode
+                                .unfocus(); // Retirer le focus du champ de texte
+                            setState(() {
+                              showAnimalDetails(context, foundAnimals[index]);
+                              _nameAnimal.text =
+                                  ''; // Réinitialiser le champ de recherche
+                            });
+                          },
+                        );
+                      },
                     ),
                   ),
                 ),
@@ -1485,10 +1516,14 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
     }
 
     void showOverlay() {
-      _focusNode.requestFocus();
+      if (_overlayEntry != null) {
+        _overlayEntry!.remove();
+      }
       _overlayEntry = createOverlayEntry();
       Overlay.of(context).insert(_overlayEntry!);
     }
+
+    
 
     return Scaffold(
       body: Container(

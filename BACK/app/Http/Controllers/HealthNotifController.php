@@ -53,6 +53,7 @@ class HealthNotifController extends Controller
                 'dateSave' => $request->dateSave,
                 'type' => $request->type,
                 'valeur' => $request->valeur,
+                'heureNotif' => now()->format('H:i:s'),
                 'etat' => 'non_lu'
             ]);
 
