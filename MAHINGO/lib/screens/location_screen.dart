@@ -54,7 +54,7 @@ class _LocationScreenState extends State<LocationScreen> {
       'timestamp': '2024-10-30',
       'batterie': "70%",
       'position': "debout",
-      'température': {'value': "15°C", 'etat': "sensible"},
+      'température': {'value': "15°C", 'etat': "anormale"},
       'frequence': {'value': "15bpm", 'etat': "normale"},
       'localisation': {
         'altitude': "14.6950", // Coordonnées dans la zone
@@ -69,7 +69,7 @@ class _LocationScreenState extends State<LocationScreen> {
       'batterie': "70%",
       'position': "debout",
       'température': {'value': "15°C", 'etat': "sensible"},
-      'frequence': {'value': "15bpm", 'etat': "normale"},
+      'frequence': {'value': "15bpm", 'etat': "anormale"},
       'localisation': {
         'altitude': "14.6970", // Coordonnées dans la zone
         'longitude': "-17.4430",
@@ -82,8 +82,8 @@ class _LocationScreenState extends State<LocationScreen> {
       'timestamp': '2024-10-30',
       'batterie': "70%",
       'position': "debout",
-      'température': {'value': "15°C", 'etat': "sensible"},
-      'frequence': {'value': "15bpm", 'etat': "normale"},
+      'température': {'value': "15°C", 'etat': "normale"},
+      'frequence': {'value': "15bpm", 'etat': "anormale"},
       'localisation': {
         'altitude': "14.6980", // Coordonnées dans la zone
         'longitude': "-17.4460",
@@ -96,7 +96,7 @@ class _LocationScreenState extends State<LocationScreen> {
       'timestamp': '2024-10-30',
       'batterie': "70%",
       'position': "debout",
-      'température': {'value': "15°C", 'etat': "sensible"},
+      'température': {'value': "15°C", 'etat': "normale"},
       'frequence': {'value': "15bpm", 'etat': "normale"},
       'localisation': {
         'altitude': "14.6995", // Coordonnées hors zone
@@ -110,7 +110,7 @@ class _LocationScreenState extends State<LocationScreen> {
       'timestamp': '2024-10-30',
       'batterie': "70%",
       'position': "debout",
-      'température': {'value': "15°C", 'etat': "sensible"},
+      'température': {'value': "15°C", 'etat': "normale"},
       'frequence': {'value': "15bpm", 'etat': "normale"},
       'localisation': {
         'altitude': "14.7000",
@@ -124,7 +124,7 @@ class _LocationScreenState extends State<LocationScreen> {
       'timestamp': '2024-10-30',
       'batterie': "70%",
       'position': "debout",
-      'température': {'value': "15°C", 'etat': "sensible"},
+      'température': {'value': "15°C", 'etat': "normale"},
       'frequence': {'value': "15bpm", 'etat': "normale"},
       'localisation': {
         'altitude': "14.7005",
@@ -138,7 +138,7 @@ class _LocationScreenState extends State<LocationScreen> {
       'timestamp': '2024-10-30',
       'batterie': "70%",
       'position': "debout",
-      'température': {'value': "15°C", 'etat': "sensible"},
+      'température': {'value': "15°C", 'etat': "normale"},
       'frequence': {'value': "15bpm", 'etat': "normale"},
       'localisation': {
         'altitude': "14.7010",
@@ -152,7 +152,7 @@ class _LocationScreenState extends State<LocationScreen> {
       'timestamp': '2024-10-30',
       'batterie': "70%",
       'position': "debout",
-      'température': {'value': "15°C", 'etat': "sensible"},
+      'température': {'value': "15°C", 'etat': "normale"},
       'frequence': {'value': "15bpm", 'etat': "normale"},
       'localisation': {
         'altitude': "14.7015",
@@ -166,7 +166,7 @@ class _LocationScreenState extends State<LocationScreen> {
       'timestamp': '2024-10-30',
       'batterie': "70%",
       'position': "debout",
-      'température': {'value': "15°C", 'etat': "sensible"},
+      'température': {'value': "15°C", 'etat': "normale"},
       'frequence': {'value': "15bpm", 'etat': "normale"},
       'localisation': {
         'altitude': "14.7020",
@@ -175,8 +175,6 @@ class _LocationScreenState extends State<LocationScreen> {
       'etat': 'normal'
     },
   ];
-
-  
   // final List<Map<String, dynamic>> _animals = [
   //   {
   //     "id": 1,

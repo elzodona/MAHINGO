@@ -46,7 +46,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
       'timestamp': '2024-10-30',
       'batterie': "70%",
       'position': "debout",
-      'température': {'value': "15°C", 'etat': "sensible"},
+      'température': {'value': "15°C", 'etat': "anormale"},
       'frequence': {'value': "15bpm", 'etat': "normale"},
       'localisation': {
         'altitude': "14.6950", // Coordonnées dans la zone
@@ -61,7 +61,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
       'batterie': "70%",
       'position': "debout",
       'température': {'value': "15°C", 'etat': "sensible"},
-      'frequence': {'value': "15bpm", 'etat': "normale"},
+      'frequence': {'value': "15bpm", 'etat': "anormale"},
       'localisation': {
         'altitude': "14.6970", // Coordonnées dans la zone
         'longitude': "-17.4430",
@@ -74,8 +74,8 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
       'timestamp': '2024-10-30',
       'batterie': "70%",
       'position': "debout",
-      'température': {'value': "15°C", 'etat': "sensible"},
-      'frequence': {'value': "15bpm", 'etat': "normale"},
+      'température': {'value': "15°C", 'etat': "normale"},
+      'frequence': {'value': "15bpm", 'etat': "anormale"},
       'localisation': {
         'altitude': "14.6980", // Coordonnées dans la zone
         'longitude': "-17.4460",
@@ -88,7 +88,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
       'timestamp': '2024-10-30',
       'batterie': "70%",
       'position': "debout",
-      'température': {'value': "15°C", 'etat': "sensible"},
+      'température': {'value': "15°C", 'etat': "normale"},
       'frequence': {'value': "15bpm", 'etat': "normale"},
       'localisation': {
         'altitude': "14.6995", // Coordonnées hors zone
@@ -102,7 +102,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
       'timestamp': '2024-10-30',
       'batterie': "70%",
       'position': "debout",
-      'température': {'value': "15°C", 'etat': "sensible"},
+      'température': {'value': "15°C", 'etat': "normale"},
       'frequence': {'value': "15bpm", 'etat': "normale"},
       'localisation': {
         'altitude': "14.7000",
@@ -116,7 +116,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
       'timestamp': '2024-10-30',
       'batterie': "70%",
       'position': "debout",
-      'température': {'value': "15°C", 'etat': "sensible"},
+      'température': {'value': "15°C", 'etat': "normale"},
       'frequence': {'value': "15bpm", 'etat': "normale"},
       'localisation': {
         'altitude': "14.7005",
@@ -130,7 +130,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
       'timestamp': '2024-10-30',
       'batterie': "70%",
       'position': "debout",
-      'température': {'value': "15°C", 'etat': "sensible"},
+      'température': {'value': "15°C", 'etat': "normale"},
       'frequence': {'value': "15bpm", 'etat': "normale"},
       'localisation': {
         'altitude': "14.7010",
@@ -144,7 +144,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
       'timestamp': '2024-10-30',
       'batterie': "70%",
       'position': "debout",
-      'température': {'value': "15°C", 'etat': "sensible"},
+      'température': {'value': "15°C", 'etat': "normale"},
       'frequence': {'value': "15bpm", 'etat': "normale"},
       'localisation': {
         'altitude': "14.7015",
@@ -158,7 +158,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
       'timestamp': '2024-10-30',
       'batterie': "70%",
       'position': "debout",
-      'température': {'value': "15°C", 'etat': "sensible"},
+      'température': {'value': "15°C", 'etat': "normale"},
       'frequence': {'value': "15bpm", 'etat': "normale"},
       'localisation': {
         'altitude': "14.7020",
@@ -522,7 +522,39 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
     try {
       ApiService apiService = ApiService();
       _animals = await apiService.fetchAnimalsb(id);
-      // print(_animals);
+
+      List<Map<String, dynamic>> animalsWithIssues = [];
+
+      for (var animal in _animals) {
+        var collar = colliers.firstWhere(
+          (c) => c['identifier'] == animal['necklace_id']['identifier'],
+          orElse: () => {},
+        );
+
+        if (collar != null) {
+          if (collar['température']['etat'] != "normale") {
+            double temperatureValue = double.parse(collar['température']['value'].replaceAll('°C', '').trim());
+
+            animalsWithIssues.add({
+              'id': animal['id'],
+              'timestamp': collar['timestamp'],
+              'value': temperatureValue,
+              'type': 'température',
+            });
+          }
+
+          if (collar['frequence']['etat'] != "normale") {
+            double frequenceValue = double.parse(collar['frequence']['value'].replaceAll('bpm', '').trim());
+
+            animalsWithIssues.add({
+              'id': animal['id'],
+              'timestamp': collar['timestamp'],
+              'value': frequenceValue,
+              'type': 'fréquence',
+            });
+          }
+        }
+      }
 
       setState(() {
         animalsOutsideZone = _animals
@@ -546,8 +578,10 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
             .cast<Map<String, dynamic>>()
             .toList();
       });
-      // print(animalsOutsideZone);
       await _saveLocation(animalsOutsideZone);
+
+      await _saveHealthIssues(animalsWithIssues);
+
     } catch (e) {
       print('Erreur : $e');
     }
@@ -650,6 +684,32 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
       print('Erreur : $e');
     }
   }
+
+  Future<void> _saveHealthIssues(List<Map<String, dynamic>> animalsWithIssues) async {
+    print("Animaux avec des constantes anormales : $animalsWithIssues");
+
+    try {
+      Api5Service apiService = Api5Service();
+
+      for (var animal in animalsWithIssues) {
+        Map<String, dynamic> newNotif = {
+          'animal_id': animal["id"],
+          'user_id': id,
+          'dateSave': animal["timestamp"],
+          'type': animal["type"],
+          'valeur': animal["value"],
+        };
+
+        dynamic response = await Api5Service().createNotif(newNotif);
+        print("Notification créée : $response");
+      }
+
+      _loadHealthNotifs(id);
+    } catch (e) {
+      print('Erreur lors de la création des notifications : $e');
+    }
+  }
+
 
 
   @override
