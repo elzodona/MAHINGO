@@ -2165,7 +2165,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                                               ),
                                                             ),
                                                             const SizedBox(
-                                                                width: 16),
+                                                                width: 12),
                                                             Column(
                                                               crossAxisAlignment:
                                                                   CrossAxisAlignment
@@ -2192,8 +2192,8 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                                                 ),
                                                                 Text(
                                                                   event['type'] == 'temperature' ?
-                                                                    '${event['animal']['name']} a une température anormale de ${event['valeur']}'
-                                                                    : '${event['animal']['name']} a une fréquence anormale de ${event['valeur']}',
+                                                                    'Température anormale de ${event['valeur']} détectée'
+                                                                    : 'Fréquence anormale de ${event['valeur']} détectée',
                                                                   style: const TextStyle(
                                                                       color: Color(
                                                                           0xFF808B9A),

@@ -5,6 +5,8 @@ import 'dart:io';
 import 'package:mahingo/services/call_api/animal_service.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:mahingo/routes/paths.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:convert';
 
 
 class NewAnimalsScreen extends StatefulWidget {
@@ -15,6 +17,9 @@ class NewAnimalsScreen extends StatefulWidget {
 }
 
 class _NewAnimalsScreenState extends State<NewAnimalsScreen> {
+  Map<String, dynamic> user = {};
+  int id = 2;
+
   String? _selectedGender = 'Masculin';
   String? _selectedCategory = 'Mouton';
 
@@ -98,20 +103,48 @@ class _NewAnimalsScreenState extends State<NewAnimalsScreen> {
 
   void showInfoDialog(BuildContext context, String message, String etat) {
     AwesomeDialog(
-      context: context,
-      dialogType: DialogType.info,
-      customHeader: const Icon(
-        Icons.info,
-        color: AppColors.vert,
-        size: 70,
-      ),
-      // dialogBackgroundColor: Colors.green,
-      animType: AnimType.bottomSlide,
-      title: etat,
-      desc: message,
-      btnOkOnPress: () {},
-      btnOkColor: AppColors.vert
-    ).show();
+            context: context,
+            dialogType: DialogType.info,
+            customHeader: const Icon(
+              Icons.info,
+              color: AppColors.vert,
+              size: 70,
+            ),
+            // dialogBackgroundColor: Colors.green,
+            animType: AnimType.bottomSlide,
+            title: etat,
+            desc: message,
+            btnOkOnPress: () {},
+            btnOkColor: AppColors.vert)
+        .show();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserInfo();
+  }
+
+  @override
+  void didPopNext() {
+    _loadUserInfo();
+    // _loadAnimals();
+  }
+
+  Future<void> _loadUserInfo() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    if (prefs.containsKey('user')) {
+      String userString = prefs.getString('user')!;
+      Map<String, dynamic> userData = json.decode(userString);
+      setState(() {
+        user = userData;
+        id = userData["id"];
+      });
+      print("User ID: ${user["id"]}");
+
+    } else {
+      print('Aucun utilisateur trouvé dans les préférences partagées');
+    }
   }
 
   @override
@@ -733,8 +766,9 @@ class _NewAnimalsScreenState extends State<NewAnimalsScreen> {
                                         onTap: () => _selectDate(context),
                                         decoration: InputDecoration(
                                           border: InputBorder.none,
-                                          contentPadding: const EdgeInsets.symmetric(
-                                              horizontal: 12.0),
+                                          contentPadding:
+                                              const EdgeInsets.symmetric(
+                                                  horizontal: 12.0),
                                           isDense: true,
                                           suffixIcon: IconButton(
                                             icon: const Icon(
@@ -801,7 +835,7 @@ class _NewAnimalsScreenState extends State<NewAnimalsScreen> {
                                     'taille': _tailleController.text,
                                     'poids': _poidsController.text,
                                     'categorie_id': categorieId,
-                                    'user_id': 2,
+                                    'user_id': id,
                                     'necklace_id': _idController.text,
                                   };
 
@@ -810,11 +844,11 @@ class _NewAnimalsScreenState extends State<NewAnimalsScreen> {
                                       .createAnimal(newAnimalData);
                                   // print('${response['message']}');
 
-                                  showInfoDialog(context, response['message'], 'Succès');
-                                  
+                                  showInfoDialog(
+                                      context, response['message'], 'Succès');
+
                                   // Navigator.pushReplacementNamed(
                                   //     context, AppPaths.animals);
-
                                 } catch (e) {
                                   print('Erreur : $e');
                                   showInfoDialog(

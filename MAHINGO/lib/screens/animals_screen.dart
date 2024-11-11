@@ -413,6 +413,7 @@ class _AnimalsScreenState extends State<AnimalsScreen> {
     }
   }
 
+  
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
