@@ -166,6 +166,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
       'etat': 'normal'
     },
   ];
+  
   final List<LatLng> _pastureZone = [
     LatLng(14.6940, -17.4470),
     LatLng(14.6940, -17.4420),
